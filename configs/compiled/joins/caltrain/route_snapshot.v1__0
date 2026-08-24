@@ -1,0 +1,259 @@
+{
+  "joinParts": [
+    {
+      "groupBy": {
+        "aggregations": [
+          {
+            "argMap": {},
+            "inputColumn": "vehicle_id",
+            "operation": 6,
+            "windows": [
+              {
+                "length": 1,
+                "timeUnit": 1
+              },
+              {
+                "length": 7,
+                "timeUnit": 1
+              }
+            ]
+          },
+          {
+            "argMap": {},
+            "inputColumn": "speed",
+            "operation": 8,
+            "windows": [
+              {
+                "length": 1,
+                "timeUnit": 1
+              },
+              {
+                "length": 7,
+                "timeUnit": 1
+              }
+            ]
+          },
+          {
+            "argMap": {
+              "k": "5"
+            },
+            "inputColumn": "stop_id",
+            "operation": 13
+          }
+        ],
+        "keyColumns": [
+          "route_id"
+        ],
+        "metaData": {
+          "columnHashes": {
+            "route_id": "1d7f057039b607c69ef75b0515fe88e6",
+            "speed_average_1d": "157d72621467690af468e97098563922",
+            "speed_average_7d": "157d72621467690af468e97098563922",
+            "stop_id_last5": "8aedcecb46d89f3c9600bc271b225785",
+            "vehicle_id_count_1d": "7a35bb64034bb4cb47fd977b6dd10973",
+            "vehicle_id_count_7d": "7a35bb64034bb4cb47fd977b6dd10973"
+          },
+          "executionInfo": {
+            "conf": {
+              "common": {
+                "spark.chronon.cloud_provider": "gcp",
+                "spark.chronon.partition.column": "ds",
+                "spark.chronon.partition.format": "yyyy-MM-dd",
+                "spark.chronon.table.format_provider.class": "ai.chronon.integrations.cloud_gcp.GcpFormatProvider",
+                "spark.chronon.table_write.format": "iceberg",
+                "spark.chronon.table_write.prefix": "gs://zipline-warehouse-canary/data/tables/",
+                "spark.sql.catalog.default_iceberg.warehouse": "gs://zipline-warehouse-canary/data/tables/",
+                "spark.sql.catalog.spark_catalog.warehouse": "gs://zipline-warehouse-canary/data/tables/"
+              }
+            },
+            "env": {
+              "common": {
+                "ARTIFACT_PREFIX": "gs://zipline-artifacts-canary",
+                "CLOUD_PROVIDER": "gcp",
+                "CUSTOMER_ID": "canary",
+                "FLINK_STATE_URI": "gs://zipline-warehouse-canary/flink-state",
+                "GCP_BIGTABLE_INSTANCE_ID": "zipline-canary-instance",
+                "GCP_PROJECT_ID": "canary-443022",
+                "GCP_REGION": "us-central1",
+                "VERSION": "latest",
+                "WAREHOUSE_PREFIX": "gs://zipline-warehouse-canary"
+              },
+              "modeEnvironments": {
+                "backfill": {
+                  "ARTIFACT_PREFIX": "gs://zipline-artifacts-canary",
+                  "CLOUD_PROVIDER": "gcp",
+                  "CUSTOMER_ID": "canary",
+                  "FLINK_STATE_URI": "gs://zipline-warehouse-canary/flink-state",
+                  "GCP_BIGTABLE_INSTANCE_ID": "zipline-canary-instance",
+                  "GCP_PROJECT_ID": "canary-443022",
+                  "GCP_REGION": "us-central1",
+                  "VERSION": "latest",
+                  "WAREHOUSE_PREFIX": "gs://zipline-warehouse-canary"
+                },
+                "streaming": {
+                  "ARTIFACT_PREFIX": "gs://zipline-artifacts-canary",
+                  "CLOUD_PROVIDER": "gcp",
+                  "CUSTOMER_ID": "canary",
+                  "FLINK_STATE_URI": "gs://zipline-warehouse-canary/flink-state",
+                  "GCP_BIGTABLE_INSTANCE_ID": "zipline-canary-instance",
+                  "GCP_PROJECT_ID": "canary-443022",
+                  "GCP_REGION": "us-central1",
+                  "VERSION": "latest",
+                  "WAREHOUSE_PREFIX": "gs://zipline-warehouse-canary"
+                },
+                "upload": {
+                  "ARTIFACT_PREFIX": "gs://zipline-artifacts-canary",
+                  "CLOUD_PROVIDER": "gcp",
+                  "CUSTOMER_ID": "canary",
+                  "FLINK_STATE_URI": "gs://zipline-warehouse-canary/flink-state",
+                  "GCP_BIGTABLE_INSTANCE_ID": "zipline-canary-instance",
+                  "GCP_PROJECT_ID": "canary-443022",
+                  "GCP_REGION": "us-central1",
+                  "VERSION": "latest",
+                  "WAREHOUSE_PREFIX": "gs://zipline-warehouse-canary"
+                }
+              }
+            },
+            "historicalBackfill": 0,
+            "onlineSchedule": "@daily"
+          },
+          "name": "caltrain.vehicle_activity.vehicle_activity_by_route__0",
+          "online": 1,
+          "outputNamespace": "data",
+          "team": "caltrain",
+          "version": "0"
+        },
+        "sources": [
+          {
+            "events": {
+              "query": {
+                "selects": {
+                  "bearing": "bearing",
+                  "current_stop_sequence": "current_stop_sequence",
+                  "latitude": "latitude",
+                  "longitude": "longitude",
+                  "occupancy_status": "occupancy_status",
+                  "route_id": "route_id",
+                  "speed": "speed",
+                  "stop_id": "stop_id",
+                  "trip_id": "trip_id",
+                  "vehicle_id": "vehicle_id"
+                },
+                "startPartition": "2026-08-24",
+                "timeColumn": "ingested_at"
+              },
+              "table": "public_demo_caltrain_raw.vehicle_positions_raw"
+            }
+          }
+        ]
+      },
+      "useLongNames": 0
+    }
+  ],
+  "left": {
+    "events": {
+      "query": {
+        "selects": {
+          "route_id": "route_id",
+          "trip_id": "trip_id",
+          "ts": "ingested_at",
+          "vehicle_id": "vehicle_id"
+        },
+        "startPartition": "2026-08-24",
+        "timeColumn": "ingested_at"
+      },
+      "table": "public_demo_caltrain_raw.vehicle_positions_raw"
+    }
+  },
+  "metaData": {
+    "columnHashes": {
+      "route_id": "d6ed5ad65625128c3f2fba745b87c3a0",
+      "route_id_speed_average_1d": "68a4a8c89bf3c15abee56c4b1c1edd47",
+      "route_id_speed_average_7d": "68a4a8c89bf3c15abee56c4b1c1edd47",
+      "route_id_stop_id_last5": "ee20f86c297bc8779513828b394ea528",
+      "route_id_vehicle_id_count_1d": "58438f88c6f249a0d08e9dee46e9d6da",
+      "route_id_vehicle_id_count_7d": "58438f88c6f249a0d08e9dee46e9d6da",
+      "trip_id": "78d017cf949083eb5fb7646eb95b0e4f",
+      "ts": "80addf0ac0d939171a85690f18e10e32",
+      "vehicle_id": "ad0989d6c6221822dca5db26d852eadb"
+    },
+    "customJson": "{\"airflowDependencies\": [{\"name\": \"wf_public_demo_caltrain_raw_vehicle_positions_raw_with_offset_0\", \"spec\": \"public_demo_caltrain_raw.vehicle_positions_raw/ds={{ macros.ds_add(ds, 0) }}\"}]}",
+    "executionInfo": {
+      "conf": {
+        "common": {
+          "spark.chronon.cloud_provider": "gcp",
+          "spark.chronon.partition.column": "ds",
+          "spark.chronon.partition.format": "yyyy-MM-dd",
+          "spark.chronon.table.format_provider.class": "ai.chronon.integrations.cloud_gcp.GcpFormatProvider",
+          "spark.chronon.table_write.format": "iceberg",
+          "spark.chronon.table_write.prefix": "gs://zipline-warehouse-canary/data/tables/",
+          "spark.sql.catalog.default_iceberg.warehouse": "gs://zipline-warehouse-canary/data/tables/",
+          "spark.sql.catalog.spark_catalog.warehouse": "gs://zipline-warehouse-canary/data/tables/"
+        }
+      },
+      "env": {
+        "common": {
+          "ARTIFACT_PREFIX": "gs://zipline-artifacts-canary",
+          "CLOUD_PROVIDER": "gcp",
+          "CUSTOMER_ID": "canary",
+          "FLINK_STATE_URI": "gs://zipline-warehouse-canary/flink-state",
+          "GCP_BIGTABLE_INSTANCE_ID": "zipline-canary-instance",
+          "GCP_PROJECT_ID": "canary-443022",
+          "GCP_REGION": "us-central1",
+          "VERSION": "latest",
+          "WAREHOUSE_PREFIX": "gs://zipline-warehouse-canary"
+        },
+        "modeEnvironments": {
+          "backfill": {
+            "ARTIFACT_PREFIX": "gs://zipline-artifacts-canary",
+            "CLOUD_PROVIDER": "gcp",
+            "CUSTOMER_ID": "canary",
+            "FLINK_STATE_URI": "gs://zipline-warehouse-canary/flink-state",
+            "GCP_BIGTABLE_INSTANCE_ID": "zipline-canary-instance",
+            "GCP_PROJECT_ID": "canary-443022",
+            "GCP_REGION": "us-central1",
+            "VERSION": "latest",
+            "WAREHOUSE_PREFIX": "gs://zipline-warehouse-canary"
+          },
+          "streaming": {
+            "ARTIFACT_PREFIX": "gs://zipline-artifacts-canary",
+            "CLOUD_PROVIDER": "gcp",
+            "CUSTOMER_ID": "canary",
+            "FLINK_STATE_URI": "gs://zipline-warehouse-canary/flink-state",
+            "GCP_BIGTABLE_INSTANCE_ID": "zipline-canary-instance",
+            "GCP_PROJECT_ID": "canary-443022",
+            "GCP_REGION": "us-central1",
+            "VERSION": "latest",
+            "WAREHOUSE_PREFIX": "gs://zipline-warehouse-canary"
+          },
+          "upload": {
+            "ARTIFACT_PREFIX": "gs://zipline-artifacts-canary",
+            "CLOUD_PROVIDER": "gcp",
+            "CUSTOMER_ID": "canary",
+            "FLINK_STATE_URI": "gs://zipline-warehouse-canary/flink-state",
+            "GCP_BIGTABLE_INSTANCE_ID": "zipline-canary-instance",
+            "GCP_PROJECT_ID": "canary-443022",
+            "GCP_REGION": "us-central1",
+            "VERSION": "latest",
+            "WAREHOUSE_PREFIX": "gs://zipline-warehouse-canary"
+          }
+        }
+      },
+      "offlineSchedule": "@daily"
+    },
+    "name": "caltrain.route_snapshot.v1__0",
+    "online": 0,
+    "outputNamespace": "data",
+    "production": 0,
+    "samplePercent": 100.0,
+    "sourceFile": "joins/caltrain/route_snapshot.py",
+    "team": "caltrain",
+    "version": "0"
+  },
+  "rowIds": [
+    "route_id",
+    "vehicle_id",
+    "trip_id"
+  ],
+  "useLongNames": 0
+}
