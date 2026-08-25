@@ -1,0 +1,264 @@
+{
+  "joinParts": [
+    {
+      "groupBy": {
+        "aggregations": [
+          {
+            "argMap": {},
+            "inputColumn": "content_sha256",
+            "operation": 6,
+            "windows": [
+              {
+                "length": 1,
+                "timeUnit": 1
+              },
+              {
+                "length": 7,
+                "timeUnit": 1
+              }
+            ]
+          },
+          {
+            "argMap": {},
+            "inputColumn": "row_count",
+            "operation": 8,
+            "windows": [
+              {
+                "length": 1,
+                "timeUnit": 1
+              },
+              {
+                "length": 7,
+                "timeUnit": 1
+              }
+            ]
+          },
+          {
+            "argMap": {
+              "k": "5"
+            },
+            "inputColumn": "snapshot_hour",
+            "operation": 13
+          }
+        ],
+        "keyColumns": [
+          "file_name"
+        ],
+        "metaData": {
+          "columnHashes": {
+            "content_sha256_count_1d": "1a5ae5156c4adc5bc3520cc285067f88",
+            "content_sha256_count_7d": "1a5ae5156c4adc5bc3520cc285067f88",
+            "file_name": "8a2b09809df47181da8834d7a851979c",
+            "row_count_average_1d": "4e7d5f5ff84c91e1083f479d7bdbc7af",
+            "row_count_average_7d": "4e7d5f5ff84c91e1083f479d7bdbc7af",
+            "snapshot_hour_last5": "96921f8f862426cc27825f1206a92341"
+          },
+          "executionInfo": {
+            "conf": {
+              "common": {
+                "spark.chronon.coalesce.factor": "2",
+                "spark.chronon.partition.column": "ds",
+                "spark.chronon.partition.format": "yyyy-MM-dd",
+                "spark.chronon.table_write.format": "iceberg",
+                "spark.default.parallelism": "4",
+                "spark.hadoop.hive.metastore.client.factory.class": "com.amazonaws.glue.catalog.metastore.AWSGlueDataCatalogHiveClientFactory",
+                "spark.sql.catalog.spark_catalog": "org.apache.iceberg.spark.SparkSessionCatalog",
+                "spark.sql.catalog.spark_catalog.catalog-impl": "org.apache.iceberg.aws.glue.GlueCatalog",
+                "spark.sql.catalog.spark_catalog.warehouse": "s3://zipline-public-demo-warehouse/data/tables/",
+                "spark.sql.defaultUrlStreamHandlerFactory.enabled": "false",
+                "spark.sql.extensions": "org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions",
+                "spark.sql.shuffle.partitions": "4"
+              }
+            },
+            "env": {
+              "common": {
+                "ARTIFACT_PREFIX": "s3://zipline-public-demo-artifacts",
+                "AWS_REGION": "us-west-2",
+                "CLOUD_PROVIDER": "aws",
+                "CUSTOMER_ID": "public-demo",
+                "FLINK_STATE_URI": "s3://zipline-public-demo-warehouse/flink-state",
+                "FRONTEND_URL": "http://k8s-ziplines-ziplineo-82549f7164-cb3dfbbafd5a0571.elb.us-west-2.amazonaws.com",
+                "HUB_URL": "http://k8s-ziplines-ziplineo-82549f7164-cb3dfbbafd5a0571.elb.us-west-2.amazonaws.com/services/hub",
+                "VERSION": "latest",
+                "WAREHOUSE_PREFIX": "s3://zipline-public-demo-warehouse"
+              },
+              "modeEnvironments": {
+                "backfill": {
+                  "ARTIFACT_PREFIX": "s3://zipline-public-demo-artifacts",
+                  "AWS_REGION": "us-west-2",
+                  "CLOUD_PROVIDER": "aws",
+                  "CUSTOMER_ID": "public-demo",
+                  "FLINK_STATE_URI": "s3://zipline-public-demo-warehouse/flink-state",
+                  "FRONTEND_URL": "http://k8s-ziplines-ziplineo-82549f7164-cb3dfbbafd5a0571.elb.us-west-2.amazonaws.com",
+                  "HUB_URL": "http://k8s-ziplines-ziplineo-82549f7164-cb3dfbbafd5a0571.elb.us-west-2.amazonaws.com/services/hub",
+                  "VERSION": "latest",
+                  "WAREHOUSE_PREFIX": "s3://zipline-public-demo-warehouse"
+                },
+                "streaming": {
+                  "ARTIFACT_PREFIX": "s3://zipline-public-demo-artifacts",
+                  "AWS_REGION": "us-west-2",
+                  "CLOUD_PROVIDER": "aws",
+                  "CUSTOMER_ID": "public-demo",
+                  "FLINK_STATE_URI": "s3://zipline-public-demo-warehouse/flink-state",
+                  "FRONTEND_URL": "http://k8s-ziplines-ziplineo-82549f7164-cb3dfbbafd5a0571.elb.us-west-2.amazonaws.com",
+                  "HUB_URL": "http://k8s-ziplines-ziplineo-82549f7164-cb3dfbbafd5a0571.elb.us-west-2.amazonaws.com/services/hub",
+                  "VERSION": "latest",
+                  "WAREHOUSE_PREFIX": "s3://zipline-public-demo-warehouse"
+                },
+                "upload": {
+                  "ARTIFACT_PREFIX": "s3://zipline-public-demo-artifacts",
+                  "AWS_REGION": "us-west-2",
+                  "CLOUD_PROVIDER": "aws",
+                  "CUSTOMER_ID": "public-demo",
+                  "FLINK_STATE_URI": "s3://zipline-public-demo-warehouse/flink-state",
+                  "FRONTEND_URL": "http://k8s-ziplines-ziplineo-82549f7164-cb3dfbbafd5a0571.elb.us-west-2.amazonaws.com",
+                  "HUB_URL": "http://k8s-ziplines-ziplineo-82549f7164-cb3dfbbafd5a0571.elb.us-west-2.amazonaws.com/services/hub",
+                  "VERSION": "latest",
+                  "WAREHOUSE_PREFIX": "s3://zipline-public-demo-warehouse"
+                }
+              }
+            },
+            "historicalBackfill": 0,
+            "onlineSchedule": "@daily"
+          },
+          "name": "caltrain.schedule_file_activity.schedule_file_activity__0",
+          "online": 1,
+          "outputNamespace": "data",
+          "team": "caltrain",
+          "version": "0"
+        },
+        "sources": [
+          {
+            "events": {
+              "query": {
+                "selects": {
+                  "content_sha256": "content_sha256",
+                  "downloaded_at": "downloaded_at",
+                  "file_name": "file_name",
+                  "row_count": "row_count",
+                  "snapshot_date": "snapshot_date",
+                  "snapshot_hour": "snapshot_hour"
+                },
+                "startPartition": "2026-08-25",
+                "timeColumn": "downloaded_at"
+              },
+              "table": "public_demo_caltrain.schedule_files"
+            }
+          }
+        ]
+      },
+      "useLongNames": 0
+    }
+  ],
+  "left": {
+    "events": {
+      "query": {
+        "selects": {
+          "content_sha256": "content_sha256",
+          "downloaded_at": "downloaded_at",
+          "file_name": "file_name",
+          "row_count": "row_count",
+          "ts": "downloaded_at"
+        },
+        "startPartition": "2026-08-25",
+        "timeColumn": "downloaded_at"
+      },
+      "table": "public_demo_caltrain.schedule_files"
+    }
+  },
+  "metaData": {
+    "columnHashes": {
+      "content_sha256": "7fb52883a94c260364033cc5afdfbc1d",
+      "downloaded_at": "f27f88bbf099dc5d58ec5fe9ddd2b93d",
+      "file_name": "5840e5dbc6eab0672a271f5276d459a1",
+      "file_name_content_sha256_count_1d": "8e03803549e319aabfb8b014f14f6908",
+      "file_name_content_sha256_count_7d": "8e03803549e319aabfb8b014f14f6908",
+      "file_name_row_count_average_1d": "66f5b23146be8a8c468a38d6b941643c",
+      "file_name_row_count_average_7d": "66f5b23146be8a8c468a38d6b941643c",
+      "file_name_snapshot_hour_last5": "0fce19314912963ec7bc3762594f602c",
+      "row_count": "8872900a4eb074249ca2f12eb9dde817",
+      "ts": "e8c87bd7e3a45d09ba27ca8d7419f51b"
+    },
+    "customJson": "{\"airflowDependencies\": [{\"name\": \"wf_public_demo_caltrain_schedule_files_with_offset_0\", \"spec\": \"public_demo_caltrain.schedule_files/ds={{ macros.ds_add(ds, 0) }}\"}]}",
+    "executionInfo": {
+      "conf": {
+        "common": {
+          "spark.chronon.coalesce.factor": "2",
+          "spark.chronon.partition.column": "ds",
+          "spark.chronon.partition.format": "yyyy-MM-dd",
+          "spark.chronon.table_write.format": "iceberg",
+          "spark.default.parallelism": "4",
+          "spark.hadoop.hive.metastore.client.factory.class": "com.amazonaws.glue.catalog.metastore.AWSGlueDataCatalogHiveClientFactory",
+          "spark.sql.catalog.spark_catalog": "org.apache.iceberg.spark.SparkSessionCatalog",
+          "spark.sql.catalog.spark_catalog.catalog-impl": "org.apache.iceberg.aws.glue.GlueCatalog",
+          "spark.sql.catalog.spark_catalog.warehouse": "s3://zipline-public-demo-warehouse/data/tables/",
+          "spark.sql.defaultUrlStreamHandlerFactory.enabled": "false",
+          "spark.sql.extensions": "org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions",
+          "spark.sql.shuffle.partitions": "4"
+        }
+      },
+      "env": {
+        "common": {
+          "ARTIFACT_PREFIX": "s3://zipline-public-demo-artifacts",
+          "AWS_REGION": "us-west-2",
+          "CLOUD_PROVIDER": "aws",
+          "CUSTOMER_ID": "public-demo",
+          "FLINK_STATE_URI": "s3://zipline-public-demo-warehouse/flink-state",
+          "FRONTEND_URL": "http://k8s-ziplines-ziplineo-82549f7164-cb3dfbbafd5a0571.elb.us-west-2.amazonaws.com",
+          "HUB_URL": "http://k8s-ziplines-ziplineo-82549f7164-cb3dfbbafd5a0571.elb.us-west-2.amazonaws.com/services/hub",
+          "VERSION": "latest",
+          "WAREHOUSE_PREFIX": "s3://zipline-public-demo-warehouse"
+        },
+        "modeEnvironments": {
+          "backfill": {
+            "ARTIFACT_PREFIX": "s3://zipline-public-demo-artifacts",
+            "AWS_REGION": "us-west-2",
+            "CLOUD_PROVIDER": "aws",
+            "CUSTOMER_ID": "public-demo",
+            "FLINK_STATE_URI": "s3://zipline-public-demo-warehouse/flink-state",
+            "FRONTEND_URL": "http://k8s-ziplines-ziplineo-82549f7164-cb3dfbbafd5a0571.elb.us-west-2.amazonaws.com",
+            "HUB_URL": "http://k8s-ziplines-ziplineo-82549f7164-cb3dfbbafd5a0571.elb.us-west-2.amazonaws.com/services/hub",
+            "VERSION": "latest",
+            "WAREHOUSE_PREFIX": "s3://zipline-public-demo-warehouse"
+          },
+          "streaming": {
+            "ARTIFACT_PREFIX": "s3://zipline-public-demo-artifacts",
+            "AWS_REGION": "us-west-2",
+            "CLOUD_PROVIDER": "aws",
+            "CUSTOMER_ID": "public-demo",
+            "FLINK_STATE_URI": "s3://zipline-public-demo-warehouse/flink-state",
+            "FRONTEND_URL": "http://k8s-ziplines-ziplineo-82549f7164-cb3dfbbafd5a0571.elb.us-west-2.amazonaws.com",
+            "HUB_URL": "http://k8s-ziplines-ziplineo-82549f7164-cb3dfbbafd5a0571.elb.us-west-2.amazonaws.com/services/hub",
+            "VERSION": "latest",
+            "WAREHOUSE_PREFIX": "s3://zipline-public-demo-warehouse"
+          },
+          "upload": {
+            "ARTIFACT_PREFIX": "s3://zipline-public-demo-artifacts",
+            "AWS_REGION": "us-west-2",
+            "CLOUD_PROVIDER": "aws",
+            "CUSTOMER_ID": "public-demo",
+            "FLINK_STATE_URI": "s3://zipline-public-demo-warehouse/flink-state",
+            "FRONTEND_URL": "http://k8s-ziplines-ziplineo-82549f7164-cb3dfbbafd5a0571.elb.us-west-2.amazonaws.com",
+            "HUB_URL": "http://k8s-ziplines-ziplineo-82549f7164-cb3dfbbafd5a0571.elb.us-west-2.amazonaws.com/services/hub",
+            "VERSION": "latest",
+            "WAREHOUSE_PREFIX": "s3://zipline-public-demo-warehouse"
+          }
+        }
+      },
+      "offlineSchedule": "@daily"
+    },
+    "name": "caltrain.schedule_snapshot.v1__0",
+    "online": 0,
+    "outputNamespace": "data",
+    "production": 0,
+    "samplePercent": 100.0,
+    "sourceFile": "joins/caltrain/schedule_snapshot.py",
+    "team": "caltrain",
+    "version": "0"
+  },
+  "rowIds": [
+    "file_name",
+    "content_sha256"
+  ],
+  "useLongNames": 0
+}

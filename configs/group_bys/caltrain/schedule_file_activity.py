@@ -1,4 +1,4 @@
-from sources.caltrain.realtime import vehicle_positions
+from sources.caltrain.realtime import schedule_files
 
 from ai.chronon.types import Aggregation, GroupBy, Operation, TimeUnit, Window
 
@@ -9,23 +9,23 @@ daily_windows = [
 ]
 
 
-vehicle_activity_by_route = GroupBy(
-    sources=[vehicle_positions],
-    keys=["route_id"],
+schedule_file_activity = GroupBy(
+    sources=[schedule_files],
+    keys=["file_name"],
     online=True,
     aggregations=[
         Aggregation(
-            input_column="vehicle_id",
+            input_column="content_sha256",
             operation=Operation.COUNT,
             windows=daily_windows,
         ),
         Aggregation(
-            input_column="speed",
+            input_column="row_count",
             operation=Operation.AVERAGE,
             windows=daily_windows,
         ),
         Aggregation(
-            input_column="stop_id",
+            input_column="snapshot_hour",
             operation=Operation.LAST_K(5),
         ),
     ],

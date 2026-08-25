@@ -1,7 +1,7 @@
 
 # 🧠 Zipline AI: Sample Chronon Project
 
-This repository demonstrates how to author and run [Chronon](https://chronon.ai) pipelines, including GroupBy and Join definitions, using GCP (BigQuery + Iceberg) as the storage backend.
+This repository demonstrates how to author and run [Chronon](https://chronon.ai) pipelines, including GroupBy and Join definitions, using AWS Glue/S3 + Iceberg as the storage backend.
 
 Chronon is a unified platform for **feature engineering**, enabling **online and offline consistency**, **real-time feature generation**, and **historical backfills** from a single codebase.
 
@@ -31,10 +31,8 @@ To get started, make sure you have the following set up:
 - ✅ **Zipline CLI** — Install or upgrade via:
   ```bash
   pip install --upgrade zipline-ai
-- ✅ gcloud CLI — authenticated and configured with the correct GCP project
-- ✅ Google Cloud credentials — either:
-  - Application Default Credentials (ADC)
-  - A service account with access to BigQuery and GCS
+- ✅ AWS CLI — authenticated against the public demo AWS account/role
+- ✅ Access to the public demo S3 buckets and Glue catalog
 - ✅Add this to your shell config (e.g., .bashrc, .zshrc):
 
 ```bash
@@ -95,7 +93,7 @@ zipline run \
 --conf compiled/joins/<TEAM_NAME>/<JOIN_NAME>
 ```
 
-Results are written to the configured BigQuery + Iceberg tables under the `outputNamespace` (e.g. `default.group_by_v1` or `default.v1`).
+Results are written to the configured AWS Glue + Iceberg tables under the `outputNamespace` (e.g. `default.group_by_v1` or `default.v1`).
 
 ---
 
@@ -108,7 +106,7 @@ zipline run \
 --ds <DATE>
 ```
 
-Results are written to the configured BigQuery + Iceberg tables under the `outputNamespace` (e.g. `default.group_by_v1` or `default.v1`).
+Results are written to the configured AWS Glue + Iceberg tables under the `outputNamespace` (e.g. `default.group_by_v1` or `default.v1`).
 
 ---
 
@@ -175,4 +173,4 @@ zipline run \
 
 ## 👋 About
 
-This project is a reference scaffold for building scalable feature pipelines using Chronon on GCP. It provides end-to-end visibility from source to production features.
+This project is a reference scaffold for building scalable feature pipelines using Chronon on AWS. It provides end-to-end visibility from source to production features.

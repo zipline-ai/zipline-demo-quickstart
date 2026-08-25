@@ -1,33 +1,40 @@
 from ai.chronon.repo.constants import RunMode
+from ai.chronon.repo.spark_catalog_confs import GlueConfiguration
 from ai.chronon.types import ConfigProperties, EnvironmentVariables, Team
 
+PUBLIC_DEMO_NLB = "http://k8s-ziplines-ziplineo-82549f7164-cb3dfbbafd5a0571.elb.us-west-2.amazonaws.com"
+WAREHOUSE_PREFIX = "s3://zipline-public-demo-warehouse"
+
 default = Team(
-    description="Default team",
-    email="you@example.com",
+    description="Public AWS demo default team",
+    email="demo@zipline.ai",
     outputNamespace="data",
     conf=ConfigProperties(
         common={
+            **GlueConfiguration(
+                {
+                    "spark.sql.catalog.spark_catalog.warehouse": f"{WAREHOUSE_PREFIX}/data/tables/",
+                }
+            ),
             "spark.chronon.table_write.format": "iceberg",
             "spark.chronon.partition.column": "ds",
             "spark.chronon.partition.format": "yyyy-MM-dd",
-            "spark.chronon.table.format_provider.class": "ai.chronon.integrations.cloud_gcp.GcpFormatProvider",
-            "spark.chronon.cloud_provider": "gcp",
-            "spark.sql.catalog.spark_catalog.warehouse": "gs://zipline-warehouse-canary/data/tables/",
-            "spark.sql.catalog.default_iceberg.warehouse": "gs://zipline-warehouse-canary/data/tables/",
-            "spark.chronon.table_write.prefix": "gs://zipline-warehouse-canary/data/tables/",
+            "spark.chronon.coalesce.factor": "2",
+            "spark.default.parallelism": "4",
+            "spark.sql.shuffle.partitions": "4",
         },
     ),
     env=EnvironmentVariables(
         common={
-            "CUSTOMER_ID": "canary",
-            "GCP_PROJECT_ID": "canary-443022",
-            "GCP_REGION": "us-central1",
-            "GCP_BIGTABLE_INSTANCE_ID": "zipline-canary-instance",
-            "ARTIFACT_PREFIX": "gs://zipline-artifacts-canary",
-            "WAREHOUSE_PREFIX": "gs://zipline-warehouse-canary",
-            "CLOUD_PROVIDER": "gcp",
+            "CUSTOMER_ID": "public-demo",
+            "CLOUD_PROVIDER": "aws",
+            "AWS_REGION": "us-west-2",
+            "ARTIFACT_PREFIX": "s3://zipline-public-demo-artifacts",
+            "WAREHOUSE_PREFIX": WAREHOUSE_PREFIX,
+            "FLINK_STATE_URI": f"{WAREHOUSE_PREFIX}/flink-state",
+            "FRONTEND_URL": PUBLIC_DEMO_NLB,
+            "HUB_URL": f"{PUBLIC_DEMO_NLB}/services/hub",
             "VERSION": "latest",
-            "FLINK_STATE_URI": "gs://zipline-warehouse-canary/flink-state",
         },
         modeEnvironments={
             RunMode.BACKFILL: {},
@@ -38,8 +45,8 @@ default = Team(
 )
 
 caltrain = Team(
-    description="Caltrain test team",
-    email="you@example.com",
+    description="Caltrain 511.org public demo team",
+    email="demo@zipline.ai",
     outputNamespace="data",
     env=EnvironmentVariables(
         common={},
