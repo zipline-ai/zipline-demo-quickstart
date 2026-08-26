@@ -46,12 +46,12 @@
         ],
         "metaData": {
           "columnHashes": {
-            "content_sha256_count_1d": "1a5ae5156c4adc5bc3520cc285067f88",
-            "content_sha256_count_7d": "1a5ae5156c4adc5bc3520cc285067f88",
-            "file_name": "8a2b09809df47181da8834d7a851979c",
-            "row_count_average_1d": "4e7d5f5ff84c91e1083f479d7bdbc7af",
-            "row_count_average_7d": "4e7d5f5ff84c91e1083f479d7bdbc7af",
-            "snapshot_hour_last5": "96921f8f862426cc27825f1206a92341"
+            "content_sha256_count_1d": "a45752e43d267c8b3cdc6e35a3c2b322",
+            "content_sha256_count_7d": "a45752e43d267c8b3cdc6e35a3c2b322",
+            "file_name": "508cb29b8c9ff1a6f1da5af7c4c0d840",
+            "row_count_average_1d": "900720538a471aaacfce5c22c3ba235a",
+            "row_count_average_7d": "900720538a471aaacfce5c22c3ba235a",
+            "snapshot_hour_last5": "97c86283b81aa113485c86406375a5fe"
           },
           "executionInfo": {
             "conf": {
@@ -62,9 +62,11 @@
                 "spark.chronon.table_write.format": "iceberg",
                 "spark.default.parallelism": "4",
                 "spark.hadoop.hive.metastore.client.factory.class": "com.amazonaws.glue.catalog.metastore.AWSGlueDataCatalogHiveClientFactory",
+                "spark.scheduler.maxRegisteredResourcesWaitingTime": "120s",
                 "spark.sql.catalog.spark_catalog": "org.apache.iceberg.spark.SparkSessionCatalog",
                 "spark.sql.catalog.spark_catalog.catalog-impl": "org.apache.iceberg.aws.glue.GlueCatalog",
                 "spark.sql.catalog.spark_catalog.warehouse": "s3://zipline-public-demo-warehouse/data/tables/",
+                "spark.sql.catalogImplementation": "hive",
                 "spark.sql.defaultUrlStreamHandlerFactory.enabled": "false",
                 "spark.sql.extensions": "org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions",
                 "spark.sql.shuffle.partitions": "4"
@@ -121,19 +123,21 @@
             "historicalBackfill": 0,
             "onlineSchedule": "@daily"
           },
-          "name": "caltrain.schedule_file_activity.schedule_file_activity__0",
+          "name": "caltrain.schedule_file_activity.schedule_file_activity__15",
           "online": 1,
-          "outputNamespace": "data",
+          "outputNamespace": "public_demo_data",
           "team": "caltrain",
-          "version": "0"
+          "version": "15"
         },
         "sources": [
           {
             "events": {
               "query": {
+                "partitionColumn": "snapshot_date",
                 "selects": {
                   "content_sha256": "content_sha256",
                   "downloaded_at": "downloaded_at",
+                  "downloaded_at_iso": "downloaded_at_iso",
                   "file_name": "file_name",
                   "row_count": "row_count",
                   "snapshot_date": "snapshot_date",
@@ -142,7 +146,7 @@
                 "startPartition": "2026-08-25",
                 "timeColumn": "downloaded_at"
               },
-              "table": "public_demo_caltrain.schedule_files"
+              "table": "public_demo_data.caltrain_schedule_files_import_v1__8"
             }
           }
         ]
@@ -153,9 +157,11 @@
   "left": {
     "events": {
       "query": {
+        "partitionColumn": "snapshot_date",
         "selects": {
           "content_sha256": "content_sha256",
           "downloaded_at": "downloaded_at",
+          "downloaded_at_iso": "downloaded_at_iso",
           "file_name": "file_name",
           "row_count": "row_count",
           "ts": "downloaded_at"
@@ -163,23 +169,24 @@
         "startPartition": "2026-08-25",
         "timeColumn": "downloaded_at"
       },
-      "table": "public_demo_caltrain.schedule_files"
+      "table": "public_demo_data.caltrain_schedule_files_import_v1__8"
     }
   },
   "metaData": {
     "columnHashes": {
-      "content_sha256": "7fb52883a94c260364033cc5afdfbc1d",
-      "downloaded_at": "f27f88bbf099dc5d58ec5fe9ddd2b93d",
-      "file_name": "5840e5dbc6eab0672a271f5276d459a1",
-      "file_name_content_sha256_count_1d": "8e03803549e319aabfb8b014f14f6908",
-      "file_name_content_sha256_count_7d": "8e03803549e319aabfb8b014f14f6908",
-      "file_name_row_count_average_1d": "66f5b23146be8a8c468a38d6b941643c",
-      "file_name_row_count_average_7d": "66f5b23146be8a8c468a38d6b941643c",
-      "file_name_snapshot_hour_last5": "0fce19314912963ec7bc3762594f602c",
-      "row_count": "8872900a4eb074249ca2f12eb9dde817",
-      "ts": "e8c87bd7e3a45d09ba27ca8d7419f51b"
+      "content_sha256": "df5bd217db6b03ab9f4f773c637ad4a8",
+      "downloaded_at": "2333d6a92bcc9b4723dbd9cc6c6eee90",
+      "downloaded_at_iso": "d7b0fffa1c18c5a751e5e6fa1cdabf1c",
+      "file_name": "966ae45b16556169b4b3e463a45bd50b",
+      "file_name_content_sha256_count_1d": "3c7b456d514fe6a66aeece8c5ee6ba91",
+      "file_name_content_sha256_count_7d": "3c7b456d514fe6a66aeece8c5ee6ba91",
+      "file_name_row_count_average_1d": "ff5fd81b9c9f57b1f6eca05031df46ba",
+      "file_name_row_count_average_7d": "ff5fd81b9c9f57b1f6eca05031df46ba",
+      "file_name_snapshot_hour_last5": "aca16e6b5dd94b1d8a61fbeac636f1f6",
+      "row_count": "348f52d22d0ddc84a64d4ca987f00584",
+      "ts": "e57dbd209d547db6a7d9da845321909c"
     },
-    "customJson": "{\"airflowDependencies\": [{\"name\": \"wf_public_demo_caltrain_schedule_files_with_offset_0\", \"spec\": \"public_demo_caltrain.schedule_files/ds={{ macros.ds_add(ds, 0) }}\"}]}",
+    "customJson": "{\"airflowDependencies\": [{\"name\": \"wf_public_demo_data_caltrain_schedule_files_import_v1__8_with_offset_0\", \"spec\": \"public_demo_data.caltrain_schedule_files_import_v1__8/snapshot_date={{ macros.ds_add(ds, 0) }}\"}]}",
     "executionInfo": {
       "conf": {
         "common": {
@@ -189,9 +196,11 @@
           "spark.chronon.table_write.format": "iceberg",
           "spark.default.parallelism": "4",
           "spark.hadoop.hive.metastore.client.factory.class": "com.amazonaws.glue.catalog.metastore.AWSGlueDataCatalogHiveClientFactory",
+          "spark.scheduler.maxRegisteredResourcesWaitingTime": "120s",
           "spark.sql.catalog.spark_catalog": "org.apache.iceberg.spark.SparkSessionCatalog",
           "spark.sql.catalog.spark_catalog.catalog-impl": "org.apache.iceberg.aws.glue.GlueCatalog",
           "spark.sql.catalog.spark_catalog.warehouse": "s3://zipline-public-demo-warehouse/data/tables/",
+          "spark.sql.catalogImplementation": "hive",
           "spark.sql.defaultUrlStreamHandlerFactory.enabled": "false",
           "spark.sql.extensions": "org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions",
           "spark.sql.shuffle.partitions": "4"
@@ -247,14 +256,14 @@
       },
       "offlineSchedule": "@daily"
     },
-    "name": "caltrain.schedule_snapshot.v1__0",
+    "name": "caltrain.schedule_snapshot.v1__15",
     "online": 0,
-    "outputNamespace": "data",
+    "outputNamespace": "public_demo_data",
     "production": 0,
     "samplePercent": 100.0,
     "sourceFile": "joins/caltrain/schedule_snapshot.py",
     "team": "caltrain",
-    "version": "0"
+    "version": "15"
   },
   "rowIds": [
     "file_name",

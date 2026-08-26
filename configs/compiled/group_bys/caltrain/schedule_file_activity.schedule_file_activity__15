@@ -43,14 +43,14 @@
   ],
   "metaData": {
     "columnHashes": {
-      "content_sha256_count_1d": "1a5ae5156c4adc5bc3520cc285067f88",
-      "content_sha256_count_7d": "1a5ae5156c4adc5bc3520cc285067f88",
-      "file_name": "8a2b09809df47181da8834d7a851979c",
-      "row_count_average_1d": "4e7d5f5ff84c91e1083f479d7bdbc7af",
-      "row_count_average_7d": "4e7d5f5ff84c91e1083f479d7bdbc7af",
-      "snapshot_hour_last5": "96921f8f862426cc27825f1206a92341"
+      "content_sha256_count_1d": "a45752e43d267c8b3cdc6e35a3c2b322",
+      "content_sha256_count_7d": "a45752e43d267c8b3cdc6e35a3c2b322",
+      "file_name": "508cb29b8c9ff1a6f1da5af7c4c0d840",
+      "row_count_average_1d": "900720538a471aaacfce5c22c3ba235a",
+      "row_count_average_7d": "900720538a471aaacfce5c22c3ba235a",
+      "snapshot_hour_last5": "97c86283b81aa113485c86406375a5fe"
     },
-    "customJson": "{\"airflowDependencies\": [{\"name\": \"wf_public_demo_caltrain_schedule_files_with_offset_0\", \"spec\": \"public_demo_caltrain.schedule_files/ds={{ macros.ds_add(ds, 0) }}\"}]}",
+    "customJson": "{\"airflowDependencies\": [{\"name\": \"wf_public_demo_data_caltrain_schedule_files_import_v1__8_with_offset_0\", \"spec\": \"public_demo_data.caltrain_schedule_files_import_v1__8/snapshot_date={{ macros.ds_add(ds, 0) }}\"}]}",
     "executionInfo": {
       "conf": {
         "common": {
@@ -60,9 +60,11 @@
           "spark.chronon.table_write.format": "iceberg",
           "spark.default.parallelism": "4",
           "spark.hadoop.hive.metastore.client.factory.class": "com.amazonaws.glue.catalog.metastore.AWSGlueDataCatalogHiveClientFactory",
+          "spark.scheduler.maxRegisteredResourcesWaitingTime": "120s",
           "spark.sql.catalog.spark_catalog": "org.apache.iceberg.spark.SparkSessionCatalog",
           "spark.sql.catalog.spark_catalog.catalog-impl": "org.apache.iceberg.aws.glue.GlueCatalog",
           "spark.sql.catalog.spark_catalog.warehouse": "s3://zipline-public-demo-warehouse/data/tables/",
+          "spark.sql.catalogImplementation": "hive",
           "spark.sql.defaultUrlStreamHandlerFactory.enabled": "false",
           "spark.sql.extensions": "org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions",
           "spark.sql.shuffle.partitions": "4"
@@ -119,20 +121,22 @@
       "historicalBackfill": 0,
       "onlineSchedule": "@daily"
     },
-    "name": "caltrain.schedule_file_activity.schedule_file_activity__0",
+    "name": "caltrain.schedule_file_activity.schedule_file_activity__15",
     "online": 1,
-    "outputNamespace": "data",
+    "outputNamespace": "public_demo_data",
     "sourceFile": "group_bys/caltrain/schedule_file_activity.py",
     "team": "caltrain",
-    "version": "0"
+    "version": "15"
   },
   "sources": [
     {
       "events": {
         "query": {
+          "partitionColumn": "snapshot_date",
           "selects": {
             "content_sha256": "content_sha256",
             "downloaded_at": "downloaded_at",
+            "downloaded_at_iso": "downloaded_at_iso",
             "file_name": "file_name",
             "row_count": "row_count",
             "snapshot_date": "snapshot_date",
@@ -141,7 +145,7 @@
           "startPartition": "2026-08-25",
           "timeColumn": "downloaded_at"
         },
-        "table": "public_demo_caltrain.schedule_files"
+        "table": "public_demo_data.caltrain_schedule_files_import_v1__8"
       }
     }
   ]

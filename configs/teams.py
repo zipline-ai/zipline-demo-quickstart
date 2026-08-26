@@ -8,7 +8,7 @@ WAREHOUSE_PREFIX = "s3://zipline-public-demo-warehouse"
 default = Team(
     description="Public AWS demo default team",
     email="demo@zipline.ai",
-    outputNamespace="data",
+    outputNamespace="public_demo_data",
     conf=ConfigProperties(
         common={
             **GlueConfiguration(
@@ -21,6 +21,8 @@ default = Team(
             "spark.chronon.partition.format": "yyyy-MM-dd",
             "spark.chronon.coalesce.factor": "2",
             "spark.default.parallelism": "4",
+            "spark.scheduler.maxRegisteredResourcesWaitingTime": "120s",
+            "spark.sql.catalogImplementation": "hive",
             "spark.sql.shuffle.partitions": "4",
         },
     ),
@@ -47,7 +49,7 @@ default = Team(
 caltrain = Team(
     description="Caltrain 511.org public demo team",
     email="demo@zipline.ai",
-    outputNamespace="data",
+    outputNamespace="public_demo_data",
     env=EnvironmentVariables(
         common={},
         modeEnvironments={
