@@ -58,6 +58,8 @@
           "spark.chronon.partition.column": "ds",
           "spark.chronon.partition.format": "yyyy-MM-dd",
           "spark.chronon.table_write.format": "iceberg",
+          "spark.chronon.table_write.upload.format": "ion",
+          "spark.chronon.table_write.upload.location": "s3://zipline-public-demo-warehouse/data/ion_uploads/",
           "spark.default.parallelism": "4",
           "spark.hadoop.hive.metastore.client.factory.class": "com.amazonaws.glue.catalog.metastore.AWSGlueDataCatalogHiveClientFactory",
           "spark.scheduler.maxRegisteredResourcesWaitingTime": "120s",
@@ -121,12 +123,12 @@
       "historicalBackfill": 0,
       "onlineSchedule": "@daily"
     },
-    "name": "caltrain.schedule_file_activity.schedule_file_activity__15",
+    "name": "caltrain.schedule_file_activity.schedule_file_activity__16",
     "online": 1,
     "outputNamespace": "public_demo_data",
     "sourceFile": "group_bys/caltrain/schedule_file_activity.py",
     "team": "caltrain",
-    "version": "15"
+    "version": "16"
   },
   "sources": [
     {

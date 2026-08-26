@@ -6,6 +6,8 @@
         "spark.chronon.partition.column": "ds",
         "spark.chronon.partition.format": "yyyy-MM-dd",
         "spark.chronon.table_write.format": "iceberg",
+        "spark.chronon.table_write.upload.format": "ion",
+        "spark.chronon.table_write.upload.location": "s3://zipline-public-demo-warehouse/data/ion_uploads/",
         "spark.default.parallelism": "4",
         "spark.hadoop.hive.metastore.client.factory.class": "com.amazonaws.glue.catalog.metastore.AWSGlueDataCatalogHiveClientFactory",
         "spark.scheduler.maxRegisteredResourcesWaitingTime": "120s",

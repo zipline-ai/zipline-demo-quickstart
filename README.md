@@ -2,6 +2,10 @@
 
 Example Zipline/Chronon configs for the public AWS demo environment.
 
+Start with the Caltrain tutorial case study:
+
+- [Caltrain online consistency case study](docs/caltrain-online-consistency-case-study.md)
+
 The first dataset is Caltrain data from 511.org, landed by the demo infrastructure into AWS Glue/S3:
 
 - `public_demo_caltrain.vehicle_positions`

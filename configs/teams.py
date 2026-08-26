@@ -17,6 +17,8 @@ default = Team(
                 }
             ),
             "spark.chronon.table_write.format": "iceberg",
+            "spark.chronon.table_write.upload.format": "ion",
+            "spark.chronon.table_write.upload.location": f"{WAREHOUSE_PREFIX}/data/ion_uploads/",
             "spark.chronon.partition.column": "ds",
             "spark.chronon.partition.format": "yyyy-MM-dd",
             "spark.chronon.coalesce.factor": "2",

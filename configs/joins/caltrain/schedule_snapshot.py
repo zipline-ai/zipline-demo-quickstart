@@ -19,5 +19,5 @@ v1 = Join(
     left=schedule_file_snapshot_events,
     right_parts=[JoinPart(group_by=schedule_file_activity)],
     row_ids=["file_name", "content_sha256"],
-    version=15,
+    version=16,
 )
