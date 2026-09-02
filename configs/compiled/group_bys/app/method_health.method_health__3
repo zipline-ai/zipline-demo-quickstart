@@ -1,56 +1,113 @@
 {
+  "accuracy": 0,
   "aggregations": [
     {
       "argMap": {},
-      "inputColumn": "content_sha256",
-      "operation": 6,
+      "inputColumn": "request_count",
+      "operation": 7,
       "windows": [
         {
           "length": 1,
-          "timeUnit": 1
-        },
-        {
-          "length": 7,
           "timeUnit": 1
         }
       ]
     },
     {
       "argMap": {},
-      "inputColumn": "row_count",
+      "inputColumn": "success_event",
+      "operation": 7,
+      "windows": [
+        {
+          "length": 1,
+          "timeUnit": 1
+        }
+      ]
+    },
+    {
+      "argMap": {},
+      "inputColumn": "client_error_event",
+      "operation": 7,
+      "windows": [
+        {
+          "length": 1,
+          "timeUnit": 1
+        }
+      ]
+    },
+    {
+      "argMap": {},
+      "inputColumn": "server_error_event",
+      "operation": 7,
+      "windows": [
+        {
+          "length": 1,
+          "timeUnit": 1
+        }
+      ]
+    },
+    {
+      "argMap": {},
+      "inputColumn": "not_found_event",
+      "operation": 7,
+      "windows": [
+        {
+          "length": 1,
+          "timeUnit": 1
+        }
+      ]
+    },
+    {
+      "argMap": {},
+      "inputColumn": "write_event",
+      "operation": 7,
+      "windows": [
+        {
+          "length": 1,
+          "timeUnit": 1
+        }
+      ]
+    },
+    {
+      "argMap": {},
+      "inputColumn": "request_time_seconds",
       "operation": 8,
       "windows": [
         {
           "length": 1,
           "timeUnit": 1
-        },
-        {
-          "length": 7,
-          "timeUnit": 1
         }
       ]
     },
     {
+      "argMap": {},
+      "inputColumn": "freshness_lag_seconds",
+      "operation": 3
+    },
+    {
       "argMap": {
-        "k": "5"
+        "k": "10"
       },
-      "inputColumn": "snapshot_hour",
+      "inputColumn": "access_event_struct",
       "operation": 13
     }
   ],
   "keyColumns": [
-    "file_name"
+    "http_method"
   ],
   "metaData": {
     "columnHashes": {
-      "content_sha256_count_1d": "a45752e43d267c8b3cdc6e35a3c2b322",
-      "content_sha256_count_7d": "a45752e43d267c8b3cdc6e35a3c2b322",
-      "file_name": "508cb29b8c9ff1a6f1da5af7c4c0d840",
-      "row_count_average_1d": "900720538a471aaacfce5c22c3ba235a",
-      "row_count_average_7d": "900720538a471aaacfce5c22c3ba235a",
-      "snapshot_hour_last5": "97c86283b81aa113485c86406375a5fe"
+      "access_event_struct_last10": "b4fb44c8109d113bb25bcee6c497afaf",
+      "client_error_event_sum_1d": "155d67fb36ba47c61b2aeff0db599d5d",
+      "freshness_lag_seconds_last": "f80736d94cc71de53c3eaea6a4531f27",
+      "http_method": "cbfacac6d6ab504c22de71af277742f5",
+      "not_found_event_sum_1d": "7c9ddebaceff9788e044bcf831172b17",
+      "request_count_sum_1d": "40a0e3dde0afe75ef9bea6adcfda27da",
+      "request_time_seconds_average_1d": "d8944dc56444d0dcbb3b7a7b1a5d41db",
+      "server_error_event_sum_1d": "b78ca39c0e46224907802fbecdc5595e",
+      "success_event_sum_1d": "0008d50bb7b36ba3b3d2947f66a8975d",
+      "write_event_sum_1d": "6f01f349207f832285c29a027d223fee"
     },
-    "customJson": "{\"airflowDependencies\": [{\"name\": \"wf_public_demo_data_caltrain_schedule_files_import_v1__8_with_offset_0\", \"spec\": \"public_demo_data.caltrain_schedule_files_import_v1__8/snapshot_date={{ macros.ds_add(ds, 0) }}\"}]}",
+    "customJson": "{\"airflowDependencies\": [{\"name\": \"wf_public_demo_app_ui_access_logs_iceberg_with_offset_0\", \"spec\": \"public_demo_app.ui_access_logs_iceberg/ds={{ macros.ds_add(ds, 0) }}\"}]}",
     "executionInfo": {
       "conf": {
         "common": {
@@ -63,10 +120,14 @@
           "spark.default.parallelism": "4",
           "spark.hadoop.hive.metastore.client.factory.class": "com.amazonaws.glue.catalog.metastore.AWSGlueDataCatalogHiveClientFactory",
           "spark.scheduler.maxRegisteredResourcesWaitingTime": "120s",
+          "spark.sql.catalog.glue": "org.apache.iceberg.spark.SparkCatalog",
+          "spark.sql.catalog.glue.catalog-impl": "org.apache.iceberg.aws.glue.GlueCatalog",
+          "spark.sql.catalog.glue.warehouse": "s3://zipline-public-demo-warehouse/data/tables/",
           "spark.sql.catalog.spark_catalog": "org.apache.iceberg.spark.SparkSessionCatalog",
           "spark.sql.catalog.spark_catalog.catalog-impl": "org.apache.iceberg.aws.glue.GlueCatalog",
           "spark.sql.catalog.spark_catalog.warehouse": "s3://zipline-public-demo-warehouse/data/tables/",
           "spark.sql.catalogImplementation": "hive",
+          "spark.sql.defaultCatalog": "glue",
           "spark.sql.defaultUrlStreamHandlerFactory.enabled": "false",
           "spark.sql.extensions": "org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions",
           "spark.sql.shuffle.partitions": "4"
@@ -78,6 +139,8 @@
           "AWS_REGION": "us-west-2",
           "CLOUD_PROVIDER": "aws",
           "CUSTOMER_ID": "public-demo",
+          "EVAL_URL": "http://k8s-ziplines-ziplineo-82549f7164-cb3dfbbafd5a0571.elb.us-west-2.amazonaws.com/services/eval",
+          "FETCHER_URL": "http://k8s-ziplines-ziplineo-82549f7164-cb3dfbbafd5a0571.elb.us-west-2.amazonaws.com/services/fetcher",
           "FLINK_STATE_URI": "s3://zipline-public-demo-warehouse/flink-state",
           "FRONTEND_URL": "http://k8s-ziplines-ziplineo-82549f7164-cb3dfbbafd5a0571.elb.us-west-2.amazonaws.com",
           "HUB_URL": "http://k8s-ziplines-ziplineo-82549f7164-cb3dfbbafd5a0571.elb.us-west-2.amazonaws.com/services/hub",
@@ -90,6 +153,8 @@
             "AWS_REGION": "us-west-2",
             "CLOUD_PROVIDER": "aws",
             "CUSTOMER_ID": "public-demo",
+            "EVAL_URL": "http://k8s-ziplines-ziplineo-82549f7164-cb3dfbbafd5a0571.elb.us-west-2.amazonaws.com/services/eval",
+            "FETCHER_URL": "http://k8s-ziplines-ziplineo-82549f7164-cb3dfbbafd5a0571.elb.us-west-2.amazonaws.com/services/fetcher",
             "FLINK_STATE_URI": "s3://zipline-public-demo-warehouse/flink-state",
             "FRONTEND_URL": "http://k8s-ziplines-ziplineo-82549f7164-cb3dfbbafd5a0571.elb.us-west-2.amazonaws.com",
             "HUB_URL": "http://k8s-ziplines-ziplineo-82549f7164-cb3dfbbafd5a0571.elb.us-west-2.amazonaws.com/services/hub",
@@ -101,6 +166,8 @@
             "AWS_REGION": "us-west-2",
             "CLOUD_PROVIDER": "aws",
             "CUSTOMER_ID": "public-demo",
+            "EVAL_URL": "http://k8s-ziplines-ziplineo-82549f7164-cb3dfbbafd5a0571.elb.us-west-2.amazonaws.com/services/eval",
+            "FETCHER_URL": "http://k8s-ziplines-ziplineo-82549f7164-cb3dfbbafd5a0571.elb.us-west-2.amazonaws.com/services/fetcher",
             "FLINK_STATE_URI": "s3://zipline-public-demo-warehouse/flink-state",
             "FRONTEND_URL": "http://k8s-ziplines-ziplineo-82549f7164-cb3dfbbafd5a0571.elb.us-west-2.amazonaws.com",
             "HUB_URL": "http://k8s-ziplines-ziplineo-82549f7164-cb3dfbbafd5a0571.elb.us-west-2.amazonaws.com/services/hub",
@@ -112,6 +179,8 @@
             "AWS_REGION": "us-west-2",
             "CLOUD_PROVIDER": "aws",
             "CUSTOMER_ID": "public-demo",
+            "EVAL_URL": "http://k8s-ziplines-ziplineo-82549f7164-cb3dfbbafd5a0571.elb.us-west-2.amazonaws.com/services/eval",
+            "FETCHER_URL": "http://k8s-ziplines-ziplineo-82549f7164-cb3dfbbafd5a0571.elb.us-west-2.amazonaws.com/services/fetcher",
             "FLINK_STATE_URI": "s3://zipline-public-demo-warehouse/flink-state",
             "FRONTEND_URL": "http://k8s-ziplines-ziplineo-82549f7164-cb3dfbbafd5a0571.elb.us-west-2.amazonaws.com",
             "HUB_URL": "http://k8s-ziplines-ziplineo-82549f7164-cb3dfbbafd5a0571.elb.us-west-2.amazonaws.com/services/hub",
@@ -123,31 +192,38 @@
       "historicalBackfill": 0,
       "onlineSchedule": "@daily"
     },
-    "name": "caltrain.schedule_file_activity.schedule_file_activity__16",
+    "name": "app.method_health.method_health__3",
     "online": 1,
     "outputNamespace": "public_demo_data",
-    "sourceFile": "group_bys/caltrain/schedule_file_activity.py",
-    "team": "caltrain",
-    "version": "16"
+    "sourceFile": "group_bys/app/method_health.py",
+    "team": "app",
+    "version": "3"
   },
   "sources": [
     {
       "events": {
         "query": {
-          "partitionColumn": "snapshot_date",
+          "partitionColumn": "ds",
           "selects": {
-            "content_sha256": "content_sha256",
-            "downloaded_at": "downloaded_at",
-            "downloaded_at_iso": "downloaded_at_iso",
-            "file_name": "file_name",
-            "row_count": "row_count",
-            "snapshot_date": "snapshot_date",
-            "snapshot_hour": "snapshot_hour"
+            "access_event_struct": "STRUCT(http_method, path, status_code, request_time_seconds, freshness_lag_seconds, event_ts as timestamp)",
+            "client_error_event": "IF(status_code >= 400 AND status_code < 500, 1, 0)",
+            "error_event": "IF(is_error = 1, 1, 0)",
+            "event_id": "event_id",
+            "freshness_lag_seconds": "freshness_lag_seconds",
+            "http_method": "http_method",
+            "not_found_event": "IF(is_not_found = 1, 1, 0)",
+            "path": "path",
+            "request_count": "1",
+            "request_time_seconds": "request_time_seconds",
+            "route_family": "route_family",
+            "server_error_event": "IF(status_code >= 500, 1, 0)",
+            "success_event": "IF(status_code >= 200 AND status_code < 300, 1, 0)",
+            "write_event": "IF(is_write = 1, 1, 0)"
           },
-          "startPartition": "2026-08-25",
-          "timeColumn": "downloaded_at"
+          "startPartition": "2026-09-02",
+          "timeColumn": "event_ts"
         },
-        "table": "public_demo_data.caltrain_schedule_files_import_v1__8"
+        "table": "public_demo_app.ui_access_logs_iceberg"
       }
     }
   ]

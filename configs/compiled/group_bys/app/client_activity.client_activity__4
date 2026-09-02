@@ -1,0 +1,237 @@
+{
+  "accuracy": 1,
+  "aggregations": [
+    {
+      "argMap": {},
+      "inputColumn": "request_count",
+      "operation": 7,
+      "windows": [
+        {
+          "length": 1,
+          "timeUnit": 1
+        }
+      ]
+    },
+    {
+      "argMap": {},
+      "inputColumn": "success_event",
+      "operation": 7,
+      "windows": [
+        {
+          "length": 1,
+          "timeUnit": 1
+        }
+      ]
+    },
+    {
+      "argMap": {},
+      "inputColumn": "client_error_event",
+      "operation": 7,
+      "windows": [
+        {
+          "length": 1,
+          "timeUnit": 1
+        }
+      ]
+    },
+    {
+      "argMap": {},
+      "inputColumn": "server_error_event",
+      "operation": 7,
+      "windows": [
+        {
+          "length": 1,
+          "timeUnit": 1
+        }
+      ]
+    },
+    {
+      "argMap": {},
+      "inputColumn": "write_event",
+      "operation": 7,
+      "windows": [
+        {
+          "length": 1,
+          "timeUnit": 1
+        }
+      ]
+    },
+    {
+      "argMap": {},
+      "inputColumn": "request_time_seconds",
+      "operation": 8,
+      "windows": [
+        {
+          "length": 1,
+          "timeUnit": 1
+        }
+      ]
+    },
+    {
+      "argMap": {},
+      "inputColumn": "freshness_lag_seconds",
+      "operation": 3
+    },
+    {
+      "argMap": {
+        "k": "5"
+      },
+      "inputColumn": "path",
+      "operation": 13
+    },
+    {
+      "argMap": {
+        "k": "5"
+      },
+      "inputColumn": "user_agent",
+      "operation": 13
+    },
+    {
+      "argMap": {
+        "k": "5"
+      },
+      "inputColumn": "access_event_struct",
+      "operation": 13
+    }
+  ],
+  "keyColumns": [
+    "client_ip"
+  ],
+  "metaData": {
+    "columnHashes": {
+      "access_event_struct_last5": "3ffed214ea7b68bade8595a78844283d",
+      "client_error_event_sum_1d": "2f427260262a423f40cdfbdf698a5502",
+      "client_ip": "4e39fde28651fc9b5588999abb65319f",
+      "freshness_lag_seconds_last": "2d51f693968e40fe1890f29b57ba7a6a",
+      "path_last5": "b8e6144e9d1bf2308827db68d794222f",
+      "request_count_sum_1d": "cb3155ed9582e4a0402575b3d6d82a56",
+      "request_time_seconds_average_1d": "3f1cf15b7ec79da14e0628b4191cb0d5",
+      "server_error_event_sum_1d": "447b8a1afacfd9566b8a52109ad9f4c3",
+      "success_event_sum_1d": "5e80a0f6902e9931cb461d84938e8371",
+      "user_agent_last5": "3a27b7f59c4a57e03bd59f740506dd2b",
+      "write_event_sum_1d": "e2c31aa6d7bcb8f4db5589b0a7bfad4f"
+    },
+    "customJson": "{\"airflowDependencies\": [{\"name\": \"wf_public_demo_app_ui_access_logs_iceberg_with_offset_0\", \"spec\": \"public_demo_app.ui_access_logs_iceberg/ds={{ macros.ds_add(ds, 0) }}\"}]}",
+    "executionInfo": {
+      "conf": {
+        "common": {
+          "spark.chronon.coalesce.factor": "2",
+          "spark.chronon.partition.column": "ds",
+          "spark.chronon.partition.format": "yyyy-MM-dd",
+          "spark.chronon.table_write.format": "iceberg",
+          "spark.chronon.table_write.upload.format": "ion",
+          "spark.chronon.table_write.upload.location": "s3://zipline-public-demo-warehouse/data/ion_uploads/",
+          "spark.default.parallelism": "4",
+          "spark.hadoop.hive.metastore.client.factory.class": "com.amazonaws.glue.catalog.metastore.AWSGlueDataCatalogHiveClientFactory",
+          "spark.scheduler.maxRegisteredResourcesWaitingTime": "120s",
+          "spark.sql.catalog.glue": "org.apache.iceberg.spark.SparkCatalog",
+          "spark.sql.catalog.glue.catalog-impl": "org.apache.iceberg.aws.glue.GlueCatalog",
+          "spark.sql.catalog.glue.warehouse": "s3://zipline-public-demo-warehouse/data/tables/",
+          "spark.sql.catalog.spark_catalog": "org.apache.iceberg.spark.SparkSessionCatalog",
+          "spark.sql.catalog.spark_catalog.catalog-impl": "org.apache.iceberg.aws.glue.GlueCatalog",
+          "spark.sql.catalog.spark_catalog.warehouse": "s3://zipline-public-demo-warehouse/data/tables/",
+          "spark.sql.catalogImplementation": "hive",
+          "spark.sql.defaultCatalog": "glue",
+          "spark.sql.defaultUrlStreamHandlerFactory.enabled": "false",
+          "spark.sql.extensions": "org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions",
+          "spark.sql.shuffle.partitions": "4"
+        }
+      },
+      "env": {
+        "common": {
+          "ARTIFACT_PREFIX": "s3://zipline-public-demo-artifacts",
+          "AWS_REGION": "us-west-2",
+          "CLOUD_PROVIDER": "aws",
+          "CUSTOMER_ID": "public-demo",
+          "EVAL_URL": "http://k8s-ziplines-ziplineo-82549f7164-cb3dfbbafd5a0571.elb.us-west-2.amazonaws.com/services/eval",
+          "FETCHER_URL": "http://k8s-ziplines-ziplineo-82549f7164-cb3dfbbafd5a0571.elb.us-west-2.amazonaws.com/services/fetcher",
+          "FLINK_STATE_URI": "s3://zipline-public-demo-warehouse/flink-state",
+          "FRONTEND_URL": "http://k8s-ziplines-ziplineo-82549f7164-cb3dfbbafd5a0571.elb.us-west-2.amazonaws.com",
+          "HUB_URL": "http://k8s-ziplines-ziplineo-82549f7164-cb3dfbbafd5a0571.elb.us-west-2.amazonaws.com/services/hub",
+          "VERSION": "latest",
+          "WAREHOUSE_PREFIX": "s3://zipline-public-demo-warehouse"
+        },
+        "modeEnvironments": {
+          "backfill": {
+            "ARTIFACT_PREFIX": "s3://zipline-public-demo-artifacts",
+            "AWS_REGION": "us-west-2",
+            "CLOUD_PROVIDER": "aws",
+            "CUSTOMER_ID": "public-demo",
+            "EVAL_URL": "http://k8s-ziplines-ziplineo-82549f7164-cb3dfbbafd5a0571.elb.us-west-2.amazonaws.com/services/eval",
+            "FETCHER_URL": "http://k8s-ziplines-ziplineo-82549f7164-cb3dfbbafd5a0571.elb.us-west-2.amazonaws.com/services/fetcher",
+            "FLINK_STATE_URI": "s3://zipline-public-demo-warehouse/flink-state",
+            "FRONTEND_URL": "http://k8s-ziplines-ziplineo-82549f7164-cb3dfbbafd5a0571.elb.us-west-2.amazonaws.com",
+            "HUB_URL": "http://k8s-ziplines-ziplineo-82549f7164-cb3dfbbafd5a0571.elb.us-west-2.amazonaws.com/services/hub",
+            "VERSION": "latest",
+            "WAREHOUSE_PREFIX": "s3://zipline-public-demo-warehouse"
+          },
+          "streaming": {
+            "ARTIFACT_PREFIX": "s3://zipline-public-demo-artifacts",
+            "AWS_REGION": "us-west-2",
+            "CLOUD_PROVIDER": "aws",
+            "CUSTOMER_ID": "public-demo",
+            "EVAL_URL": "http://k8s-ziplines-ziplineo-82549f7164-cb3dfbbafd5a0571.elb.us-west-2.amazonaws.com/services/eval",
+            "FETCHER_URL": "http://k8s-ziplines-ziplineo-82549f7164-cb3dfbbafd5a0571.elb.us-west-2.amazonaws.com/services/fetcher",
+            "FLINK_STATE_URI": "s3://zipline-public-demo-warehouse/flink-state",
+            "FRONTEND_URL": "http://k8s-ziplines-ziplineo-82549f7164-cb3dfbbafd5a0571.elb.us-west-2.amazonaws.com",
+            "HUB_URL": "http://k8s-ziplines-ziplineo-82549f7164-cb3dfbbafd5a0571.elb.us-west-2.amazonaws.com/services/hub",
+            "VERSION": "latest",
+            "WAREHOUSE_PREFIX": "s3://zipline-public-demo-warehouse"
+          },
+          "upload": {
+            "ARTIFACT_PREFIX": "s3://zipline-public-demo-artifacts",
+            "AWS_REGION": "us-west-2",
+            "CLOUD_PROVIDER": "aws",
+            "CUSTOMER_ID": "public-demo",
+            "EVAL_URL": "http://k8s-ziplines-ziplineo-82549f7164-cb3dfbbafd5a0571.elb.us-west-2.amazonaws.com/services/eval",
+            "FETCHER_URL": "http://k8s-ziplines-ziplineo-82549f7164-cb3dfbbafd5a0571.elb.us-west-2.amazonaws.com/services/fetcher",
+            "FLINK_STATE_URI": "s3://zipline-public-demo-warehouse/flink-state",
+            "FRONTEND_URL": "http://k8s-ziplines-ziplineo-82549f7164-cb3dfbbafd5a0571.elb.us-west-2.amazonaws.com",
+            "HUB_URL": "http://k8s-ziplines-ziplineo-82549f7164-cb3dfbbafd5a0571.elb.us-west-2.amazonaws.com/services/hub",
+            "VERSION": "latest",
+            "WAREHOUSE_PREFIX": "s3://zipline-public-demo-warehouse"
+          }
+        }
+      },
+      "historicalBackfill": 0,
+      "onlineSchedule": "@daily"
+    },
+    "name": "app.client_activity.client_activity__4",
+    "online": 1,
+    "outputNamespace": "public_demo_data",
+    "sourceFile": "group_bys/app/client_activity.py",
+    "team": "app",
+    "version": "4"
+  },
+  "sources": [
+    {
+      "events": {
+        "query": {
+          "partitionColumn": "ds",
+          "selects": {
+            "access_event_struct": "STRUCT(client_ip, user_id, http_method, path, user_agent, status_code, request_time_seconds, freshness_lag_seconds, event_ts as timestamp)",
+            "actor_id": "IF(user_id IS NOT NULL AND user_id != '', user_id, client_ip)",
+            "client_error_event": "IF(status_code >= 400 AND status_code < 500, 1, 0)",
+            "client_ip": "client_ip",
+            "error_event": "IF(is_error = 1, 1, 0)",
+            "event_id": "event_id",
+            "freshness_lag_seconds": "freshness_lag_seconds",
+            "http_method": "http_method",
+            "path": "path",
+            "request_count": "1",
+            "request_time_seconds": "request_time_seconds",
+            "route_family": "route_family",
+            "server_error_event": "IF(status_code >= 500, 1, 0)",
+            "success_event": "IF(status_code >= 200 AND status_code < 300, 1, 0)",
+            "user_agent": "user_agent",
+            "user_id": "user_id",
+            "write_event": "IF(is_write = 1, 1, 0)"
+          },
+          "startPartition": "2026-09-02",
+          "timeColumn": "event_ts"
+        },
+        "table": "public_demo_app.ui_access_logs_iceberg"
+      }
+    }
+  ]
+}
