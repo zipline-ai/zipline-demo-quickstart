@@ -2,7 +2,7 @@ from ai.chronon.types import EntitySource, Query, selects
 
 
 user_identity_snapshots = EntitySource(
-    snapshot_table="public_demo_app.user_identity_snapshots",
+    snapshot_table="public_demo_app.app_user_identity_user_identity_snapshots_iceberg__0",
     query=Query(
         selects=selects(
             "user_id",
@@ -12,7 +12,6 @@ user_identity_snapshots = EntitySource(
             "last_seen_time_iso",
             "last_event",
         ),
-        partition_column="snapshot_date",
-        start_partition="2026-09-02",
+        start_partition="2026-08-25",
     ),
 )

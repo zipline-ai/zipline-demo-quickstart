@@ -5,14 +5,14 @@
   ],
   "metaData": {
     "columnHashes": {
-      "email_hash": "8e92ba0285b44caf089346f1f478a931",
-      "first_seen_ts": "cd46067ef9af2306a258153edd3b2177",
-      "last_event": "b2e3b92a1413d127d1ffda969c268d73",
-      "last_seen_time_iso": "18e97036379b71301adbad683c0fc6d1",
-      "last_seen_ts": "fd7591a9d2bf8e91ba0ea4121af72555",
-      "user_id": "13042b3085b102ac92656b7211bd90e7"
+      "email_hash": "0ca64df4c0ab72510772fa1b1c7230ee",
+      "first_seen_ts": "67226dbe95b2c6b43b7891caf360d117",
+      "last_event": "df1f781575d04ed6119a6a64ae4b366a",
+      "last_seen_time_iso": "823fde7bf2b4b312eaf730920ce062b3",
+      "last_seen_ts": "e20b771d06cf4cc8713c3fd4704cf233",
+      "user_id": "a7c15b1c5c03250fbcbea6fe724cccbb"
     },
-    "customJson": "{\"airflowDependencies\": [{\"name\": \"wf_public_demo_app_user_identity_snapshots_with_offset_0\", \"spec\": \"public_demo_app.user_identity_snapshots/snapshot_date={{ macros.ds_add(ds, 0) }}\"}]}",
+    "customJson": "{\"airflowDependencies\": [{\"name\": \"wf_public_demo_app_app_user_identity_user_identity_snapshots_iceberg__0_with_offset_0\", \"spec\": \"public_demo_app.app_user_identity_user_identity_snapshots_iceberg__0/ds={{ macros.ds_add(ds, 0) }}\"}]}",
     "executionInfo": {
       "conf": {
         "common": {
@@ -25,14 +25,10 @@
           "spark.default.parallelism": "4",
           "spark.hadoop.hive.metastore.client.factory.class": "com.amazonaws.glue.catalog.metastore.AWSGlueDataCatalogHiveClientFactory",
           "spark.scheduler.maxRegisteredResourcesWaitingTime": "120s",
-          "spark.sql.catalog.glue": "org.apache.iceberg.spark.SparkCatalog",
-          "spark.sql.catalog.glue.catalog-impl": "org.apache.iceberg.aws.glue.GlueCatalog",
-          "spark.sql.catalog.glue.warehouse": "s3://zipline-public-demo-warehouse/data/tables/",
           "spark.sql.catalog.spark_catalog": "org.apache.iceberg.spark.SparkSessionCatalog",
           "spark.sql.catalog.spark_catalog.catalog-impl": "org.apache.iceberg.aws.glue.GlueCatalog",
           "spark.sql.catalog.spark_catalog.warehouse": "s3://zipline-public-demo-warehouse/data/tables/",
           "spark.sql.catalogImplementation": "hive",
-          "spark.sql.defaultCatalog": "glue",
           "spark.sql.defaultUrlStreamHandlerFactory.enabled": "false",
           "spark.sql.extensions": "org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions",
           "spark.sql.shuffle.partitions": "4"
@@ -96,20 +92,19 @@
       },
       "historicalBackfill": 0,
       "onlineSchedule": "@daily",
-      "stepDays": 1
+      "stepDays": 7
     },
-    "name": "app.user_identity.user_identity__2",
+    "name": "app.user_identity.user_identity__8",
     "online": 1,
     "outputNamespace": "public_demo_data",
     "sourceFile": "group_bys/app/user_identity.py",
     "team": "app",
-    "version": "2"
+    "version": "8"
   },
   "sources": [
     {
       "entities": {
         "query": {
-          "partitionColumn": "snapshot_date",
           "selects": {
             "email_hash": "email_hash",
             "first_seen_ts": "first_seen_ts",
@@ -118,9 +113,9 @@
             "last_seen_ts": "last_seen_ts",
             "user_id": "user_id"
           },
-          "startPartition": "2026-09-02"
+          "startPartition": "2026-08-25"
         },
-        "snapshotTable": "public_demo_app.user_identity_snapshots"
+        "snapshotTable": "public_demo_app.app_user_identity_user_identity_snapshots_iceberg__0"
       }
     }
   ]

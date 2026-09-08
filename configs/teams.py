@@ -16,10 +16,6 @@ default = Team(
                     "spark.sql.catalog.spark_catalog.warehouse": f"{WAREHOUSE_PREFIX}/data/tables/",
                 }
             ),
-            "spark.sql.catalog.glue": "org.apache.iceberg.spark.SparkCatalog",
-            "spark.sql.catalog.glue.catalog-impl": "org.apache.iceberg.aws.glue.GlueCatalog",
-            "spark.sql.catalog.glue.warehouse": f"{WAREHOUSE_PREFIX}/data/tables/",
-            "spark.sql.defaultCatalog": "glue",
             "spark.chronon.table_write.format": "iceberg",
             "spark.chronon.table_write.upload.format": "ion",
             "spark.chronon.table_write.upload.location": f"{WAREHOUSE_PREFIX}/data/ion_uploads/",

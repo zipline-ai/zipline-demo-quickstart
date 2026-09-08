@@ -9,6 +9,6 @@ user_identity = GroupBy(
     online=True,
     accuracy=Accuracy.SNAPSHOT,
     aggregations=None,
-    version=2,
-    step_days=1,
+    version=8,
+    step_days=7,
 )
