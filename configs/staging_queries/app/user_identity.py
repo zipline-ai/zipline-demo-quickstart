@@ -20,7 +20,10 @@ user_identity_snapshots_iceberg = StagingQuery(
     output_namespace="public_demo_app",
     engine_type=EngineType.SPARK,
     dependencies=[
-        TableDependency(table="public_demo_app.user_identity_snapshots_iceberg"),
+        TableDependency(
+            table="public_demo_app.user_identity_snapshots_iceberg",
+            partition_column="snapshot_date",
+        ),
     ],
     version=0,
     step_days=7,

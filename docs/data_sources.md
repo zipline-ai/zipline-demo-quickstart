@@ -64,6 +64,12 @@ Two Zipline event sources select from this table:
 
 They feed `endpoint_health`, `method_health`, and `client_activity`, plus the `client_request_context` and `user_request_identity` joins.
 
+The `email_access_logs` source selects authenticated requests and derives the
+same eight-character `email_hash` directly in Spark without selecting the raw
+email into its feature GroupBy. `email_request_activity` computes one-day and
+six-day behavioral features by that privacy-safe key; the
+`account_activity_review` Join packages them for online fetching.
+
 ## User Identity Snapshots
 
 This entity dataset maps an internal user ID to a short, non-reversible display identifier without publishing email addresses.

@@ -6,6 +6,13 @@ New here? Start with [your first Zipline feature in five minutes](docs/tutorials
 
 For a smaller follow-up exercise, try the [two-minute derived feature tutorial](docs/tutorials/derived-feature-and-fetch.md).
 
+To combine chained features with an LLM-assisted investigation, try the
+[account activity review tutorial](docs/tutorials/activity-review.md).
+
+Coding agents can use the repository-local
+[Zipline demo skill](.agents/skills/zipline-demo/SKILL.md) to discover the data,
+follow lineage, deploy changes, and fetch features safely.
+
 See [demo data sources](docs/data_sources.md) for the raw tables, schemas, freshness controls, and their consumers.
 
 Start with the UI logs tutorial case study:
@@ -21,6 +28,10 @@ The live public demo endpoints are:
 
 - UI: `https://try.zipline.ai`
 - Hub: `https://try.zipline.ai/services/hub`
+
+By using the public demo, you agree to its [Terms of Service](TERMS.md). See the
+[Privacy Policy](PRIVACY.md) for details about Google sign-in, access logs, Demo
+datasets, retention, and your choices.
 
 Datasource freshness is controlled in the infrastructure repo with
 `ui_logs_freshness_profile` (`low_cost`, `balanced`, or `fresh`). This config

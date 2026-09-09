@@ -1,7 +1,7 @@
 {
   "engineType": 0,
   "metaData": {
-    "customJson": "{\"airflowDependencies\": []}",
+    "customJson": "{\"airflowDependencies\": [{\"name\": \"wf_public_demo_app_user_identity_snapshots_iceberg_with_offset_0\", \"spec\": \"public_demo_app.user_identity_snapshots_iceberg/snapshot_date={{ macros.ds_add(ds, 0) }}\"}]}",
     "executionInfo": {
       "conf": {
         "common": {
@@ -100,6 +100,7 @@
         "timeUnit": 1
       },
       "tableInfo": {
+        "partitionColumn": "snapshot_date",
         "partitionInterval": {
           "length": 1,
           "timeUnit": 1

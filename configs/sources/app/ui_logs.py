@@ -60,3 +60,31 @@ client_access_logs = EventSource(
         start_partition="2026-09-02",
     ),
 )
+
+
+email_access_logs = EventSource(
+    table="public_demo_app.ui_access_logs_iceberg",
+    query=Query(
+        selects=selects(
+            "event_id",
+            "route_family",
+            "http_method",
+            "path",
+            "client_ip",
+            "user_agent",
+            email_hash="substring(sha2(lower(trim(user_id)), 256), 1, 8)",
+            request_count="1",
+            error_event="IF(is_error = 1, 1, 0)",
+            write_event="IF(is_write = 1, 1, 0)",
+            freshness_lag_seconds="freshness_lag_seconds",
+            activity_event=(
+                "STRUCT(client_ip, user_agent, http_method, path, route_family, "
+                "is_error as error_event, is_write as write_event, event_ts as timestamp)"
+            ),
+        ),
+        wheres=["user_id IS NOT NULL AND trim(user_id) != ''"],
+        time_column="event_ts",
+        partition_column="ds",
+        start_partition="2026-09-02",
+    ),
+)
