@@ -88,6 +88,24 @@
     "team": "app",
     "version": "0"
   },
-  "query": "\n    SELECT\n        user_id,\n        email_hash,\n        first_seen_ts,\n        last_seen_ts,\n        last_seen_time_iso,\n        last_event,\n        source_event_id,\n        ingestion_id,\n        ingested_at,\n        snapshot_date AS ds\n    FROM public_demo_app.user_identity_snapshots\n    WHERE snapshot_date BETWEEN {{ start_date }} AND {{ end_date }}\n    ",
-  "tableDependencies": []
+  "query": "\n    SELECT\n        user_id,\n        email_hash,\n        first_seen_ts,\n        last_seen_ts,\n        last_seen_time_iso,\n        last_event,\n        source_event_id,\n        ingestion_id,\n        ingested_at,\n        snapshot_date AS ds\n    FROM public_demo_app.user_identity_snapshots_iceberg\n    WHERE snapshot_date BETWEEN {{ start_date }} AND {{ end_date }}\n    ",
+  "tableDependencies": [
+    {
+      "endOffset": {
+        "length": 0,
+        "timeUnit": 1
+      },
+      "startOffset": {
+        "length": 0,
+        "timeUnit": 1
+      },
+      "tableInfo": {
+        "partitionInterval": {
+          "length": 1,
+          "timeUnit": 1
+        },
+        "table": "public_demo_app.user_identity_snapshots_iceberg"
+      }
+    }
+  ]
 }

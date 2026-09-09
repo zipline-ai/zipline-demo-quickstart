@@ -1,4 +1,4 @@
-from ai.chronon.types import EngineType, StagingQuery
+from ai.chronon.types import EngineType, StagingQuery, TableDependency
 
 
 user_identity_snapshots_iceberg = StagingQuery(
@@ -14,12 +14,14 @@ user_identity_snapshots_iceberg = StagingQuery(
         ingestion_id,
         ingested_at,
         snapshot_date AS ds
-    FROM public_demo_app.user_identity_snapshots
+    FROM public_demo_app.user_identity_snapshots_iceberg
     WHERE snapshot_date BETWEEN {{ start_date }} AND {{ end_date }}
     """,
     output_namespace="public_demo_app",
     engine_type=EngineType.SPARK,
-    dependencies=[],
+    dependencies=[
+        TableDependency(table="public_demo_app.user_identity_snapshots_iceberg"),
+    ],
     version=0,
     step_days=7,
 )
