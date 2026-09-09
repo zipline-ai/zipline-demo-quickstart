@@ -21,6 +21,10 @@
       "name": "last_event"
     },
     {
+      "expression": "CAST((profile_email_hash_last_seen_ts - profile_email_hash_first_seen_ts) / 3600000.0 AS DOUBLE)",
+      "name": "identity_age_hours"
+    },
+    {
       "expression": "CASE WHEN profile_email_hash_last_seen_ts > profile_email_hash_first_seen_ts THEN 1 ELSE 0 END",
       "name": "is_returning_user"
     }
@@ -165,6 +169,7 @@
   "metaData": {
     "columnHashes": {
       "first_seen_ts": "c9be375f066af412ce340c29a7d4c5c6",
+      "identity_age_hours": "8f6c4b5e41e1a918dadf7b20a8969ecd",
       "is_returning_user": "7b311051fbb17b383564a2e5a6f6c6ac",
       "last_event": "c52bf8967c30b6100cfa3ae3c309942a",
       "last_seen_time_iso": "116b406318dc0407a0381b5c1a15ea64",
@@ -254,14 +259,14 @@
       "offlineSchedule": "@daily",
       "onlineSchedule": "@daily"
     },
-    "name": "app.email_activity_profile.email_activity_profile__5",
+    "name": "app.email_activity_profile.email_activity_profile__7",
     "online": 1,
     "outputNamespace": "public_demo_data",
     "production": 0,
     "samplePercent": 100.0,
     "sourceFile": "joins/app/email_activity_profile.py",
     "team": "app",
-    "version": "5"
+    "version": "7"
   },
   "rowIds": [],
   "useLongNames": 0

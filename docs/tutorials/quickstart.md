@@ -32,11 +32,10 @@ export MY_EMAIL_HASH="YOUR_8_CHARACTER_HASH"
 
 ## 2. Fetch Your Features
 
-Set the demo endpoints and move into the config project:
+Move into the config project. The Hub and Fetcher URLs are already configured
+in `teams.py`:
 
 ```bash
-export HUB_URL="https://try.zipline.ai/services/hub"
-export FETCHER_URL="https://try.zipline.ai/services/fetcher"
 cd configs
 export PYTHONPATH="$(pwd):${PYTHONPATH:-}"
 ```
@@ -45,10 +44,8 @@ Fetch the deployed profile:
 
 ```bash
 zipline hub fetch \
-  compiled/joins/app/email_activity_profile.email_activity_profile__5 \
-  --hub-url "$HUB_URL" \
-  --fetcher-url "$FETCHER_URL" \
-  --key-json "{\"email_hash\":\"$MY_EMAIL_HASH\"}" \
+  compiled/joins/app/email_activity_profile.email_activity_profile \
+  --key-json "[{\"email_hash\":\"$MY_EMAIL_HASH\"}]" \
   --format json
 ```
 
@@ -62,7 +59,7 @@ try again.
 
 ## 3. Follow The Data
 
-Open `app.email_activity_profile.email_activity_profile__5` in the Zipline UI.
+Open `app.email_activity_profile.email_activity_profile` in the Zipline UI.
 Its lineage is deliberately small:
 
 ```text
@@ -102,16 +99,14 @@ Derivation(
 ),
 ```
 
-Increment the Join version before compiling. Online configurations are
+Increment the Join version before evaluating. Online configurations are
 immutable because applications may already depend on their schemas.
 
-Then evaluate the new compiled version:
+Then evaluate the new version. `zipline hub eval` compiles the configs before
+submitting the evaluation:
 
 ```bash
-zipline compile
-zipline hub eval \
-  compiled/joins/app/email_activity_profile.email_activity_profile__NEW_VERSION \
-  --hub-url "$HUB_URL"
+zipline hub eval compiled/joins/app/email_activity_profile.email_activity_profile
 ```
 
 Eval checks the output schema, dependencies, and lineage without changing the
@@ -122,11 +117,7 @@ serving deployment.
 Deploy the evaluated version:
 
 ```bash
-zipline hub run-adhoc \
-  compiled/joins/app/email_activity_profile.email_activity_profile__NEW_VERSION \
-  --hub-url "$HUB_URL" \
-  --skip-compile \
-  --yes
+zipline hub run-adhoc compiled/joins/app/email_activity_profile.email_activity_profile
 ```
 
 After the workflow succeeds, run the fetch command again with the new compiled

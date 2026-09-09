@@ -20,6 +20,13 @@ email_activity_profile = Join(
         Derivation(name="last_seen_time_iso", expression="profile_email_hash_last_seen_time_iso"),
         Derivation(name="last_event", expression="profile_email_hash_last_event"),
         Derivation(
+        name="identity_age_hours",
+        expression=(
+            "CAST((profile_email_hash_last_seen_ts - "
+            "profile_email_hash_first_seen_ts) / 3600000.0 AS DOUBLE)"
+          ),
+       ),
+        Derivation(
             name="is_returning_user",
             expression=(
                 "CASE WHEN profile_email_hash_last_seen_ts > profile_email_hash_first_seen_ts "
@@ -31,5 +38,5 @@ email_activity_profile = Join(
     check_consistency=True,
     consistency_sample_percent=100.0,
     output_namespace="public_demo_data",
-    version=5,
+    version=7,
 )
