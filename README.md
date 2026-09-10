@@ -27,7 +27,6 @@ deployment, landed by the demo infrastructure into AWS Glue/S3:
 The live public demo endpoints are:
 
 - UI: `https://try.zipline.ai`
-- Hub: `https://try.zipline.ai/services/hub`
 
 By using the public demo, you agree to its [Terms of Service](TERMS.md). See the
 [Privacy Policy](PRIVACY.md) for details about Google sign-in, access logs, Demo
@@ -37,16 +36,3 @@ Datasource freshness is controlled in the infrastructure repo with
 `ui_logs_freshness_profile` (`low_cost`, `balanced`, or `fresh`). This config
 repo reads whatever cadence-produced log snapshots are present in S3/Glue.
 
-## Compile
-
-```bash
-cd configs
-export PYTHONPATH="$(pwd):$PYTHONPATH"
-zipline compile
-```
-
-Or from the repository root:
-
-```bash
-./scripts/compile.sh
-```
