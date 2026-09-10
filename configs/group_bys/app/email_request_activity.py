@@ -1,6 +1,6 @@
 from sources.app.ui_logs import email_access_logs
 
-from ai.chronon.types import Aggregation, GroupBy, Operation
+from ai.chronon.types import Aggregation, EnvironmentVariables, GroupBy, Operation
 
 
 activity_windows = ["1d", "6d"]
@@ -24,6 +24,12 @@ email_request_activity = GroupBy(
         Aggregation(input_column="freshness_lag_seconds", operation=Operation.LAST, windows=["6d"]),
         Aggregation(input_column="freshness_lag_seconds", operation=Operation.MAX, windows=["1d"]),
     ],
-    version=2,
+    version=3,
     step_days=14,
+    env_vars=EnvironmentVariables(
+        common={
+            "CHRONON_ONLINE_ARGS": "-Ztasks=1",
+            "ENABLE_KINESIS": "true",
+        }
+    ),
 )

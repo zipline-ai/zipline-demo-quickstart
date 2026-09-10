@@ -6,9 +6,8 @@ The demo uses its own traffic as data. Requests to `https://try.zipline.ai` prod
 try.zipline.ai
   -> Kubernetes ingress and application audit logs
   -> CloudWatch Logs
-  -> public-demo-ui-log-ingestor
-  -> partitioned JSONL in S3 and AWS Glue
-  -> Iceberg tables read by Zipline
+  -> scheduled Lambda -> Iceberg tables for offline computation
+  -> subscription Lambda -> Kinesis for real-time online updates
 ```
 
 The persistent datasource infrastructure lives in `infrastructure/aws/public-demo-datasources`. It is separate from the Kubernetes platform so weekly platform resets do not erase the demo history.
@@ -25,6 +24,8 @@ Each row represents one parsed HTTP request.
 | Zipline-facing table | `public_demo_app.ui_access_logs_iceberg` |
 | Partition | `snapshot_date` in Glue/JSONL; `ds` in Iceberg |
 | Zipline source | `configs/sources/app/ui_logs.py` |
+| Online stream | `public-demo-ui-access-events` in Kinesis |
+| Stream schema | `zipline-public-demo/ui-access-event-v1` in Glue Schema Registry |
 
 The ingestor understands standard ingress-nginx access lines and structured `api_request_complete` audit events. It discards log lines that are not HTTP requests.
 
@@ -64,7 +65,8 @@ Two Zipline event sources select from this table:
 
 They feed `endpoint_health`, `method_health`, and `client_activity`, plus the `client_request_context` and `user_request_identity` joins.
 
-The `email_access_logs` source selects authenticated requests and derives the
+The `email_access_logs` source selects authenticated requests, consumes the
+same event shape from Kinesis for online updates, and derives the
 same eight-character `email_hash` directly in Spark without selecting the raw
 email into its feature GroupBy. `email_request_activity` computes one-day and
 six-day behavioral features by that privacy-safe key; the
@@ -117,6 +119,12 @@ The `user_request_identity` join enriches a request with `email_hash` and `has_a
 | `balanced` | 5 minutes | 5 minutes |
 | `fresh` | 1 minute | 1 minute |
 
-Both datasets are produced by the same invocation, so the setting affects access-log and identity freshness together. Overlapping lookbacks can produce repeated raw access events; `event_id` remains stable so consumers can identify duplicates.
+Both offline datasets are produced by the same scheduled invocation, so the
+setting affects access-log and identity freshness together. Authenticated
+access events also flow continuously through Kinesis into
+`email_request_activity`. Comparing that GroupBy's online values with its
+cadence-controlled offline values demonstrates the cost and correctness impact
+of stale batch data. Overlapping lookbacks can produce repeated raw access
+events; `event_id` remains stable so consumers can identify duplicates.
 
 The Iceberg tables are the tables referenced by the demo configs. Their latest `ds` partition must be refreshed from the raw Glue tables before a backfill that requires newly landed dates.

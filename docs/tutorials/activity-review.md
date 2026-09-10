@@ -25,8 +25,10 @@ signals with identity first-seen and last-seen fields for one online fetch.
 ## 1. Generate Activity
 
 Sign in to [try.zipline.ai](https://try.zipline.ai), visit a few pages, and run
-one or two searches. The datasource lands demo traffic on its configured
-cadence, so very recent requests may not appear immediately.
+one or two searches. Authenticated activity reaches the online GroupBy through
+Kinesis, while the offline Iceberg table advances on its configured cadence.
+That intentional difference is what makes freshness visible in the consistency
+view.
 
 ## 2. Build And Deploy
 
@@ -44,6 +46,14 @@ for online fetching:
 zipline hub run-adhoc compiled/group_bys/app/email_request_activity.email_request_activity
 zipline hub run-adhoc compiled/joins/app/account_activity_review.account_activity_review
 ```
+
+Deploy the GroupBy to start its Flink streaming job:
+
+```bash
+zipline hub schedule compiled/group_bys/app/email_request_activity.email_request_activity
+```
+
+The Join is fetched on demand and does not need a separate streaming job.
 
 ## 3. Change A Signal
 

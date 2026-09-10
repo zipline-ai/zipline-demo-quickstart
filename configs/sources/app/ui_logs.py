@@ -64,6 +64,12 @@ client_access_logs = EventSource(
 
 email_access_logs = EventSource(
     table="public_demo_app.ui_access_logs_iceberg",
+    topic=(
+        "kinesis://public-demo-ui-access-events/"
+        "serde=glue_registry/"
+        "registry_name=zipline-public-demo/"
+        "schema_name=ui-access-event-v1"
+    ),
     query=Query(
         selects=selects(
             "event_id",

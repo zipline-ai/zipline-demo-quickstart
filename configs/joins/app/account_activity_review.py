@@ -33,6 +33,6 @@ account_activity_review = Join(
     consistency_sample_percent=100.0,
     enable_stats_compute=True,
     output_namespace="public_demo_data",
-    version=3,
+    version=4,
     step_days=14,
 )

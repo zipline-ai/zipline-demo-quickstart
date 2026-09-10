@@ -4,6 +4,7 @@ from ai.chronon.types import ConfigProperties, EnvironmentVariables, Team
 
 PUBLIC_DEMO_NLB = "https://try.zipline.ai"
 WAREHOUSE_PREFIX = "s3://zipline-public-demo-warehouse"
+ARTIFACT_PREFIX = "s3://zipline-artifacts-crucible"
 
 default = Team(
     description="Public AWS demo default team",
@@ -33,9 +34,10 @@ default = Team(
             "CUSTOMER_ID": "public-demo",
             "CLOUD_PROVIDER": "aws",
             "AWS_REGION": "us-west-2",
-            "ARTIFACT_PREFIX": "s3://zipline-public-demo-artifacts",
+            "ARTIFACT_PREFIX": ARTIFACT_PREFIX,
             "WAREHOUSE_PREFIX": WAREHOUSE_PREFIX,
             "FLINK_STATE_URI": f"{WAREHOUSE_PREFIX}/flink-state",
+            "FLINK_JARS_URI": "s3://zipline-spark-libs/spark-4.1.3/libs/",
             "FRONTEND_URL": PUBLIC_DEMO_NLB,
             "HUB_URL": f"{PUBLIC_DEMO_NLB}/services/hub",
             "EVAL_URL": f"{PUBLIC_DEMO_NLB}/services/eval",

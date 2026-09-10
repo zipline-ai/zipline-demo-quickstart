@@ -216,10 +216,13 @@
         "common": {
           "ARTIFACT_PREFIX": "s3://zipline-public-demo-artifacts",
           "AWS_REGION": "us-west-2",
+          "CHRONON_ONLINE_ARGS": "-Ztasks=1",
           "CLOUD_PROVIDER": "aws",
           "CUSTOMER_ID": "public-demo",
+          "ENABLE_KINESIS": "true",
           "EVAL_URL": "https://try.zipline.ai/services/eval",
           "FETCHER_URL": "https://try.zipline.ai/services/fetcher",
+          "FLINK_JARS_URI": "s3://zipline-spark-libs/spark-4.1.3/libs/",
           "FLINK_STATE_URI": "s3://zipline-public-demo-warehouse/flink-state",
           "FRONTEND_URL": "https://try.zipline.ai",
           "HUB_URL": "https://try.zipline.ai/services/hub",
@@ -230,10 +233,13 @@
           "backfill": {
             "ARTIFACT_PREFIX": "s3://zipline-public-demo-artifacts",
             "AWS_REGION": "us-west-2",
+            "CHRONON_ONLINE_ARGS": "-Ztasks=1",
             "CLOUD_PROVIDER": "aws",
             "CUSTOMER_ID": "public-demo",
+            "ENABLE_KINESIS": "true",
             "EVAL_URL": "https://try.zipline.ai/services/eval",
             "FETCHER_URL": "https://try.zipline.ai/services/fetcher",
+            "FLINK_JARS_URI": "s3://zipline-spark-libs/spark-4.1.3/libs/",
             "FLINK_STATE_URI": "s3://zipline-public-demo-warehouse/flink-state",
             "FRONTEND_URL": "https://try.zipline.ai",
             "HUB_URL": "https://try.zipline.ai/services/hub",
@@ -243,10 +249,13 @@
           "streaming": {
             "ARTIFACT_PREFIX": "s3://zipline-public-demo-artifacts",
             "AWS_REGION": "us-west-2",
+            "CHRONON_ONLINE_ARGS": "-Ztasks=1",
             "CLOUD_PROVIDER": "aws",
             "CUSTOMER_ID": "public-demo",
+            "ENABLE_KINESIS": "true",
             "EVAL_URL": "https://try.zipline.ai/services/eval",
             "FETCHER_URL": "https://try.zipline.ai/services/fetcher",
+            "FLINK_JARS_URI": "s3://zipline-spark-libs/spark-4.1.3/libs/",
             "FLINK_STATE_URI": "s3://zipline-public-demo-warehouse/flink-state",
             "FRONTEND_URL": "https://try.zipline.ai",
             "HUB_URL": "https://try.zipline.ai/services/hub",
@@ -256,10 +265,13 @@
           "upload": {
             "ARTIFACT_PREFIX": "s3://zipline-public-demo-artifacts",
             "AWS_REGION": "us-west-2",
+            "CHRONON_ONLINE_ARGS": "-Ztasks=1",
             "CLOUD_PROVIDER": "aws",
             "CUSTOMER_ID": "public-demo",
+            "ENABLE_KINESIS": "true",
             "EVAL_URL": "https://try.zipline.ai/services/eval",
             "FETCHER_URL": "https://try.zipline.ai/services/fetcher",
+            "FLINK_JARS_URI": "s3://zipline-spark-libs/spark-4.1.3/libs/",
             "FLINK_STATE_URI": "s3://zipline-public-demo-warehouse/flink-state",
             "FRONTEND_URL": "https://try.zipline.ai",
             "HUB_URL": "https://try.zipline.ai/services/hub",
@@ -272,12 +284,12 @@
       "onlineSchedule": "@daily",
       "stepDays": 14
     },
-    "name": "app.email_request_activity.email_request_activity__2",
+    "name": "app.email_request_activity.email_request_activity__3",
     "online": 1,
     "outputNamespace": "public_demo_data",
     "sourceFile": "group_bys/app/email_request_activity.py",
     "team": "app",
-    "version": "2"
+    "version": "3"
   },
   "sources": [
     {
@@ -304,7 +316,8 @@
             "user_id IS NOT NULL AND trim(user_id) != ''"
           ]
         },
-        "table": "public_demo_app.ui_access_logs_iceberg"
+        "table": "public_demo_app.ui_access_logs_iceberg",
+        "topic": "kinesis://public-demo-ui-access-events/serde=glue_registry/registry_name=zipline-public-demo/schema_name=ui-access-event-v1"
       }
     }
   ]
