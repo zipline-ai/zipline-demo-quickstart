@@ -1,0 +1,268 @@
+{
+  "derivations": [
+    {
+      "expression": "profile_email_hash_user_id_suffix",
+      "name": "user_id_suffix"
+    },
+    {
+      "expression": "profile_email_hash_first_seen_ts",
+      "name": "first_seen_ts"
+    },
+    {
+      "expression": "profile_email_hash_last_seen_ts",
+      "name": "last_seen_ts"
+    },
+    {
+      "expression": "profile_email_hash_last_seen_time_iso",
+      "name": "last_seen_time_iso"
+    },
+    {
+      "expression": "profile_email_hash_last_event",
+      "name": "last_event"
+    },
+    {
+      "expression": "CASE WHEN profile_email_hash_last_seen_ts > profile_email_hash_first_seen_ts THEN 1 ELSE 0 END",
+      "name": "is_returning_user"
+    }
+  ],
+  "joinParts": [
+    {
+      "groupBy": {
+        "accuracy": 1,
+        "keyColumns": [
+          "email_hash"
+        ],
+        "metaData": {
+          "columnHashes": {
+            "email_hash": "f94c02fdcf9090a57d3f384d33ffe70b",
+            "first_seen_ts": "b7135f647a7b9feb820f96caf93ea5da",
+            "last_event": "e609f5a01c880a9ca190f10e80d1cd9c",
+            "last_seen_time_iso": "7654e426091507c2f56739ae85c731bb",
+            "last_seen_ts": "4b47eb3c35f450de442feb34a6a68d52",
+            "user_id_suffix": "4202a580975779cebfd909369ac6a86f"
+          },
+          "executionInfo": {
+            "conf": {
+              "common": {
+                "spark.chronon.coalesce.factor": "2",
+                "spark.chronon.partition.column": "ds",
+                "spark.chronon.partition.format": "yyyy-MM-dd",
+                "spark.chronon.table_write.format": "iceberg",
+                "spark.chronon.table_write.upload.format": "ion",
+                "spark.chronon.table_write.upload.location": "s3://zipline-public-demo-warehouse/data/ion_uploads/",
+                "spark.default.parallelism": "4",
+                "spark.hadoop.hive.metastore.client.factory.class": "com.amazonaws.glue.catalog.metastore.AWSGlueDataCatalogHiveClientFactory",
+                "spark.scheduler.maxRegisteredResourcesWaitingTime": "120s",
+                "spark.sql.catalog.spark_catalog": "org.apache.iceberg.spark.SparkSessionCatalog",
+                "spark.sql.catalog.spark_catalog.catalog-impl": "org.apache.iceberg.aws.glue.GlueCatalog",
+                "spark.sql.catalog.spark_catalog.warehouse": "s3://zipline-public-demo-warehouse/data/tables/",
+                "spark.sql.catalogImplementation": "hive",
+                "spark.sql.defaultUrlStreamHandlerFactory.enabled": "false",
+                "spark.sql.extensions": "org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions",
+                "spark.sql.shuffle.partitions": "4"
+              }
+            },
+            "env": {
+              "common": {
+                "ARTIFACT_PREFIX": "s3://zipline-public-demo-artifacts",
+                "AWS_REGION": "us-west-2",
+                "CLOUD_PROVIDER": "aws",
+                "CUSTOMER_ID": "public-demo",
+                "EVAL_URL": "https://try.zipline.ai/services/eval",
+                "FETCHER_URL": "https://try.zipline.ai/services/fetcher",
+                "FLINK_STATE_URI": "s3://zipline-public-demo-warehouse/flink-state",
+                "FRONTEND_URL": "https://try.zipline.ai",
+                "HUB_URL": "https://try.zipline.ai/services/hub",
+                "VERSION": "latest",
+                "WAREHOUSE_PREFIX": "s3://zipline-public-demo-warehouse"
+              },
+              "modeEnvironments": {
+                "backfill": {
+                  "ARTIFACT_PREFIX": "s3://zipline-public-demo-artifacts",
+                  "AWS_REGION": "us-west-2",
+                  "CLOUD_PROVIDER": "aws",
+                  "CUSTOMER_ID": "public-demo",
+                  "EVAL_URL": "https://try.zipline.ai/services/eval",
+                  "FETCHER_URL": "https://try.zipline.ai/services/fetcher",
+                  "FLINK_STATE_URI": "s3://zipline-public-demo-warehouse/flink-state",
+                  "FRONTEND_URL": "https://try.zipline.ai",
+                  "HUB_URL": "https://try.zipline.ai/services/hub",
+                  "VERSION": "latest",
+                  "WAREHOUSE_PREFIX": "s3://zipline-public-demo-warehouse"
+                },
+                "streaming": {
+                  "ARTIFACT_PREFIX": "s3://zipline-public-demo-artifacts",
+                  "AWS_REGION": "us-west-2",
+                  "CLOUD_PROVIDER": "aws",
+                  "CUSTOMER_ID": "public-demo",
+                  "EVAL_URL": "https://try.zipline.ai/services/eval",
+                  "FETCHER_URL": "https://try.zipline.ai/services/fetcher",
+                  "FLINK_STATE_URI": "s3://zipline-public-demo-warehouse/flink-state",
+                  "FRONTEND_URL": "https://try.zipline.ai",
+                  "HUB_URL": "https://try.zipline.ai/services/hub",
+                  "VERSION": "latest",
+                  "WAREHOUSE_PREFIX": "s3://zipline-public-demo-warehouse"
+                },
+                "upload": {
+                  "ARTIFACT_PREFIX": "s3://zipline-public-demo-artifacts",
+                  "AWS_REGION": "us-west-2",
+                  "CLOUD_PROVIDER": "aws",
+                  "CUSTOMER_ID": "public-demo",
+                  "EVAL_URL": "https://try.zipline.ai/services/eval",
+                  "FETCHER_URL": "https://try.zipline.ai/services/fetcher",
+                  "FLINK_STATE_URI": "s3://zipline-public-demo-warehouse/flink-state",
+                  "FRONTEND_URL": "https://try.zipline.ai",
+                  "HUB_URL": "https://try.zipline.ai/services/hub",
+                  "VERSION": "latest",
+                  "WAREHOUSE_PREFIX": "s3://zipline-public-demo-warehouse"
+                }
+              }
+            },
+            "historicalBackfill": 0,
+            "onlineSchedule": "@daily",
+            "stepDays": 7
+          },
+          "name": "app.email_identity.email_identity__2",
+          "online": 1,
+          "outputNamespace": "public_demo_data",
+          "team": "app",
+          "version": "2"
+        },
+        "sources": [
+          {
+            "entities": {
+              "query": {
+                "selects": {
+                  "email_hash": "email_hash",
+                  "first_seen_ts": "first_seen_ts",
+                  "last_event": "last_event",
+                  "last_seen_time_iso": "last_seen_time_iso",
+                  "last_seen_ts": "last_seen_ts",
+                  "user_id_suffix": "substring(user_id, -8, 8)"
+                },
+                "startPartition": "2026-08-25"
+              },
+              "snapshotTable": "public_demo_app.app_user_identity_user_identity_snapshots_iceberg__0"
+            }
+          }
+        ]
+      },
+      "prefix": "profile",
+      "useLongNames": 0
+    }
+  ],
+  "left": {
+    "entities": {
+      "query": {
+        "selects": {
+          "email_hash": "email_hash"
+        },
+        "startPartition": "2026-08-25"
+      },
+      "snapshotTable": "public_demo_app.app_user_identity_user_identity_snapshots_iceberg__0"
+    }
+  },
+  "metaData": {
+    "columnHashes": {
+      "first_seen_ts": "c9be375f066af412ce340c29a7d4c5c6",
+      "is_returning_user": "7b311051fbb17b383564a2e5a6f6c6ac",
+      "last_event": "c52bf8967c30b6100cfa3ae3c309942a",
+      "last_seen_time_iso": "116b406318dc0407a0381b5c1a15ea64",
+      "last_seen_ts": "1b0761228448dfde707d1e69b5fc03e1",
+      "user_id_suffix": "eeb4d9d8eb7c4468147592503d0b529d"
+    },
+    "consistencyCheck": 1,
+    "consistencySamplePercent": 100.0,
+    "customJson": "{\"airflowDependencies\": [{\"name\": \"wf_public_demo_app_app_user_identity_user_identity_snapshots_iceberg__0_with_offset_0\", \"spec\": \"public_demo_app.app_user_identity_user_identity_snapshots_iceberg__0/ds={{ macros.ds_add(ds, 0) }}\"}]}",
+    "executionInfo": {
+      "conf": {
+        "common": {
+          "spark.chronon.coalesce.factor": "2",
+          "spark.chronon.partition.column": "ds",
+          "spark.chronon.partition.format": "yyyy-MM-dd",
+          "spark.chronon.table_write.format": "iceberg",
+          "spark.chronon.table_write.upload.format": "ion",
+          "spark.chronon.table_write.upload.location": "s3://zipline-public-demo-warehouse/data/ion_uploads/",
+          "spark.default.parallelism": "4",
+          "spark.hadoop.hive.metastore.client.factory.class": "com.amazonaws.glue.catalog.metastore.AWSGlueDataCatalogHiveClientFactory",
+          "spark.scheduler.maxRegisteredResourcesWaitingTime": "120s",
+          "spark.sql.catalog.spark_catalog": "org.apache.iceberg.spark.SparkSessionCatalog",
+          "spark.sql.catalog.spark_catalog.catalog-impl": "org.apache.iceberg.aws.glue.GlueCatalog",
+          "spark.sql.catalog.spark_catalog.warehouse": "s3://zipline-public-demo-warehouse/data/tables/",
+          "spark.sql.catalogImplementation": "hive",
+          "spark.sql.defaultUrlStreamHandlerFactory.enabled": "false",
+          "spark.sql.extensions": "org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions",
+          "spark.sql.shuffle.partitions": "4"
+        }
+      },
+      "env": {
+        "common": {
+          "ARTIFACT_PREFIX": "s3://zipline-public-demo-artifacts",
+          "AWS_REGION": "us-west-2",
+          "CLOUD_PROVIDER": "aws",
+          "CUSTOMER_ID": "public-demo",
+          "EVAL_URL": "https://try.zipline.ai/services/eval",
+          "FETCHER_URL": "https://try.zipline.ai/services/fetcher",
+          "FLINK_STATE_URI": "s3://zipline-public-demo-warehouse/flink-state",
+          "FRONTEND_URL": "https://try.zipline.ai",
+          "HUB_URL": "https://try.zipline.ai/services/hub",
+          "VERSION": "latest",
+          "WAREHOUSE_PREFIX": "s3://zipline-public-demo-warehouse"
+        },
+        "modeEnvironments": {
+          "backfill": {
+            "ARTIFACT_PREFIX": "s3://zipline-public-demo-artifacts",
+            "AWS_REGION": "us-west-2",
+            "CLOUD_PROVIDER": "aws",
+            "CUSTOMER_ID": "public-demo",
+            "EVAL_URL": "https://try.zipline.ai/services/eval",
+            "FETCHER_URL": "https://try.zipline.ai/services/fetcher",
+            "FLINK_STATE_URI": "s3://zipline-public-demo-warehouse/flink-state",
+            "FRONTEND_URL": "https://try.zipline.ai",
+            "HUB_URL": "https://try.zipline.ai/services/hub",
+            "VERSION": "latest",
+            "WAREHOUSE_PREFIX": "s3://zipline-public-demo-warehouse"
+          },
+          "streaming": {
+            "ARTIFACT_PREFIX": "s3://zipline-public-demo-artifacts",
+            "AWS_REGION": "us-west-2",
+            "CLOUD_PROVIDER": "aws",
+            "CUSTOMER_ID": "public-demo",
+            "EVAL_URL": "https://try.zipline.ai/services/eval",
+            "FETCHER_URL": "https://try.zipline.ai/services/fetcher",
+            "FLINK_STATE_URI": "s3://zipline-public-demo-warehouse/flink-state",
+            "FRONTEND_URL": "https://try.zipline.ai",
+            "HUB_URL": "https://try.zipline.ai/services/hub",
+            "VERSION": "latest",
+            "WAREHOUSE_PREFIX": "s3://zipline-public-demo-warehouse"
+          },
+          "upload": {
+            "ARTIFACT_PREFIX": "s3://zipline-public-demo-artifacts",
+            "AWS_REGION": "us-west-2",
+            "CLOUD_PROVIDER": "aws",
+            "CUSTOMER_ID": "public-demo",
+            "EVAL_URL": "https://try.zipline.ai/services/eval",
+            "FETCHER_URL": "https://try.zipline.ai/services/fetcher",
+            "FLINK_STATE_URI": "s3://zipline-public-demo-warehouse/flink-state",
+            "FRONTEND_URL": "https://try.zipline.ai",
+            "HUB_URL": "https://try.zipline.ai/services/hub",
+            "VERSION": "latest",
+            "WAREHOUSE_PREFIX": "s3://zipline-public-demo-warehouse"
+          }
+        }
+      },
+      "offlineSchedule": "@daily",
+      "onlineSchedule": "@daily"
+    },
+    "name": "app.email_activity_profile.email_activity_profile__1",
+    "online": 1,
+    "outputNamespace": "public_demo_data",
+    "production": 0,
+    "samplePercent": 100.0,
+    "sourceFile": "joins/app/email_activity_profile.py",
+    "team": "app",
+    "version": "1"
+  },
+  "rowIds": [],
+  "useLongNames": 0
+}
