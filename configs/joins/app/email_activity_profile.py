@@ -30,6 +30,7 @@ email_activity_profile = Join(
     online=True,
     check_consistency=True,
     consistency_sample_percent=100.0,
+    enable_stats_compute=True,
     output_namespace="public_demo_data",
-    version=1,
+    version=2,
 )

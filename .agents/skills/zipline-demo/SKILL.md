@@ -33,6 +33,12 @@ External staging-query inputs must be declared with `TableDependency`, including
 their actual partition column. Outputs of Zipline configs are resolved through
 lineage and must not be treated as external tables.
 
+Public-demo Joins should set `enable_stats_compute=True` in the Python `Join`
+constructor. This enables Join stats computation and serializes to
+`executionInfo.enableStatsCompute` in the compiled config; it is separate from
+`check_consistency`. Enabling it on an existing online Join requires a version
+increment.
+
 ## Workflow
 
 1. Inspect the source, upstream configs, and compiled lineage.

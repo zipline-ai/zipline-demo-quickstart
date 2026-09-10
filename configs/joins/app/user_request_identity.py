@@ -20,6 +20,7 @@ user_request_identity = Join(
     online=True,
     check_consistency=True,
     consistency_sample_percent=100.0,
+    enable_stats_compute=True,
     output_namespace="public_demo_data",
-    version=8,
+    version=9,
 )
