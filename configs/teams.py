@@ -4,7 +4,7 @@ from ai.chronon.types import ConfigProperties, EnvironmentVariables, Team
 
 PUBLIC_DEMO_NLB = "https://try.zipline.ai"
 WAREHOUSE_PREFIX = "s3://zipline-public-demo-warehouse"
-ARTIFACT_PREFIX = "s3://zipline-artifacts-crucible"
+ARTIFACT_PREFIX = "s3://zipline-public-demo-artifacts"
 
 default = Team(
     description="Public AWS demo default team",

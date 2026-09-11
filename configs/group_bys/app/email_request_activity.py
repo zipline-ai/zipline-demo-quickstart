@@ -20,11 +20,12 @@ email_request_activity = GroupBy(
         Aggregation(input_column="client_ip", operation=Operation.LAST_K(5), windows=["6d"]),
         Aggregation(input_column="user_agent", operation=Operation.LAST_K(5), windows=["6d"]),
         Aggregation(input_column="path", operation=Operation.LAST_K(5), windows=["6d"]),
+        Aggregation(input_column="visit_ts", operation=Operation.LAST, windows=["6d"]),
         Aggregation(input_column="activity_event", operation=Operation.LAST_K(10), windows=["6d"]),
         Aggregation(input_column="freshness_lag_seconds", operation=Operation.LAST, windows=["6d"]),
         Aggregation(input_column="freshness_lag_seconds", operation=Operation.MAX, windows=["1d"]),
     ],
-    version=3,
+    version=4,
     step_days=14,
     env_vars=EnvironmentVariables(
         common={

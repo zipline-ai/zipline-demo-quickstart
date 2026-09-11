@@ -5,6 +5,22 @@
       "name": "*"
     },
     {
+      "expression": "activity_email_hash_path_last5_6d",
+      "name": "last_5_hub_requests"
+    },
+    {
+      "expression": "activity_email_hash_visit_ts_last_6d",
+      "name": "last_visit_ts"
+    },
+    {
+      "expression": "CASE WHEN activity_email_hash_visit_ts_last_6d IS NULL THEN NULL ELSE CAST(GREATEST(ts - activity_email_hash_visit_ts_last_6d, 0) / 1000 AS BIGINT) END",
+      "name": "seconds_since_last_visit"
+    },
+    {
+      "expression": "CASE WHEN activity_email_hash_visit_ts_last_6d IS NULL THEN NULL WHEN GREATEST(ts - activity_email_hash_visit_ts_last_6d, 0) < 60000 THEN 'just now' WHEN GREATEST(ts - activity_email_hash_visit_ts_last_6d, 0) < 120000 THEN '1 minute ago' WHEN GREATEST(ts - activity_email_hash_visit_ts_last_6d, 0) < 3600000 THEN CONCAT(CAST(FLOOR(GREATEST(ts - activity_email_hash_visit_ts_last_6d, 0) / 60000) AS BIGINT), ' minutes ago') WHEN GREATEST(ts - activity_email_hash_visit_ts_last_6d, 0) < 7200000 THEN '1 hour ago' WHEN GREATEST(ts - activity_email_hash_visit_ts_last_6d, 0) < 86400000 THEN CONCAT(CAST(FLOOR(GREATEST(ts - activity_email_hash_visit_ts_last_6d, 0) / 3600000) AS BIGINT), ' hours ago') WHEN GREATEST(ts - activity_email_hash_visit_ts_last_6d, 0) < 172800000 THEN '1 day ago' ELSE CONCAT(CAST(FLOOR(GREATEST(ts - activity_email_hash_visit_ts_last_6d, 0) / 86400000) AS BIGINT), ' days ago') END",
+      "name": "time_since_last_visit"
+    },
+    {
       "expression": "CASE WHEN activity_email_hash_request_count_sum_1d > 0 THEN 1 ELSE 0 END",
       "name": "has_recent_activity"
     },
@@ -275,6 +291,17 @@
             ]
           },
           {
+            "argMap": {},
+            "inputColumn": "visit_ts",
+            "operation": 3,
+            "windows": [
+              {
+                "length": 6,
+                "timeUnit": 1
+              }
+            ]
+          },
+          {
             "argMap": {
               "k": "10"
             },
@@ -332,6 +359,7 @@
             "user_agent_approx_unique_count_1d": "f640454d8b917bbde2f62d9fe55e20bd",
             "user_agent_approx_unique_count_6d": "f640454d8b917bbde2f62d9fe55e20bd",
             "user_agent_last5_6d": "f640454d8b917bbde2f62d9fe55e20bd",
+            "visit_ts_last_6d": "1aaf4e5ec866852bce724c278d829194",
             "write_event_sum_1d": "68a3db5f590604d8147d4cd8acdce62e",
             "write_event_sum_6d": "68a3db5f590604d8147d4cd8acdce62e"
           },
@@ -428,11 +456,11 @@
             "onlineSchedule": "@daily",
             "stepDays": 14
           },
-          "name": "app.email_request_activity.email_request_activity__3",
+          "name": "app.email_request_activity.email_request_activity__4",
           "online": 1,
           "outputNamespace": "public_demo_data",
           "team": "app",
-          "version": "3"
+          "version": "4"
         },
         "sources": [
           {
@@ -451,6 +479,7 @@
                   "request_count": "1",
                   "route_family": "route_family",
                   "user_agent": "user_agent",
+                  "visit_ts": "event_ts",
                   "write_event": "IF(is_write = 1, 1, 0)"
                 },
                 "startPartition": "2026-09-02",
@@ -498,6 +527,7 @@
       "activity_email_hash_user_agent_approx_unique_count_1d": "8072f5efe7897b5d5d92934de68c64dc",
       "activity_email_hash_user_agent_approx_unique_count_6d": "8072f5efe7897b5d5d92934de68c64dc",
       "activity_email_hash_user_agent_last5_6d": "8072f5efe7897b5d5d92934de68c64dc",
+      "activity_email_hash_visit_ts_last_6d": "2e5a0fbc2fdfb064857ed29bd0db5253",
       "activity_email_hash_write_event_sum_1d": "48a513b05a16bc65a463aa6654b64156",
       "activity_email_hash_write_event_sum_6d": "48a513b05a16bc65a463aa6654b64156",
       "email_hash": "b64d4941a6558664942cfabbb7fe67c5",
@@ -508,7 +538,11 @@
       "identity_email_hash_last_seen_time_iso": "f4ddecf81f86ace684ddd5d46749cba6",
       "identity_email_hash_last_seen_ts": "d08d8b771eaff63099c85c1430bc0a95",
       "identity_email_hash_user_id_suffix": "2f1c9d22bdbcbbdc8bd5438110c1097b",
-      "ip_velocity_flag": "38f937d46ac938a57e3cc39d5a63329c"
+      "ip_velocity_flag": "38f937d46ac938a57e3cc39d5a63329c",
+      "last_5_hub_requests": "017ad62cbf50e24187249b10794e4f62",
+      "last_visit_ts": "357fb79fc8f0cd6fa51eeba0e1f35ca8",
+      "seconds_since_last_visit": "ec31a3669902e65dd4dfabef0bebe5cf",
+      "time_since_last_visit": "729be84fa764a63a08841994a9fb99a4"
     },
     "consistencyCheck": 1,
     "consistencySamplePercent": 100.0,
@@ -599,14 +633,14 @@
       "onlineSchedule": "@daily",
       "stepDays": 14
     },
-    "name": "app.account_activity_review.account_activity_review__4",
+    "name": "app.account_activity_review.account_activity_review__7",
     "online": 1,
     "outputNamespace": "public_demo_data",
     "production": 0,
     "samplePercent": 100.0,
     "sourceFile": "joins/app/account_activity_review.py",
     "team": "app",
-    "version": "4"
+    "version": "7"
   },
   "rowIds": [],
   "useLongNames": 0

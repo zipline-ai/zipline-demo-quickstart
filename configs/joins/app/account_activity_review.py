@@ -4,6 +4,9 @@ from sources.app.user_identity import email_profile_requests
 from ai.chronon.types import Derivation, Join, JoinPart
 
 
+last_visit_age_ms = "GREATEST(ts - activity_email_hash_visit_ts_last_6d, 0)"
+
+
 account_activity_review = Join(
     left=email_profile_requests,
     row_ids=[],
@@ -13,6 +16,36 @@ account_activity_review = Join(
     ],
     derivations=[
         Derivation(name="*", expression="*"),
+        Derivation(
+            name="last_5_hub_requests",
+            expression="activity_email_hash_path_last5_6d",
+        ),
+        Derivation(
+            name="last_visit_ts",
+            expression="activity_email_hash_visit_ts_last_6d",
+        ),
+        Derivation(
+            name="seconds_since_last_visit",
+            expression=(
+                "CASE WHEN activity_email_hash_visit_ts_last_6d IS NULL THEN NULL "
+                f"ELSE CAST({last_visit_age_ms} / 1000 AS BIGINT) END"
+            ),
+        ),
+        Derivation(
+            name="time_since_last_visit",
+            expression=(
+                "CASE WHEN activity_email_hash_visit_ts_last_6d IS NULL THEN NULL "
+                f"WHEN {last_visit_age_ms} < 60000 THEN 'just now' "
+                f"WHEN {last_visit_age_ms} < 120000 THEN '1 minute ago' "
+                f"WHEN {last_visit_age_ms} < 3600000 THEN "
+                f"CONCAT(CAST(FLOOR({last_visit_age_ms} / 60000) AS BIGINT), ' minutes ago') "
+                f"WHEN {last_visit_age_ms} < 7200000 THEN '1 hour ago' "
+                f"WHEN {last_visit_age_ms} < 86400000 THEN "
+                f"CONCAT(CAST(FLOOR({last_visit_age_ms} / 3600000) AS BIGINT), ' hours ago') "
+                f"WHEN {last_visit_age_ms} < 172800000 THEN '1 day ago' "
+                f"ELSE CONCAT(CAST(FLOOR({last_visit_age_ms} / 86400000) AS BIGINT), ' days ago') END"
+            ),
+        ),
         Derivation(
             name="has_recent_activity",
             expression=(
@@ -33,6 +66,6 @@ account_activity_review = Join(
     consistency_sample_percent=100.0,
     enable_stats_compute=True,
     output_namespace="public_demo_data",
-    version=4,
+    version=7,
     step_days=14,
 )

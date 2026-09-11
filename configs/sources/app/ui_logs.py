@@ -78,6 +78,7 @@ email_access_logs = EventSource(
             "path",
             "client_ip",
             "user_agent",
+            visit_ts="event_ts",
             email_hash="substring(sha2(lower(trim(user_id)), 256), 1, 8)",
             request_count="1",
             error_event="IF(is_error = 1, 1, 0)",

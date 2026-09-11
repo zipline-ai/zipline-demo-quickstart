@@ -14,7 +14,7 @@ See [demo data sources](docs/data_sources.md) for the raw tables, schemas, fresh
 
 The live public demo endpoints are:
 
-- UI: `https://try.zipline.ai`
+- UI: [https://try.zipline.ai](https://try.zipline.ai)
 
 By using the public demo, you agree to its [Terms of Service](TERMS.md). See the
 [Privacy Policy](PRIVACY.md) for details about Google sign-in, access logs, Demo

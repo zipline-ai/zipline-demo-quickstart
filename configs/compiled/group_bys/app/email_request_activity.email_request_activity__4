@@ -130,6 +130,17 @@
       ]
     },
     {
+      "argMap": {},
+      "inputColumn": "visit_ts",
+      "operation": 3,
+      "windows": [
+        {
+          "length": 6,
+          "timeUnit": 1
+        }
+      ]
+    },
+    {
       "argMap": {
         "k": "10"
       },
@@ -187,6 +198,7 @@
       "user_agent_approx_unique_count_1d": "f640454d8b917bbde2f62d9fe55e20bd",
       "user_agent_approx_unique_count_6d": "f640454d8b917bbde2f62d9fe55e20bd",
       "user_agent_last5_6d": "f640454d8b917bbde2f62d9fe55e20bd",
+      "visit_ts_last_6d": "1aaf4e5ec866852bce724c278d829194",
       "write_event_sum_1d": "68a3db5f590604d8147d4cd8acdce62e",
       "write_event_sum_6d": "68a3db5f590604d8147d4cd8acdce62e"
     },
@@ -284,12 +296,12 @@
       "onlineSchedule": "@daily",
       "stepDays": 14
     },
-    "name": "app.email_request_activity.email_request_activity__3",
+    "name": "app.email_request_activity.email_request_activity__4",
     "online": 1,
     "outputNamespace": "public_demo_data",
     "sourceFile": "group_bys/app/email_request_activity.py",
     "team": "app",
-    "version": "3"
+    "version": "4"
   },
   "sources": [
     {
@@ -308,6 +320,7 @@
             "request_count": "1",
             "route_family": "route_family",
             "user_agent": "user_agent",
+            "visit_ts": "event_ts",
             "write_event": "IF(is_write = 1, 1, 0)"
           },
           "startPartition": "2026-09-02",
