@@ -20,6 +20,8 @@ By using the public demo, you agree to its [Terms of Service](TERMS.md). See the
 [Privacy Policy](PRIVACY.md) for details about Google sign-in, access logs, Demo
 datasets, retention, and your choices.
 
-Datasource freshness is controlled in an infrastructure repo with
-`ui_logs_freshness_profile` (`low_cost`, `balanced`, or `fresh`) changed weekly to purposely create online offline inconsistencies. 
-
+Offline datasource freshness is controlled in the infrastructure repo with
+`ui_logs_freshness_profile`: `low_cost` (about 30 minutes), `balanced` (about
+5 minutes), or `fresh` (about 1 minute), plus processing time. Authenticated
+Hub events continue flowing through Kinesis in near real time, intentionally
+creating a tunable gap between online and offline freshness.
