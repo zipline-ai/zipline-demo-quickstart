@@ -9,12 +9,14 @@ From the repository root:
 ```sh
 python3 -m venv .venv-taxi
 . .venv-taxi/bin/activate
-pip install -r scripts/requirements-taxi.txt
+python -m pip install -r scripts/requirements-taxi.txt
 python -m unittest discover -s scripts -p 'test_*.py' -v
 python scripts/provision_taxi.py --snapshot-date 2026-09-16 --output /tmp/zipline-taxi
 ```
 
 Choose the snapshot date explicitly and use the same date for deployment. Preparation checks the upstream CSV checksum and creates 500 integer entity keys, expected feature values, a normalized CSV, and a source manifest. It makes no AWS calls without `--apply`.
+
+The requirements include Boto3's `crt` extra, which supports credentials created by `aws login`. If an older environment reports `MissingDependencyException` for the login credential provider, rerun the requirements installation in that same environment.
 
 ## Load AWS data
 
