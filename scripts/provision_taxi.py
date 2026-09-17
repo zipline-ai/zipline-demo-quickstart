@@ -93,9 +93,19 @@ def apply(rows, region):
     from pyiceberg.transforms import IdentityTransform
     from pyiceberg.types import DoubleType, LongType, NestedField, StringType
 
+    session = boto3.Session(region_name=region)
+    resolved = session.get_credentials()
+    if resolved is None:
+        raise ValueError("No AWS credentials found; authenticate before applying")
+    # Arrow's native AWS provider may not support aws login. Share Boto3's
+    # resolved credentials for this short, one-shot upload; never persist them.
+    credentials = resolved.get_frozen_credentials()
     catalog = load_catalog("glue", **{
         "type": "glue", "glue.region": region, "s3.region": region,
         "warehouse": LOCATION,
+        "client.access-key-id": credentials.access_key,
+        "client.secret-access-key": credentials.secret_key,
+        **({"client.session-token": credentials.token} if credentials.token else {}),
     })
     try:
         catalog.load_table(TABLE)
@@ -105,7 +115,7 @@ def apply(rows, region):
         raise ValueError(f"Refusing to modify existing table {TABLE}; review its data before retrying")
     # Also reject orphaned data from an interrupted earlier attempt.
     bucket, prefix = LOCATION.removeprefix("s3://").split("/", 1)
-    existing = boto3.client("s3", region_name=region).list_objects_v2(
+    existing = session.client("s3").list_objects_v2(
         Bucket=bucket, Prefix=prefix + "/", MaxKeys=1,
     )
     if existing.get("KeyCount", 0):

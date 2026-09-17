@@ -50,9 +50,20 @@ class TaxiPreparationTest(unittest.TestCase):
             table.scan.return_value.to_arrow.return_value = batch
 
         table.append.side_effect = append
-        with patch("pyiceberg.catalog.load_catalog", return_value=catalog), patch.object(boto3, "client") as client:
-            client.return_value.list_objects_v2.return_value = {"KeyCount": 0}
+        with patch("pyiceberg.catalog.load_catalog", return_value=catalog) as load, patch.object(boto3, "Session") as session, patch.object(boto3, "client") as legacy_client:
+            credentials = session.return_value.get_credentials.return_value.get_frozen_credentials.return_value
+            credentials.access_key = "test-access"
+            credentials.secret_key = "test-secret"
+            credentials.token = "test-session-token"
+            session.return_value.client.return_value.list_objects_v2.return_value = {"KeyCount": 0}
+            legacy_client.return_value.list_objects_v2.return_value = {"KeyCount": 0}
             taxi.apply(rows, "us-west-2")
+            properties = load.call_args.kwargs
+            self.assertEqual(properties.get("client.access-key-id"), "test-access")
+            self.assertEqual(properties.get("client.secret-access-key"), "test-secret")
+            self.assertEqual(properties.get("client.session-token"), "test-session-token")
+            session.return_value.client.assert_called_once_with("s3")
+            legacy_client.assert_not_called()
         table.append.assert_called_once()
 
     def test_checksum_rejects_modified_data(self):

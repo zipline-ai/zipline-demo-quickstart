@@ -20,7 +20,7 @@ The requirements include Boto3's `crt` extra, which supports credentials created
 
 ## Load AWS data
 
-Use AWS credentials for the public demo account. The loader uses the standard AWS credential chain; do not put keys into the script. The operator needs Glue table creation/read permissions in `public_demo_app`, S3 list/read/write permissions on the dedicated prefix below, and any encryption permissions required by the bucket. The Glue database must already exist.
+Use AWS credentials for the public demo account. The loader resolves credentials through Boto3 and shares them in memory with Iceberg’s Glue and S3 clients for the one-shot upload. This supports `aws login` even when PyArrow’s native credential provider does not. Credentials are not written to the manifest or table properties; do not put keys into the script. The operator needs Glue table creation/read permissions in `public_demo_app`, S3 list/read/write permissions on the dedicated prefix below, and any encryption permissions required by the bucket. The Glue database must already exist.
 
 Check the selected AWS identity, then create the table:
 
