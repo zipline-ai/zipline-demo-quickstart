@@ -128,3 +128,15 @@ of stale batch data. Overlapping lookbacks can produce repeated raw access
 events; `event_id` remains stable so consumers can identify duplicates.
 
 The Iceberg tables are the tables referenced by the demo configs. Their latest `ds` partition must be refreshed from the raw Glue tables before a backfill that requires newly landed dates.
+
+## Featurestore.org Taxi Benchmark
+
+The optional static benchmark fixture uses `public_demo_app.featurestore_benchmark_taxi`
+at `s3://zipline-public-demo-curated/app/featurestore_benchmark_taxi`. It contains the
+500 upstream taxi records, an integer `id`, and a string `ds` snapshot partition.
+`configs/group_bys/app/benchmark_taxi.py` serves the 19 feature columns without
+aggregation. Its recurring schedules are disabled.
+
+See [provisioning and verification](tutorials/featurestore-benchmark.md) for the
+explicit loader and one-off online deployment steps. The configuration's presence
+does not mean the table has been provisioned.
