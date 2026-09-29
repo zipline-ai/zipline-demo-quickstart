@@ -1,0 +1,152 @@
+{
+  "accuracy": 1,
+  "keyColumns": [
+    "id"
+  ],
+  "metaData": {
+    "columnHashes": {
+      "distance": "a287e09021e0199537216ba153513d99",
+      "driver_id": "f19a7a7f9c6eb8440b2a550ecffbb4b8",
+      "dropoff_distance_to_ewr": "507c53bdd96971e5f419fff681532874",
+      "dropoff_distance_to_jfk": "47dbb90f79c997c1be1c62a039f96305",
+      "dropoff_distance_to_lgr": "5b85b7d936172d3b8af6f2aca0a95cd1",
+      "dropoff_latitude": "0d7d9387f4d6603443d5610f7a836d4d",
+      "dropoff_longitude": "6dcd471c6c94641c80d7fc807fcd977e",
+      "hour": "009cd5d245e6374ac272ee7c185f31be",
+      "id": "303825d75c01c3e37b83697887ca7673",
+      "passenger_count": "42835c840c2e3837c478a5b558ca5a7f",
+      "pickup_datetime": "5ff10a5cfb46c223fc206eed60350ded",
+      "pickup_distance_to_ewr": "e6d7cd186bd6930be2098a055e569c58",
+      "pickup_distance_to_jfk": "8e9497b8a958a12ecf03294a653d7a15",
+      "pickup_distance_to_lgr": "d42351c5968404f105b95e485b74c61f",
+      "pickup_latitude": "2596dc6d6c475fd409128062927edf48",
+      "pickup_longitude": "cbff1562cc8d03b46d94e97ff5c67a74",
+      "ride_id": "1038791c96c5fc15fd4d12476b8278b1",
+      "taxi_id": "3f88d1b112445796a4e5e8a515a38ff8",
+      "weekday": "16d754fb6264745c9c24828b9cf4b2fa",
+      "year": "75c7b05df8afbbfa7c53517d0b084ef7"
+    },
+    "customJson": "{\"airflowDependencies\": [{\"name\": \"wf_public_demo_app_featurestore_benchmark_taxi_with_offset_0\", \"spec\": \"public_demo_app.featurestore_benchmark_taxi/ds={{ macros.ds_add(ds, 0) }}\"}]}",
+    "executionInfo": {
+      "conf": {
+        "common": {
+          "spark.chronon.coalesce.factor": "2",
+          "spark.chronon.partition.column": "ds",
+          "spark.chronon.partition.format": "yyyy-MM-dd",
+          "spark.chronon.table_write.format": "iceberg",
+          "spark.chronon.table_write.upload.format": "ion",
+          "spark.chronon.table_write.upload.location": "s3://zipline-public-demo-warehouse/data/ion_uploads/",
+          "spark.default.parallelism": "4",
+          "spark.hadoop.hive.metastore.client.factory.class": "com.amazonaws.glue.catalog.metastore.AWSGlueDataCatalogHiveClientFactory",
+          "spark.scheduler.maxRegisteredResourcesWaitingTime": "120s",
+          "spark.sql.catalog.spark_catalog": "org.apache.iceberg.spark.SparkSessionCatalog",
+          "spark.sql.catalog.spark_catalog.catalog-impl": "org.apache.iceberg.aws.glue.GlueCatalog",
+          "spark.sql.catalog.spark_catalog.warehouse": "s3://zipline-public-demo-warehouse/data/tables/",
+          "spark.sql.catalogImplementation": "hive",
+          "spark.sql.defaultUrlStreamHandlerFactory.enabled": "false",
+          "spark.sql.extensions": "org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions",
+          "spark.sql.shuffle.partitions": "4"
+        }
+      },
+      "env": {
+        "common": {
+          "ARTIFACT_PREFIX": "s3://zipline-public-demo-artifacts",
+          "AWS_REGION": "us-west-2",
+          "CLOUD_PROVIDER": "aws",
+          "CUSTOMER_ID": "public-demo",
+          "EVAL_URL": "https://try.zipline.ai/services/eval",
+          "FETCHER_URL": "https://try.zipline.ai/services/fetcher",
+          "FLINK_JARS_URI": "s3://zipline-spark-libs/spark-4.1.3/libs/",
+          "FLINK_STATE_URI": "s3://zipline-public-demo-warehouse/flink-state",
+          "FRONTEND_URL": "https://try.zipline.ai",
+          "HUB_URL": "https://try.zipline.ai/services/hub",
+          "VERSION": "latest",
+          "WAREHOUSE_PREFIX": "s3://zipline-public-demo-warehouse"
+        },
+        "modeEnvironments": {
+          "backfill": {
+            "ARTIFACT_PREFIX": "s3://zipline-public-demo-artifacts",
+            "AWS_REGION": "us-west-2",
+            "CLOUD_PROVIDER": "aws",
+            "CUSTOMER_ID": "public-demo",
+            "EVAL_URL": "https://try.zipline.ai/services/eval",
+            "FETCHER_URL": "https://try.zipline.ai/services/fetcher",
+            "FLINK_JARS_URI": "s3://zipline-spark-libs/spark-4.1.3/libs/",
+            "FLINK_STATE_URI": "s3://zipline-public-demo-warehouse/flink-state",
+            "FRONTEND_URL": "https://try.zipline.ai",
+            "HUB_URL": "https://try.zipline.ai/services/hub",
+            "VERSION": "latest",
+            "WAREHOUSE_PREFIX": "s3://zipline-public-demo-warehouse"
+          },
+          "streaming": {
+            "ARTIFACT_PREFIX": "s3://zipline-public-demo-artifacts",
+            "AWS_REGION": "us-west-2",
+            "CLOUD_PROVIDER": "aws",
+            "CUSTOMER_ID": "public-demo",
+            "EVAL_URL": "https://try.zipline.ai/services/eval",
+            "FETCHER_URL": "https://try.zipline.ai/services/fetcher",
+            "FLINK_JARS_URI": "s3://zipline-spark-libs/spark-4.1.3/libs/",
+            "FLINK_STATE_URI": "s3://zipline-public-demo-warehouse/flink-state",
+            "FRONTEND_URL": "https://try.zipline.ai",
+            "HUB_URL": "https://try.zipline.ai/services/hub",
+            "VERSION": "latest",
+            "WAREHOUSE_PREFIX": "s3://zipline-public-demo-warehouse"
+          },
+          "upload": {
+            "ARTIFACT_PREFIX": "s3://zipline-public-demo-artifacts",
+            "AWS_REGION": "us-west-2",
+            "CLOUD_PROVIDER": "aws",
+            "CUSTOMER_ID": "public-demo",
+            "EVAL_URL": "https://try.zipline.ai/services/eval",
+            "FETCHER_URL": "https://try.zipline.ai/services/fetcher",
+            "FLINK_JARS_URI": "s3://zipline-spark-libs/spark-4.1.3/libs/",
+            "FLINK_STATE_URI": "s3://zipline-public-demo-warehouse/flink-state",
+            "FRONTEND_URL": "https://try.zipline.ai",
+            "HUB_URL": "https://try.zipline.ai/services/hub",
+            "VERSION": "latest",
+            "WAREHOUSE_PREFIX": "s3://zipline-public-demo-warehouse"
+          }
+        }
+      },
+      "historicalBackfill": 0,
+      "offlineSchedule": "@never"
+    },
+    "name": "app.benchmark_taxi.benchmark_taxi__0",
+    "online": 1,
+    "outputNamespace": "public_demo_data",
+    "sourceFile": "group_bys/app/benchmark_taxi.py",
+    "team": "app",
+    "version": "0"
+  },
+  "sources": [
+    {
+      "entities": {
+        "query": {
+          "selects": {
+            "distance": "distance",
+            "driver_id": "driver_id",
+            "dropoff_distance_to_ewr": "dropoff_distance_to_ewr",
+            "dropoff_distance_to_jfk": "dropoff_distance_to_jfk",
+            "dropoff_distance_to_lgr": "dropoff_distance_to_lgr",
+            "dropoff_latitude": "dropoff_latitude",
+            "dropoff_longitude": "dropoff_longitude",
+            "hour": "hour",
+            "id": "id",
+            "passenger_count": "passenger_count",
+            "pickup_datetime": "pickup_datetime",
+            "pickup_distance_to_ewr": "pickup_distance_to_ewr",
+            "pickup_distance_to_jfk": "pickup_distance_to_jfk",
+            "pickup_distance_to_lgr": "pickup_distance_to_lgr",
+            "pickup_latitude": "pickup_latitude",
+            "pickup_longitude": "pickup_longitude",
+            "ride_id": "ride_id",
+            "taxi_id": "taxi_id",
+            "weekday": "weekday",
+            "year": "year"
+          }
+        },
+        "snapshotTable": "public_demo_app.featurestore_benchmark_taxi"
+      }
+    }
+  ]
+}
