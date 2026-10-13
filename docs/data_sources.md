@@ -1,6 +1,11 @@
 # Demo Data Sources
 
-The demo uses its own traffic as data. Requests to `https://try.zipline.ai` produce Kubernetes ingress and application audit logs, which are shipped to CloudWatch, parsed by a scheduled Lambda, and stored in S3. No third-party API token is required.
+The demo combines its own live traffic with the public Instacart Online Grocery
+Shopping Dataset 2017. Requests to `https://try.zipline.ai` produce Kubernetes
+ingress and application audit logs, which are shipped to CloudWatch, parsed by
+a scheduled Lambda, and stored in S3. Instacart provides a larger, static
+dataset for feature engineering and model-training examples. No third-party API
+token is required.
 
 ```text
 try.zipline.ai
@@ -108,6 +113,53 @@ The `user_identity_snapshots` entity source feeds two no-aggregation GroupBys:
 - `email_identity`, keyed by `email_hash`, powers a privacy-safe self-lookup.
 
 The `user_request_identity` join enriches a request with `email_hash` and `has_authenticated_identity`. The `email_activity_profile` join lets a person fetch their identity activity using only the eight-character email hash. It returns only the final eight characters of the opaque user ID as `user_id_suffix`, along with first/last-seen fields, the latest event, and the derived `is_returning_user` feature.
+
+## Instacart Grocery Orders
+
+This static source is the Instacart Online Grocery Shopping Dataset 2017,
+accessed through Kaggle. It contains more than 3.4 million orders from over
+200,000 shoppers and supports the demo's next-basket feature engineering and
+model-training examples. Instacart publishes the dataset for non-commercial use;
+demo code and tutorials should preserve this attribution.
+
+The original CSV files were converted once to Parquet. The `iceberg` prefix is
+retained for compatibility with the existing staging-query paths, but these are
+plain Parquet files read directly by Spark rather than catalog-managed Iceberg
+tables.
+
+| Layer | Location |
+| --- | --- |
+| S3 prefix | `s3://zipline-public-demo-curated/kaggle_instacart/iceberg/` |
+| File layout | `<table>/data/part-00000.parquet` |
+| Partitioning | None; the source is a static snapshot |
+| Total rows | 37,290,032 |
+| Stored size | Approximately 142 MiB |
+
+### Tables
+
+| Table | Rows | Columns | Used by current staging queries |
+| --- | ---: | --- | --- |
+| `orders` | 3,421,083 | `order_id`, `user_id`, `eval_set`, `order_number`, `order_dow`, `order_hour_of_day`, `days_since_prior_order` | Yes |
+| `order_products_prior` | 32,434,489 | `order_id`, `product_id`, `add_to_cart_order`, `reordered` | Yes |
+| `order_products_train` | 1,384,617 | `order_id`, `product_id`, `add_to_cart_order`, `reordered` | Yes |
+| `products` | 49,688 | `product_id`, `product_name`, `aisle_id`, `department_id` | Yes |
+| `aisles` | 134 | `aisle_id`, `aisle` | No |
+| `departments` | 21 | `department_id`, `department` | No |
+
+The dataset does not include calendar dates. The staging queries reconstruct
+event dates from each shopper's real order sequence and
+`days_since_prior_order`, anchored to a fixed demo date. The `prior` baskets
+form the historical feature stream, while the `train` basket supplies the
+next-basket label. Keeping those inputs separate prevents label leakage.
+
+Spark reads the four active inputs from these paths:
+
+```text
+s3://zipline-public-demo-curated/kaggle_instacart/iceberg/orders/data/
+s3://zipline-public-demo-curated/kaggle_instacart/iceberg/order_products_prior/data/
+s3://zipline-public-demo-curated/kaggle_instacart/iceberg/order_products_train/data/
+s3://zipline-public-demo-curated/kaggle_instacart/iceberg/products/data/
+```
 
 ## Freshness And Cost
 
