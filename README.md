@@ -1,16 +1,20 @@
 # Zipline Demo Quickstart
 
-Example Zipline/Chronon configs for a demo environment.
+Learn to build features, train models, and compare experiments in the Zipline public demo.
+The tutorials use ready-to-use datasets and example configs.
 
 New here? Start with [your first Zipline feature in five minutes](docs/tutorials/quickstart.md).
 
-For a smaller follow-up exercises, see other included [tutorials](docs/tutorials/).
+For follow-up exercises, see the other [tutorials](docs/tutorials/).
+
+For model training, follow [iterate on a model and compare experiments](docs/tutorials/model-experiment-comparison.md)
+to create a variant, track its training in a trial, and compare measured results.
 
 Coding agents can use the repository-local
 [Zipline demo skill](.agents/skills/zipline-demo/SKILL.md) to discover the data,
 follow lineage, deploy changes, and fetch features safely.
 
-See [demo data sources](docs/data_sources.md) for the raw tables, schemas, freshness controls, and their consumers.
+See [demo data sources](docs/data_sources.md) for dataset schemas, feature lineage, and freshness behavior.
 
 The live public demo endpoints are:
 
@@ -20,8 +24,6 @@ By using the public demo, you agree to its [Terms of Service](TERMS.md). See the
 [Privacy Policy](PRIVACY.md) for details about Google sign-in, access logs, Demo
 datasets, retention, and your choices.
 
-Offline datasource freshness is controlled in the infrastructure repo with
-`ui_logs_freshness_profile`: `low_cost` (about 30 minutes), `balanced` (about
-5 minutes), or `fresh` (about 1 minute), plus processing time. Authenticated
-Hub events continue flowing through Kinesis in near real time, intentionally
-creating a tunable gap between online and offline freshness.
+Online features update as new activity arrives, while offline features refresh
+periodically. Compare their freshness to understand how delayed data affects
+feature values and model inputs.

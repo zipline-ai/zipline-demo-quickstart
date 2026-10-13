@@ -25,8 +25,8 @@ signals with identity first-seen and last-seen fields for one online fetch.
 ## 1. Generate Activity
 
 Sign in to [try.zipline.ai](https://try.zipline.ai), visit a few pages, and run
-one or two searches. Authenticated activity reaches the online GroupBy through
-Kinesis, while the offline Iceberg table advances on its configured cadence.
+one or two searches. Authenticated activity updates the online GroupBy as events
+arrive, while offline feature data refreshes periodically.
 That intentional difference is what makes freshness visible in the consistency
 view.
 

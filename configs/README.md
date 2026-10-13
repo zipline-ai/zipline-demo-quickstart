@@ -1,7 +1,7 @@
 
 # 🧠 Zipline AI: Sample Chronon Project
 
-This repository demonstrates how to author and run [Chronon](https://chronon.ai) pipelines, including GroupBy and Join definitions, using AWS Glue/S3 + Iceberg as the storage backend.
+Use these configs to author and run [Chronon](https://chronon.ai) feature pipelines in the Zipline public demo, including GroupBys, Joins, and model experiments.
 
 Chronon is a unified platform for **feature engineering**, enabling **online and offline consistency**, **real-time feature generation**, and **historical backfills** from a single codebase.
 
@@ -31,9 +31,9 @@ To get started, make sure you have the following set up:
 - ✅ **Zipline CLI** — Install or upgrade via:
   ```bash
   pip install --upgrade zipline-ai
-- ✅ AWS CLI — authenticated against the public demo AWS account/role
-- ✅ Access to the public demo S3 buckets and Glue catalog
-- ✅Add this to your shell config (e.g., .bashrc, .zshrc):
+  ```
+- ✅ Access to [the public demo](https://try.zipline.ai)
+- ✅ Add this to your shell config (e.g., .bashrc, .zshrc):
 
 ```bash
 # From the same directory as this README
@@ -41,21 +41,12 @@ export PYTHONPATH="$(pwd):$PYTHONPATH"
 ```
 
 ---
-## Requirements
+## Demo Configuration
 
-Teams define metadata, Spark config, and environment variables.
-
-In [teams.py](teams.py), fill in the appropriate values in the TODO section.
-
-Make sure to replace placeholders like `<project-id>` and `<gcs-prefix>` with real values.
-
-### Partition format and column
-Chronon expects tables to be date partitioned. Please specify the partition format and the column in teams.py here:
-
-```python
-            "spark.chronon.partition.format": "<date-format>", # ex: "yyyy-MM-dd",
-            "spark.chronon.partition.column": "<partition-column-name>", # ex: "ds",
-```
+[teams.py](teams.py) already contains the connection settings for the public demo.
+Start with [your first feature](../docs/tutorials/quickstart.md), or follow
+[model iteration and experiment comparison](../docs/tutorials/model-experiment-comparison.md).
+Each tutorial explains the authentication and data access it needs.
 
 ---
 
@@ -68,12 +59,6 @@ zipline compile
 ```
 
 This will create a `compiled` directory.
-
-### Canary environment (optional)
-
-To compile the same configs against a canary deployment, drop a sibling `teams.canary.py` next to `teams.py`. `zipline compile` will run a second pass and produce `compiled_canary/`. Only `canary` is supported as a non-prod env today (the Thrift `Environment` enum models `PROD` and `CANARY` only). Per-entity opt-in to canary is via `environments=['prod', 'canary']` on the `GroupBy`/`Join`/`StagingQuery` — see the [Multi-Environment Compile & Deploy guide](../../../../../../docs/source/running_on_zipline_hub/MultiEnvironment.md) for details.
-
----
 
 ## 🧪 Running a GroupBy or Join Backfill
 
@@ -93,7 +78,7 @@ zipline run \
 --conf compiled/joins/<TEAM_NAME>/<JOIN_NAME>
 ```
 
-Results are written to the configured AWS Glue + Iceberg tables under the `outputNamespace` (e.g. `default.group_by_v1` or `default.v1`).
+Results are written to the output table specified by the config.
 
 ---
 
@@ -106,7 +91,7 @@ zipline run \
 --ds <DATE>
 ```
 
-Results are written to the configured AWS Glue + Iceberg tables under the `outputNamespace` (e.g. `default.group_by_v1` or `default.v1`).
+Results are written to the output table specified by the config.
 
 ---
 
@@ -173,4 +158,4 @@ zipline run \
 
 ## 👋 About
 
-This project is a reference scaffold for building scalable feature pipelines using Chronon on AWS. It provides end-to-end visibility from source to production features.
+This public demo helps you explore feature pipelines from source data through historical computation, online serving, and model evaluation.

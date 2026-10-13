@@ -1,21 +1,14 @@
 # Demo Data Sources
 
-The demo combines its own live traffic with the public Instacart Online Grocery
-Shopping Dataset 2017. Requests to `https://try.zipline.ai` produce Kubernetes
-ingress and application audit logs, which are shipped to CloudWatch, parsed by
-a scheduled Lambda, and stored in S3. Instacart provides a larger, static
-dataset for feature engineering and model-training examples. No third-party API
-token is required.
+The public demo combines live application activity with the Instacart Online
+Grocery Shopping Dataset 2017. Use application activity to explore online feature
+updates, and the static grocery dataset to build historical features and compare
+model experiments. No third-party dataset API token is required.
 
 ```text
-try.zipline.ai
-  -> Kubernetes ingress and application audit logs
-  -> CloudWatch Logs
-  -> scheduled Lambda -> Iceberg tables for offline computation
-  -> subscription Lambda -> Kinesis for real-time online updates
+Demo activity -> event sources -> online and offline features
+Grocery orders -> staging queries -> history features -> model experiments
 ```
-
-The persistent datasource infrastructure lives in `infrastructure/aws/public-demo-datasources`. It is separate from the Kubernetes platform so weekly platform resets do not erase the demo history.
 
 ## Access Logs
 
@@ -23,32 +16,23 @@ Each row represents one parsed HTTP request.
 
 | Layer | Location |
 | --- | --- |
-| Upstream logs | `/aws/eks/public-demo-eks/containers` in CloudWatch Logs |
-| Raw Glue table | `public_demo_app.ui_access_logs` |
-| Raw S3 prefix | `s3://zipline-public-demo-curated/app/ui_access_logs/` |
 | Zipline-facing table | `public_demo_app.ui_access_logs_iceberg` |
-| Partition | `snapshot_date` in Glue/JSONL; `ds` in Iceberg |
+| Partition | `ds`, a date in `YYYY-MM-DD` format |
 | Zipline source | `configs/sources/app/ui_logs.py` |
-| Online stream | `public-demo-ui-access-events` in Kinesis |
-| Stream schema | `zipline-public-demo/ui-access-event-v1` in Glue Schema Registry |
 
-The ingestor understands standard ingress-nginx access lines and structured `api_request_complete` audit events. It discards log lines that are not HTTP requests.
+Only HTTP request events enter this dataset.
 
-### Columns
+### Columns used by the examples
 
 | Column | Type | Meaning |
 | --- | --- | --- |
-| `event_id` | string | Stable SHA-256 identifier derived from the CloudWatch event and message. |
-| `ingestion_id` | string | UUID shared by rows written in one Lambda invocation. |
+| `event_id` | string | Stable SHA-256 identifier for the source request event. |
+| `ingestion_id` | string | Identifier shared by rows ingested together. |
 | `event_ts` | bigint | Request time in Unix milliseconds; used as event time by Zipline. |
 | `event_time_iso` | string | UTC request time in ISO 8601 form. |
-| `ingested_at` | string | UTC time at which the Lambda processed the request. |
+| `ingested_at` | string | UTC time at which the request was ingested. |
 | `freshness_lag_seconds` | bigint | Seconds between the request and ingestion. |
-| `log_stream` | string | Source CloudWatch log stream. |
-| `namespace` | string | Kubernetes namespace parsed from log metadata. |
-| `pod` | string | Kubernetes pod that emitted the log. |
-| `container` | string | Kubernetes container that emitted the log. |
-| `client_ip` | string | Origin IP recorded by ingress or the structured audit event. |
+| `client_ip` | string | Origin IP recorded for the request. |
 | `user_id` | string | Authenticated Zipline user ID when an audit event provides it; otherwise empty. |
 | `http_method` | string | HTTP method such as `GET`, `POST`, `PUT`, or `DELETE`. |
 | `path` | string | Request path, including its query string when present. |
@@ -71,7 +55,7 @@ Two Zipline event sources select from this table:
 They feed `endpoint_health`, `method_health`, and `client_activity`, plus the `client_request_context` and `user_request_identity` joins.
 
 The `email_access_logs` source selects authenticated requests, consumes the
-same event shape from Kinesis for online updates, and derives the
+same event shape for online updates, and derives the
 same eight-character `email_hash` directly in Spark without selecting the raw
 email into its feature GroupBy. `email_request_activity` computes one-day and
 six-day behavioral features by that privacy-safe key; the
@@ -84,15 +68,13 @@ This entity dataset maps an internal user ID to a short, non-reversible display 
 | Layer | Location |
 | --- | --- |
 | Source events | `user_created`, `authn_login_success`, and `authn_token_created` application logs |
-| Raw Glue table | `public_demo_app.user_identity_snapshots` |
-| Raw S3 prefix | `s3://zipline-public-demo-curated/app/user_identity_snapshots/` |
 | Zipline-facing table | `public_demo_app.app_user_identity_user_identity_snapshots_iceberg__0` |
-| Partition | `snapshot_date` in Glue/JSONL; `ds` in Iceberg |
+| Partition | `ds`, a date in `YYYY-MM-DD` format |
 | Zipline source | `configs/sources/app/user_identity.py` |
 
-The Lambda normalizes the email to lowercase and stores only the first eight hexadecimal characters of its SHA-256 digest. The plain email is not written to this dataset. Eight characters are convenient for the demo but are a pseudonymous label, not a security boundary.
+The demo normalizes the email to lowercase and stores only the first eight hexadecimal characters of its SHA-256 digest. The plain email is not written to this dataset. Eight characters are convenient for the demo but are a pseudonymous label, not a security boundary.
 
-### Columns
+### Columns used by the examples
 
 | Column | Type | Meaning |
 | --- | --- | --- |
@@ -102,8 +84,8 @@ The Lambda normalizes the email to lowercase and stores only the first eight hex
 | `last_seen_ts` | bigint | Latest observed identity event in Unix milliseconds. |
 | `last_seen_time_iso` | string | Latest observed identity event in ISO 8601 form. |
 | `last_event` | string | Most recent supported authentication event name. |
-| `source_event_id` | string | CloudWatch event that last updated the identity. |
-| `ingestion_id` | string | UUID of the Lambda invocation that wrote the snapshot. |
+| `source_event_id` | string | Source event that last updated the identity. |
+| `ingestion_id` | string | Identifier of the batch that wrote the snapshot. |
 | `ingested_at` | string | UTC time at which the snapshot was written. |
 | `snapshot_date` / `ds` | string | Daily snapshot partition in `YYYY-MM-DD` format. |
 
@@ -183,25 +165,17 @@ These are one-time artifacts, not outputs of config compilation. If either is
 missing, Ray fails while preparing its runtime environment with `NoSuchKey`
 before training starts.
 
-## Freshness And Cost
+## Feature Freshness
 
-`ui_logs_freshness_profile` controls how often the Lambda reads CloudWatch and how far it looks back:
+Online activity features update as new events arrive. Offline activity and
+identity data refresh periodically, so their values may lag behind recent demo
+activity. Check `event_ts`, `ingested_at`, and `freshness_lag_seconds` before
+interpreting results or backfilling a recent date.
 
-| Profile | Schedule | Lookback |
-| --- | ---: | ---: |
-| `low_cost` | 30 minutes | 30 minutes |
-| `balanced` | 5 minutes | 5 minutes |
-| `fresh` | 1 minute | 1 minute |
-
-Both offline datasets are produced by the same scheduled invocation, so the
-setting affects access-log and identity freshness together. Authenticated
-access events also flow continuously through Kinesis into
-`email_request_activity`. Comparing that GroupBy's online values with its
-cadence-controlled offline values demonstrates the cost and correctness impact
-of stale batch data. Overlapping lookbacks can produce repeated raw access
-events; `event_id` remains stable so consumers can identify duplicates.
-
-The Iceberg tables are the tables referenced by the demo configs. Their latest `ds` partition must be refreshed from the raw Glue tables before a backfill that requires newly landed dates.
+Compare online and offline values to see how delayed data affects feature
+correctness. Repeated source events can share the same `event_id`; use that stable
+identifier when checking for duplicates. The Instacart dataset is a fixed
+snapshot and does not receive live updates.
 
 ## Featurestore.org Taxi Benchmark
 

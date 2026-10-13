@@ -7,7 +7,7 @@ used for historical computation and online serving.
 ## 1. Create Some Activity
 
 Sign in to [try.zipline.ai](https://try.zipline.ai) with Google and visit a few
-pages. The demo converts its Kubernetes access and authentication logs into
+pages. The demo converts application activity and sign-in events into
 privacy-safe feature data. It stores an eight-character SHA-256 prefix of your
 normalized email rather than your email address.
 
@@ -63,7 +63,7 @@ Open `app.email_activity_profile.email_activity_profile` in the Zipline UI.
 Its lineage is deliberately small:
 
 ```text
-Kubernetes authentication logs
+Application sign-in events
         |
         v
 privacy-safe identity snapshots
