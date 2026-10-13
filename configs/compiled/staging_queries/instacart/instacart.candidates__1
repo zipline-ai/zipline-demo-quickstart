@@ -12,6 +12,8 @@
           "spark.chronon.table_write.upload.format": "ion",
           "spark.chronon.table_write.upload.location": "s3://zipline-public-demo-warehouse/data/ion_uploads/",
           "spark.default.parallelism": "4",
+          "spark.driver.memory": "4g",
+          "spark.driver.memoryOverhead": "1g",
           "spark.hadoop.hive.metastore.client.factory.class": "com.amazonaws.glue.catalog.metastore.AWSGlueDataCatalogHiveClientFactory",
           "spark.scheduler.maxRegisteredResourcesWaitingTime": "120s",
           "spark.sql.catalog.spark_catalog": "org.apache.iceberg.spark.SparkSessionCatalog",

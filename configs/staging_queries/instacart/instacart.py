@@ -173,7 +173,12 @@ WHERE u.ds BETWEEN {{{{ start_date }}}} AND {{{{ end_date }}}}
 """,
     output_namespace="public_demo_data",
     engine_type=EngineType.SPARK,
-    conf=ConfigProperties(common={"spark.sql.session.timeZone": "UTC"}),
+    conf=ConfigProperties(common={
+        "spark.sql.session.timeZone": "UTC",
+        # Leave room for post-job reporting after the full candidate set is written.
+        "spark.driver.memory": "4g",
+        "spark.driver.memoryOverhead": "1g",
+    }),
     offline_schedule="@never",
     dependencies=[
         TableDependency(table=orders.table, partition_column="ds", start_offset=0, end_offset=0),
