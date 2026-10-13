@@ -11,6 +11,9 @@ from ai.chronon.types import ConfigProperties, EngineType, StagingQuery, TableDe
 
 _PARQUET = "s3://zipline-public-demo-curated/kaggle_instacart/iceberg"
 
+# These immutable files have no dated partitions for Hub to wait on. As in the
+# canary, declare only dependencies on staged tables, not the raw Parquet paths.
+
 # Fixed tutorial calendar; the seven label partitions end on this date.
 _ANCHOR = "2026-08-24"
 
@@ -68,7 +71,7 @@ JOIN spans p ON s.user_id = p.user_id
     engine_type=EngineType.SPARK,
     conf=ConfigProperties(common={"spark.sql.session.timeZone": "UTC"}),
     offline_schedule="@never",
-    dependencies=[TableDependency(table=f"parquet.`{_PARQUET}/orders/data/`", time_partitioned=False)],
+    dependencies=[],
     step_days=3650,
     version=1,
 )
@@ -87,7 +90,7 @@ FROM parquet.`{_PARQUET}/products/data/`
     engine_type=EngineType.SPARK,
     conf=ConfigProperties(common={"spark.sql.session.timeZone": "UTC"}),
     offline_schedule="@never",
-    dependencies=[TableDependency(table=f"parquet.`{_PARQUET}/products/data/`", time_partitioned=False)],
+    dependencies=[],
     version=1,
 )
 
@@ -126,7 +129,6 @@ WHERE o.eval_set = 'prior'
     conf=ConfigProperties(common={"spark.sql.session.timeZone": "UTC"}),
     offline_schedule="@never",
     dependencies=[
-        TableDependency(table=f"parquet.`{_PARQUET}/order_products_prior/data/`", time_partitioned=False),
         TableDependency(table=orders.table, partition_column="ds", start_offset=0, end_offset=0),
     ],
     step_days=400,
@@ -175,9 +177,6 @@ WHERE u.ds BETWEEN {{{{ start_date }}}} AND {{{{ end_date }}}}
     offline_schedule="@never",
     dependencies=[
         TableDependency(table=orders.table, partition_column="ds", start_offset=0, end_offset=0),
-        TableDependency(table=f"parquet.`{_PARQUET}/orders/data/`", time_partitioned=False),
-        TableDependency(table=f"parquet.`{_PARQUET}/order_products_prior/data/`", time_partitioned=False),
-        TableDependency(table=f"parquet.`{_PARQUET}/order_products_train/data/`", time_partitioned=False),
     ],
     step_days=400,
     version=1,

@@ -93,24 +93,5 @@
     "version": "1"
   },
   "query": "\nSELECT\n    product_id,\n    product_name,\n    aisle_id,\n    department_id,\n    DATE_FORMAT(DATE('2026-08-24'), 'yyyy-MM-dd') AS ds\nFROM parquet.`s3://zipline-public-demo-curated/kaggle_instacart/iceberg/products/data/`\n",
-  "tableDependencies": [
-    {
-      "endOffset": {
-        "length": 0,
-        "timeUnit": 1
-      },
-      "startOffset": {
-        "length": 0,
-        "timeUnit": 1
-      },
-      "tableInfo": {
-        "partitionInterval": {
-          "length": 1,
-          "timeUnit": 1
-        },
-        "table": "parquet.`s3://zipline-public-demo-curated/kaggle_instacart/iceberg/products/data/`",
-        "timePartitioned": 0
-      }
-    }
-  ]
+  "tableDependencies": []
 }

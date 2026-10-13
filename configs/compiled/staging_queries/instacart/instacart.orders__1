@@ -94,24 +94,5 @@
     "version": "1"
   },
   "query": "\nWITH raw AS (\n    SELECT\n        order_id,\n        user_id,\n        eval_set,\n        order_number,\n        order_dow,\n        order_hour_of_day,\n        COALESCE(days_since_prior_order, 0) AS days_since_prior_order\n    FROM parquet.`s3://zipline-public-demo-curated/kaggle_instacart/iceberg/orders/data/`\n),\nsequenced AS (\n    SELECT\n        *,\n        SUM(days_since_prior_order) OVER (\n            PARTITION BY user_id ORDER BY order_number\n            ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW\n        ) AS days_from_first\n    FROM raw\n),\nspans AS (\n    SELECT user_id, MAX(days_from_first) AS total_days FROM sequenced GROUP BY user_id\n)\nSELECT\n    s.order_id,\n    s.user_id,\n    s.eval_set,\n    s.order_number,\n    s.order_dow,\n    s.order_hour_of_day,\n    s.days_since_prior_order,\n    DATE_FORMAT(\n        DATE_SUB(\n            DATE('2026-08-24'),\n            CAST(p.total_days - s.days_from_first\n                 + PMOD(s.user_id, 7) AS INT)\n        ),\n        'yyyy-MM-dd'\n    ) AS ds\nFROM sequenced s\nJOIN spans p ON s.user_id = p.user_id\n",
-  "tableDependencies": [
-    {
-      "endOffset": {
-        "length": 0,
-        "timeUnit": 1
-      },
-      "startOffset": {
-        "length": 0,
-        "timeUnit": 1
-      },
-      "tableInfo": {
-        "partitionInterval": {
-          "length": 1,
-          "timeUnit": 1
-        },
-        "table": "parquet.`s3://zipline-public-demo-curated/kaggle_instacart/iceberg/orders/data/`",
-        "timePartitioned": 0
-      }
-    }
-  ]
+  "tableDependencies": []
 }

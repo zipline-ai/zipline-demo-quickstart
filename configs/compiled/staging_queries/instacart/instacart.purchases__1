@@ -105,24 +105,6 @@
         "timeUnit": 1
       },
       "tableInfo": {
-        "partitionInterval": {
-          "length": 1,
-          "timeUnit": 1
-        },
-        "table": "parquet.`s3://zipline-public-demo-curated/kaggle_instacart/iceberg/order_products_prior/data/`",
-        "timePartitioned": 0
-      }
-    },
-    {
-      "endOffset": {
-        "length": 0,
-        "timeUnit": 1
-      },
-      "startOffset": {
-        "length": 0,
-        "timeUnit": 1
-      },
-      "tableInfo": {
         "partitionColumn": "ds",
         "partitionInterval": {
           "length": 1,
