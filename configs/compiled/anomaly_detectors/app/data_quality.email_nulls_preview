@@ -1,0 +1,102 @@
+{
+  "detector": {
+    "algorithm": "prophet",
+    "forecastHorizonDays": 7,
+    "intervalWidth": 0.99,
+    "lookbackDays": 1095,
+    "minHistoryDays": 28,
+    "name": "nulls_alert_budget"
+  },
+  "enabled": 1,
+  "metaData": {
+    "executionInfo": {
+      "offlineSchedule": "@daily"
+    },
+    "name": "app.data_quality.email_nulls_preview",
+    "outputNamespace": "public_demo_data",
+    "sourceFile": "anomaly_detectors/app/data_quality.py",
+    "team": "app"
+  },
+  "metrics": [
+    {
+      "alertPolicy": {
+        "minAbsoluteChange": 0.05,
+        "minCalibrationPoints": 365,
+        "minRelativeChange": 0.25,
+        "targetAlertRate": 0.0027397260273972603,
+        "validationPoints": 365
+      },
+      "column": "email_hash",
+      "name": "null_rate"
+    },
+    {
+      "alertPolicy": {
+        "minAbsoluteChange": 0.05,
+        "minCalibrationPoints": 365,
+        "minRelativeChange": 0.25,
+        "targetAlertRate": 0.0027397260273972603,
+        "validationPoints": 365
+      },
+      "column": "first_seen_ts",
+      "name": "null_rate"
+    },
+    {
+      "alertPolicy": {
+        "minAbsoluteChange": 0.05,
+        "minCalibrationPoints": 365,
+        "minRelativeChange": 0.25,
+        "targetAlertRate": 0.0027397260273972603,
+        "validationPoints": 365
+      },
+      "column": "is_returning_user",
+      "name": "null_rate"
+    },
+    {
+      "alertPolicy": {
+        "minAbsoluteChange": 0.05,
+        "minCalibrationPoints": 365,
+        "minRelativeChange": 0.25,
+        "targetAlertRate": 0.0027397260273972603,
+        "validationPoints": 365
+      },
+      "column": "last_event",
+      "name": "null_rate"
+    },
+    {
+      "alertPolicy": {
+        "minAbsoluteChange": 0.05,
+        "minCalibrationPoints": 365,
+        "minRelativeChange": 0.25,
+        "targetAlertRate": 0.0027397260273972603,
+        "validationPoints": 365
+      },
+      "column": "last_seen_time_iso",
+      "name": "null_rate"
+    },
+    {
+      "alertPolicy": {
+        "minAbsoluteChange": 0.05,
+        "minCalibrationPoints": 365,
+        "minRelativeChange": 0.25,
+        "targetAlertRate": 0.0027397260273972603,
+        "validationPoints": 365
+      },
+      "column": "last_seen_ts",
+      "name": "null_rate"
+    },
+    {
+      "alertPolicy": {
+        "minAbsoluteChange": 0.05,
+        "minCalibrationPoints": 365,
+        "minRelativeChange": 0.25,
+        "targetAlertRate": 0.0027397260273972603,
+        "validationPoints": 365
+      },
+      "column": "user_id_suffix",
+      "name": "null_rate"
+    }
+  ],
+  "targets": [
+    "joins/app/email_activity_profile.email_activity_profile__2"
+  ]
+}

@@ -1,0 +1,410 @@
+{
+  "detector": {
+    "algorithm": "prophet",
+    "forecastHorizonDays": 7,
+    "intervalWidth": 0.99,
+    "lookbackDays": 1095,
+    "minHistoryDays": 28,
+    "name": "nulls_alert_budget"
+  },
+  "enabled": 1,
+  "metaData": {
+    "executionInfo": {
+      "offlineSchedule": "@daily"
+    },
+    "name": "app.data_quality.client_nulls_preview",
+    "outputNamespace": "public_demo_data",
+    "sourceFile": "anomaly_detectors/app/data_quality.py",
+    "team": "app"
+  },
+  "metrics": [
+    {
+      "alertPolicy": {
+        "minAbsoluteChange": 0.05,
+        "minCalibrationPoints": 365,
+        "minRelativeChange": 0.25,
+        "targetAlertRate": 0.0027397260273972603,
+        "validationPoints": 365
+      },
+      "column": "actor_id",
+      "name": "null_rate"
+    },
+    {
+      "alertPolicy": {
+        "minAbsoluteChange": 0.05,
+        "minCalibrationPoints": 365,
+        "minRelativeChange": 0.25,
+        "targetAlertRate": 0.0027397260273972603,
+        "validationPoints": 365
+      },
+      "column": "client_error_event",
+      "name": "null_rate"
+    },
+    {
+      "alertPolicy": {
+        "minAbsoluteChange": 0.05,
+        "minCalibrationPoints": 365,
+        "minRelativeChange": 0.25,
+        "targetAlertRate": 0.0027397260273972603,
+        "validationPoints": 365
+      },
+      "column": "client_ip",
+      "name": "null_rate"
+    },
+    {
+      "alertPolicy": {
+        "minAbsoluteChange": 0.05,
+        "minCalibrationPoints": 365,
+        "minRelativeChange": 0.25,
+        "targetAlertRate": 0.0027397260273972603,
+        "validationPoints": 365
+      },
+      "column": "client_ip_client_error_event_sum_1d",
+      "name": "null_rate"
+    },
+    {
+      "alertPolicy": {
+        "minAbsoluteChange": 0.05,
+        "minCalibrationPoints": 365,
+        "minRelativeChange": 0.25,
+        "targetAlertRate": 0.0027397260273972603,
+        "validationPoints": 365
+      },
+      "column": "client_ip_freshness_lag_seconds_last",
+      "name": "null_rate"
+    },
+    {
+      "alertPolicy": {
+        "minAbsoluteChange": 0.05,
+        "minCalibrationPoints": 365,
+        "minRelativeChange": 0.25,
+        "targetAlertRate": 0.0027397260273972603,
+        "validationPoints": 365
+      },
+      "column": "client_ip_request_count_sum_1d",
+      "name": "null_rate"
+    },
+    {
+      "alertPolicy": {
+        "minAbsoluteChange": 0.05,
+        "minCalibrationPoints": 365,
+        "minRelativeChange": 0.25,
+        "targetAlertRate": 0.0027397260273972603,
+        "validationPoints": 365
+      },
+      "column": "client_ip_request_time_seconds_average_1d",
+      "name": "null_rate"
+    },
+    {
+      "alertPolicy": {
+        "minAbsoluteChange": 0.05,
+        "minCalibrationPoints": 365,
+        "minRelativeChange": 0.25,
+        "targetAlertRate": 0.0027397260273972603,
+        "validationPoints": 365
+      },
+      "column": "client_ip_server_error_event_sum_1d",
+      "name": "null_rate"
+    },
+    {
+      "alertPolicy": {
+        "minAbsoluteChange": 0.05,
+        "minCalibrationPoints": 365,
+        "minRelativeChange": 0.25,
+        "targetAlertRate": 0.0027397260273972603,
+        "validationPoints": 365
+      },
+      "column": "client_ip_success_event_sum_1d",
+      "name": "null_rate"
+    },
+    {
+      "alertPolicy": {
+        "minAbsoluteChange": 0.05,
+        "minCalibrationPoints": 365,
+        "minRelativeChange": 0.25,
+        "targetAlertRate": 0.0027397260273972603,
+        "validationPoints": 365
+      },
+      "column": "client_ip_write_event_sum_1d",
+      "name": "null_rate"
+    },
+    {
+      "alertPolicy": {
+        "minAbsoluteChange": 0.05,
+        "minCalibrationPoints": 365,
+        "minRelativeChange": 0.25,
+        "targetAlertRate": 0.0027397260273972603,
+        "validationPoints": 365
+      },
+      "column": "error_event",
+      "name": "null_rate"
+    },
+    {
+      "alertPolicy": {
+        "minAbsoluteChange": 0.05,
+        "minCalibrationPoints": 365,
+        "minRelativeChange": 0.25,
+        "targetAlertRate": 0.0027397260273972603,
+        "validationPoints": 365
+      },
+      "column": "event_id",
+      "name": "null_rate"
+    },
+    {
+      "alertPolicy": {
+        "minAbsoluteChange": 0.05,
+        "minCalibrationPoints": 365,
+        "minRelativeChange": 0.25,
+        "targetAlertRate": 0.0027397260273972603,
+        "validationPoints": 365
+      },
+      "column": "freshness_lag_seconds",
+      "name": "null_rate"
+    },
+    {
+      "alertPolicy": {
+        "minAbsoluteChange": 0.05,
+        "minCalibrationPoints": 365,
+        "minRelativeChange": 0.25,
+        "targetAlertRate": 0.0027397260273972603,
+        "validationPoints": 365
+      },
+      "column": "freshness_risk",
+      "name": "null_rate"
+    },
+    {
+      "alertPolicy": {
+        "minAbsoluteChange": 0.05,
+        "minCalibrationPoints": 365,
+        "minRelativeChange": 0.25,
+        "targetAlertRate": 0.0027397260273972603,
+        "validationPoints": 365
+      },
+      "column": "http_method",
+      "name": "null_rate"
+    },
+    {
+      "alertPolicy": {
+        "minAbsoluteChange": 0.05,
+        "minCalibrationPoints": 365,
+        "minRelativeChange": 0.25,
+        "targetAlertRate": 0.0027397260273972603,
+        "validationPoints": 365
+      },
+      "column": "path",
+      "name": "null_rate"
+    },
+    {
+      "alertPolicy": {
+        "minAbsoluteChange": 0.05,
+        "minCalibrationPoints": 365,
+        "minRelativeChange": 0.25,
+        "targetAlertRate": 0.0027397260273972603,
+        "validationPoints": 365
+      },
+      "column": "request_count",
+      "name": "null_rate"
+    },
+    {
+      "alertPolicy": {
+        "minAbsoluteChange": 0.05,
+        "minCalibrationPoints": 365,
+        "minRelativeChange": 0.25,
+        "targetAlertRate": 0.0027397260273972603,
+        "validationPoints": 365
+      },
+      "column": "request_time_seconds",
+      "name": "null_rate"
+    },
+    {
+      "alertPolicy": {
+        "minAbsoluteChange": 0.05,
+        "minCalibrationPoints": 365,
+        "minRelativeChange": 0.25,
+        "targetAlertRate": 0.0027397260273972603,
+        "validationPoints": 365
+      },
+      "column": "route_family",
+      "name": "null_rate"
+    },
+    {
+      "alertPolicy": {
+        "minAbsoluteChange": 0.05,
+        "minCalibrationPoints": 365,
+        "minRelativeChange": 0.25,
+        "targetAlertRate": 0.0027397260273972603,
+        "validationPoints": 365
+      },
+      "column": "route_family_client_error_event_sum_1d",
+      "name": "null_rate"
+    },
+    {
+      "alertPolicy": {
+        "minAbsoluteChange": 0.05,
+        "minCalibrationPoints": 365,
+        "minRelativeChange": 0.25,
+        "targetAlertRate": 0.0027397260273972603,
+        "validationPoints": 365
+      },
+      "column": "route_family_freshness_lag_seconds_last",
+      "name": "null_rate"
+    },
+    {
+      "alertPolicy": {
+        "minAbsoluteChange": 0.05,
+        "minCalibrationPoints": 365,
+        "minRelativeChange": 0.25,
+        "targetAlertRate": 0.0027397260273972603,
+        "validationPoints": 365
+      },
+      "column": "route_family_freshness_lag_seconds_max_1d",
+      "name": "null_rate"
+    },
+    {
+      "alertPolicy": {
+        "minAbsoluteChange": 0.05,
+        "minCalibrationPoints": 365,
+        "minRelativeChange": 0.25,
+        "targetAlertRate": 0.0027397260273972603,
+        "validationPoints": 365
+      },
+      "column": "route_family_not_found_event_sum_1d",
+      "name": "null_rate"
+    },
+    {
+      "alertPolicy": {
+        "minAbsoluteChange": 0.05,
+        "minCalibrationPoints": 365,
+        "minRelativeChange": 0.25,
+        "targetAlertRate": 0.0027397260273972603,
+        "validationPoints": 365
+      },
+      "column": "route_family_request_count_sum_1d",
+      "name": "null_rate"
+    },
+    {
+      "alertPolicy": {
+        "minAbsoluteChange": 0.05,
+        "minCalibrationPoints": 365,
+        "minRelativeChange": 0.25,
+        "targetAlertRate": 0.0027397260273972603,
+        "validationPoints": 365
+      },
+      "column": "route_family_request_time_seconds_average_1d",
+      "name": "null_rate"
+    },
+    {
+      "alertPolicy": {
+        "minAbsoluteChange": 0.05,
+        "minCalibrationPoints": 365,
+        "minRelativeChange": 0.25,
+        "targetAlertRate": 0.0027397260273972603,
+        "validationPoints": 365
+      },
+      "column": "route_family_request_time_seconds_max_1d",
+      "name": "null_rate"
+    },
+    {
+      "alertPolicy": {
+        "minAbsoluteChange": 0.05,
+        "minCalibrationPoints": 365,
+        "minRelativeChange": 0.25,
+        "targetAlertRate": 0.0027397260273972603,
+        "validationPoints": 365
+      },
+      "column": "route_family_server_error_event_sum_1d",
+      "name": "null_rate"
+    },
+    {
+      "alertPolicy": {
+        "minAbsoluteChange": 0.05,
+        "minCalibrationPoints": 365,
+        "minRelativeChange": 0.25,
+        "targetAlertRate": 0.0027397260273972603,
+        "validationPoints": 365
+      },
+      "column": "route_family_success_event_sum_1d",
+      "name": "null_rate"
+    },
+    {
+      "alertPolicy": {
+        "minAbsoluteChange": 0.05,
+        "minCalibrationPoints": 365,
+        "minRelativeChange": 0.25,
+        "targetAlertRate": 0.0027397260273972603,
+        "validationPoints": 365
+      },
+      "column": "route_family_write_event_sum_1d",
+      "name": "null_rate"
+    },
+    {
+      "alertPolicy": {
+        "minAbsoluteChange": 0.05,
+        "minCalibrationPoints": 365,
+        "minRelativeChange": 0.25,
+        "targetAlertRate": 0.0027397260273972603,
+        "validationPoints": 365
+      },
+      "column": "server_error_event",
+      "name": "null_rate"
+    },
+    {
+      "alertPolicy": {
+        "minAbsoluteChange": 0.05,
+        "minCalibrationPoints": 365,
+        "minRelativeChange": 0.25,
+        "targetAlertRate": 0.0027397260273972603,
+        "validationPoints": 365
+      },
+      "column": "success_event",
+      "name": "null_rate"
+    },
+    {
+      "alertPolicy": {
+        "minAbsoluteChange": 0.05,
+        "minCalibrationPoints": 365,
+        "minRelativeChange": 0.25,
+        "targetAlertRate": 0.0027397260273972603,
+        "validationPoints": 365
+      },
+      "column": "ts",
+      "name": "null_rate"
+    },
+    {
+      "alertPolicy": {
+        "minAbsoluteChange": 0.05,
+        "minCalibrationPoints": 365,
+        "minRelativeChange": 0.25,
+        "targetAlertRate": 0.0027397260273972603,
+        "validationPoints": 365
+      },
+      "column": "user_agent",
+      "name": "null_rate"
+    },
+    {
+      "alertPolicy": {
+        "minAbsoluteChange": 0.05,
+        "minCalibrationPoints": 365,
+        "minRelativeChange": 0.25,
+        "targetAlertRate": 0.0027397260273972603,
+        "validationPoints": 365
+      },
+      "column": "user_id",
+      "name": "null_rate"
+    },
+    {
+      "alertPolicy": {
+        "minAbsoluteChange": 0.05,
+        "minCalibrationPoints": 365,
+        "minRelativeChange": 0.25,
+        "targetAlertRate": 0.0027397260273972603,
+        "validationPoints": 365
+      },
+      "column": "write_event",
+      "name": "null_rate"
+    }
+  ],
+  "targets": [
+    "joins/app/client_request_context.client_request_context__3"
+  ]
+}

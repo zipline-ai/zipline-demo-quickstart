@@ -1,0 +1,37 @@
+{
+  "detector": {
+    "algorithm": "prophet",
+    "forecastHorizonDays": 7,
+    "intervalWidth": 0.95,
+    "lookbackDays": 1095,
+    "minHistoryDays": 28,
+    "name": "volume_alert_budget"
+  },
+  "enabled": 1,
+  "metaData": {
+    "executionInfo": {
+      "offlineSchedule": "@daily"
+    },
+    "name": "app.data_quality.sporadic_volume_preview",
+    "outputNamespace": "public_demo_data",
+    "sourceFile": "anomaly_detectors/app/data_quality.py",
+    "team": "app"
+  },
+  "metrics": [
+    {
+      "alertPolicy": {
+        "minAbsoluteChange": 100,
+        "minCalibrationPoints": 365,
+        "minRelativeChange": 0.25,
+        "targetAlertRate": 0.0027397260273972603,
+        "validationPoints": 365
+      },
+      "name": "row_count"
+    }
+  ],
+  "targets": [
+    "joins/app/client_request_context.client_request_context__3",
+    "joins/app/email_activity_profile.email_activity_profile__2",
+    "joins/app/user_request_identity.user_request_identity__9"
+  ]
+}
