@@ -70,3 +70,9 @@ app = Team(
         },
     ),
 )
+
+instacart = Team(
+    description="Static Instacart next-basket prediction tutorial",
+    email="demo@zipline.ai",
+    outputNamespace="public_demo_data",
+)

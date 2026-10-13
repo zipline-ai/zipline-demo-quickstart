@@ -161,6 +161,28 @@ s3://zipline-public-demo-curated/kaggle_instacart/iceberg/order_products_train/d
 s3://zipline-public-demo-curated/kaggle_instacart/iceberg/products/data/
 ```
 
+### Trainer Artifacts
+
+The Ray trainer code is packaged separately from the compiled Zipline model
+configuration. For each model, Ray downloads this name-scoped object:
+
+```text
+<model_artifact_base_uri>/builds/<model_name>-<version>.zip
+```
+
+The demo uses `s3://zipline-public-demo-artifacts` as
+`model_artifact_base_uri` and trainer version `19ca8c1c152c`. Both model names
+therefore require an archive, even though the bytes are identical:
+
+```text
+s3://zipline-public-demo-artifacts/builds/instacart_basket_baseline-19ca8c1c152c.zip
+s3://zipline-public-demo-artifacts/builds/instacart_basket_model-19ca8c1c152c.zip
+```
+
+These are one-time artifacts, not outputs of config compilation. If either is
+missing, Ray fails while preparing its runtime environment with `NoSuchKey`
+before training starts.
+
 ## Freshness And Cost
 
 `ui_logs_freshness_profile` controls how often the Lambda reads CloudWatch and how far it looks back:
