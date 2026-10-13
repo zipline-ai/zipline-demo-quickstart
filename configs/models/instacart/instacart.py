@@ -90,7 +90,8 @@ def _variant(model_name, features):
                 "num-boost-round": "100",
                 # The final partition holds out whole shoppers via the staging hash.
                 "eval-days": "1",
-                "thresholds": "validation_auc>=0.70",
+                # The trainer's word form is safe for Crucible's entrypoint validation.
+                "thresholds": "validation_auc:ge:0.70",
             },
         ),
     )
