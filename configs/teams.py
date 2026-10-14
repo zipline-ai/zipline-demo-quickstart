@@ -56,6 +56,10 @@ app = Team(
     description="Public demo UI and Hub access-log features",
     email="demo@zipline.ai",
     outputNamespace="public_demo_data",
+    # Redis bulk uploads read catalog-backed tables, rather than DynamoDB Ion files.
+    conf=ConfigProperties(
+        common={"spark.chronon.table_write.upload.format": "parquet"},
+    ),
     env=EnvironmentVariables(
         common={
             "FRONTEND_URL": PUBLIC_DEMO_NLB,
