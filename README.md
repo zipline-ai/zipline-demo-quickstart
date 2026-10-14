@@ -7,6 +7,9 @@ New here? Start with [your first Zipline feature in five minutes](docs/tutorials
 
 For follow-up exercises, see the other [tutorials](docs/tutorials/).
 
+Explore [advanced feature stats in five minutes](docs/tutorials/advanced-feature-stats.md):
+enable Stats Compute and inspect feature distributions.
+
 For model training, follow [compare two models in a trial](docs/tutorials/model-experiment-comparison.md)
 to track the two prepared models in a trial and compare measured results.
 
