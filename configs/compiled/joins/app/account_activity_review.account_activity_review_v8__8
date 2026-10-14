@@ -632,7 +632,6 @@
         }
       },
       "offlineSchedule": "@daily",
-      "onlineSchedule": "@daily",
       "stepDays": 14
     },
     "name": "app.account_activity_review.account_activity_review_v8__8",

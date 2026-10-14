@@ -92,6 +92,7 @@ account_activity_review_v8 = Join(
     ],
     derivations=account_activity_review.derivations,
     online=True,
+    online_schedule="@never",
     check_consistency=True,
     consistency_sample_percent=100.0,
     enable_stats_compute=True,
