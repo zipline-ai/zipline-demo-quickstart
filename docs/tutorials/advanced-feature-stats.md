@@ -93,7 +93,6 @@ schedule. Use a fresh variable name and version if v2 is already in use, and
 adjust the compiled path and metrics link accordingly.
 
 **Operator check:** rehearse the enabled variant and confirm its feature tables
-load before teaching. On October 14, the demo's Stats Compute job succeeded but
-wrote to `ENHANCED_STATS`, while the fetcher used `PUBLIC_DEMO_ENHANCED_STATS`.
-The operator must align the writer/reader table prefix before the final metrics
-step will work. A successful compute job alone does not verify this integration.
+load before teaching. Confirm both the Iceberg charts and advanced statistics
+for the selected date; a successful compute job alone does not verify the full
+integration.
