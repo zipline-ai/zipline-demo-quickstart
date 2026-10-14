@@ -7,8 +7,8 @@ New here? Start with [your first Zipline feature in five minutes](docs/tutorials
 
 For follow-up exercises, see the other [tutorials](docs/tutorials/).
 
-For model training, follow [iterate on a model and compare experiments](docs/tutorials/model-experiment-comparison.md)
-to create a variant, track its training in a trial, and compare measured results.
+For model training, follow [compare two models in a trial](docs/tutorials/model-experiment-comparison.md)
+to track the two prepared models in a trial and compare measured results.
 
 Coding agents can use the repository-local
 [Zipline demo skill](.agents/skills/zipline-demo/SKILL.md) to discover the data,

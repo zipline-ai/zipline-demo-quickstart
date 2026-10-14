@@ -4,6 +4,14 @@ In this tutorial, you will fetch features built from your own activity on the
 Zipline demo, inspect how Zipline produced them, and see the same definition
 used for historical computation and online serving.
 
+Using a coding assistant? Optionally install the Zipline agent skill:
+
+```bash
+zipline init-agent
+```
+
+Choose your assistant when prompted, then ask it to help you through this tutorial.
+
 ## 1. Create Some Activity
 
 Sign in to [try.zipline.ai](https://try.zipline.ai) with Google and visit a few

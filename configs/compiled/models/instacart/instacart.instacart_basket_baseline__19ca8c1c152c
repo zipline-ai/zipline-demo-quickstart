@@ -114,7 +114,7 @@
       "num-boost-round": "100",
       "partition-column": "ds",
       "seed": "42",
-      "thresholds": "validation_auc>=0.70"
+      "thresholds": "validation_auc:ge:0.70"
     },
     "pythonModule": "trainer.train",
     "resourceConfig": {
