@@ -1,6 +1,6 @@
 # Instacart next-basket tutorial configs
 
-Follow [compare model experiments with tracked metrics](tutorials/model-experiment-comparison.md)
+Follow [compare two models in a trial](tutorials/model-experiment-comparison.md)
 to compare the two available models in the trials view. A Zipline employee will be
 happy to help upload another model on request; customers do not need S3 copy or
 upload permissions.
