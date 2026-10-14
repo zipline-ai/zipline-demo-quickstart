@@ -1,222 +1,186 @@
-# Iterate on a model and compare experiments
+# Compare model experiments with tracked metrics
 
-This tutorial takes the existing next-basket model through one experiment:
-**does increasing tree depth from 6 to 8 improve validation AUC and logloss?**
-The features, trainer bytes, seed, and training dates stay fixed, so the comparison
-isolates tree depth. Adding longer history is a separate experiment described below.
+This tutorial compares two models already available in the public demo to answer:
+**does adding shopper-product history improve next-basket prediction?** You will
+record both experiments in one trial, run them, and compare their measured
+validation AUC and logloss.
 
-Complete the [Instacart pipeline setup](../instacart.md) first. The static Parquet
-inputs and original trainer bundles are already in the demo buckets; the training
-Join must also be materialized for **2026-08-18 through 2026-08-24**. You need the
-Zipline CLI, AWS access to copy trainer archives, and permission to push your branch.
+| Available model | Full model config name |
+| --- | --- |
+| Product popularity and overall shopper behavior | `instacart.instacart.instacart_basket_baseline__19ca8c1c152c` |
+| The same features plus shopper-product history and ratios | `instacart.instacart.instacart_basket_model__19ca8c1c152c` |
 
-## 1. Create a branch and configure hosted authentication
+Both models and their trainer bundles are already prepared. You do not need S3
+copy or upload permissions for this tutorial. If you would like to try another
+model, a Zipline employee will be happy to help upload it on request.
 
-Start from the repository root with the existing Instacart setup committed and
-pushed. Choose your own branch prefix if desired:
+Complete the [pipeline setup](../instacart.md) first, or confirm it has already
+been completed for your demo. The training Join must be materialized for
+**2026-08-18 through 2026-08-24**. You need the Zipline CLI and a demo login.
+
+## 1. Configure hosted authentication
+
+Start from a clean, pushed checkout of this repository:
 
 ```bash
-git checkout -b codex/instacart-deeper
 cd configs
 export ZIPLINE_AUTH_URL=https://try.zipline.ai
-export INSTACART_HUB_URL=https://try.zipline.ai/services/hub
 ```
 
 Set `ZIPLINE_TOKEN` to your hosted-demo token using your shell's secret-loading
 mechanism. Keep it out of committed files and command output. `ZIPLINE_AUTH_URL`
-is the frontend URL, not the Hub service path. Missing or expired authentication
-can send requests to the login page instead of returning API results.
+is the frontend URL, not the Hub service path.
 
-All remaining shell commands run from `configs/` in this same shell. Define a
-helper so **every trial command** carries `--cloud aws`, the demo customer, and
-the production environment used by `compiled/`:
+All remaining shell commands run from `configs/` in this same shell. The checked-in
+team configuration supplies the demo Hub URL, AWS provider, and customer; the CLI
+uses the `prod` environment by default. No `--hub-url` or `--cloud` arguments are
+needed for this repository. Remove any environment overrides pointing at another
+deployment before continuing.
 
-```bash
-trial_cmd() {
-  zipline hub trial "$@" --cloud aws --customer-id public-demo --env prod \
-    --hub-url "$INSTACART_HUB_URL"
-}
-```
-
-## 2. Start or resume the trial before making changes
+## 2. Start or resume a trial
 
 Look for prior attempts first:
 
 ```bash
-trial_cmd journal list --run-name instacart-iteration --format json
-trial_cmd list --run-name instacart-iteration --format json
+zipline hub trial journal list --run-name instacart-next-basket --format json
+zipline hub trial list --run-name instacart-next-basket --format json
 ```
 
-Use `trial_cmd show <trial-id>` to inspect an existing attempt. To continue it,
-reuse its ID; calling `start` again creates a new attempt even with the same name.
-For a new attempt:
+Use `zipline hub trial show <trial-id>` to inspect an existing attempt. To continue
+it, reuse its ID; calling `start` again creates a new attempt even with the same
+name. For a new attempt:
 
 ```bash
-trial_cmd start instacart-iteration \
-  --task 'Does max-depth 8 improve next-basket prediction over max-depth 6?' \
+zipline hub trial start instacart-next-basket \
+  --task 'Does shopper-product history improve next-basket prediction?' \
   --model instacart.instacart.instacart_basket_model__19ca8c1c152c --format json
 export ZIPLINE_TRIAL_ID='<returned-or-resumed-trial-id>'
 ```
 
-A fresh trial does not automatically contain experiments from another trial.
-The following steps train a control and a candidate in this trial, so both appear
-in its comparison. If resuming a trial that already has a completed depth-6
-history model and attached metrics for the same data and trainer, you can skip
-the new control and add only the candidate. The popularity-only model is a
-different baseline; comparing against it would change both features and depth.
+A fresh trial does not automatically contain experiments from another trial. The
+following steps record both available models in the selected trial. If resuming,
+use `zipline hub trial experiments list "$ZIPLINE_TRIAL_ID" --format json` to check
+which experiments already have completed runs and attached reports; skip those
+steps rather than starting duplicate runs.
 
-## 3. Add uniquely named variants
+Use the **full model config name** from the table above for `--model` and
+`--model-conf-name`, including the team, module, and `__version` suffix. An
+experiment ID such as `baseline` is a label within the trial. The short name
+`instacart_basket_baseline` is not a model config name. A compiled file path is
+used by `backfill`, not by the trial's model-name options.
 
-Append this to `models/instacart/instacart.py`. `_variant` constructs a fresh model
-and maps the supplied features into both the training and inference definitions.
-The existing models remain available.
-
-```python
-# New control for this iteration: existing history features and depth 6.
-instacart_basket_depth6_r1 = _variant("instacart_basket_depth6_r1", _WITH_HISTORY)
-
-# New candidate: change only tree depth.
-instacart_basket_depth8_r1 = _variant("instacart_basket_depth8_r1", _WITH_HISTORY)
-instacart_basket_depth8_r1.trainingConf.jobConfigs["max-depth"] = "8"
-```
-
-Use unused model names; on later iterations, change `r1` to `r2` (or another
-unique suffix) everywhere in the code and commands. Each variant needs both a
-unique Python variable and a unique backend `model_name`. Trainer version
-`19ca8c1c152c` identifies the unchanged trainer archive, not the hyperparameters.
-The model name separates the report locations:
-
-| Variant | Model config name | Artifact/report prefix |
-| --- | --- | --- |
-| Control | `instacart.instacart.instacart_basket_depth6_r1__19ca8c1c152c` | `s3://zipline-public-demo-artifacts/models/instacart_basket_depth6_r1/19ca8c1c152c/` |
-| Candidate | `instacart.instacart.instacart_basket_depth8_r1__19ca8c1c152c` | `s3://zipline-public-demo-artifacts/models/instacart_basket_depth8_r1/19ca8c1c152c/` |
-
-Changing only a trial or experiment ID does not isolate reports. Reusing a model
-name/version can overwrite the report from an earlier run.
-
-For a **longer-history feature experiment instead**, create a fresh variant with
-an additional feature that the existing Join already emits:
-
-```python
-_WITH_LONGER_HISTORY = _WITH_HISTORY + [
-    ("user_id_product_id_order_id_count_365d", "pair_count_365d"),
-]
-instacart_basket_long_history_r1 = _variant(
-    "instacart_basket_long_history_r1", _WITH_LONGER_HISTORY
-)
-```
-
-Keep tree depth unchanged for that comparison and use its new name throughout
-the archive and trial commands. To test learning rate instead, change only
-`trainingConf.jobConfigs["eta"]` on a fresh variant. Features absent from the Join
-require versioning and validating their upstream configs and materializing the
-new training table before training; a model-only change cannot create them.
-
-## 4. Copy the trainer archives, compile, commit, and push
-
-Ray resolves archives by **model name and trainer version**, so each new name
-needs its own object even though the bytes are identical:
+## 3. Check the training table
 
 ```bash
-aws s3 cp \
-  s3://zipline-public-demo-artifacts/builds/instacart_basket_model-19ca8c1c152c.zip \
-  s3://zipline-public-demo-artifacts/builds/instacart_basket_depth6_r1-19ca8c1c152c.zip
-aws s3 cp \
-  s3://zipline-public-demo-artifacts/builds/instacart_basket_model-19ca8c1c152c.zip \
-  s3://zipline-public-demo-artifacts/builds/instacart_basket_depth8_r1-19ca8c1c152c.zip
-zipline compile
-
-git add models/instacart/instacart.py \
-  compiled/models/instacart/instacart.instacart_basket_depth6_r1__19ca8c1c152c \
-  compiled/models/instacart/instacart.instacart_basket_depth8_r1__19ca8c1c152c
-git diff --cached
-git commit -m "Add Instacart tree-depth experiment"
-git push -u origin HEAD
+zipline hub eval-table public_demo_data.instacart_instacart_join_v1__1 \
+  --team instacart --format json
 ```
 
-Review the compiler output for those exact names. Hub requires a clean, pushed
-branch so workers can reproduce the configs. Evaluate both compiled models after
-pushing, and resolve evaluation failures before submitting training:
+Confirm that it contains the selected model features, label `in_next_basket`, and
+partition column `ds`, and that the setup backfill completed for August 18–24.
+This command checks the schema, not partition completeness or model quality.
+Training-model configs do not support `zipline hub eval`; the completed trainer
+report provides the model's evaluation results.
+
+## 4. Record and run the baseline
+
+Record the experiment before submitting training. Both attribution variables
+must be on the backfill command, with the experiment ID matching its record:
 
 ```bash
-zipline hub eval compiled/models/instacart/instacart.instacart_basket_depth6_r1__19ca8c1c152c \
-  --hub-url "$INSTACART_HUB_URL"
-zipline hub eval compiled/models/instacart/instacart.instacart_basket_depth8_r1__19ca8c1c152c \
-  --hub-url "$INSTACART_HUB_URL"
+zipline hub trial experiments record baseline "$ZIPLINE_TRIAL_ID" \
+  --title 'Product popularity and shopper behavior' --status RUNNING \
+  --model-conf-name instacart.instacart.instacart_basket_baseline__19ca8c1c152c && \
+ZIPLINE_TRIAL_ID="$ZIPLINE_TRIAL_ID" ZIPLINE_EXPERIMENT_ID=baseline \
+  zipline hub backfill compiled/models/instacart/instacart.instacart_basket_baseline__19ca8c1c152c \
+  --start-ds 2026-08-24 --end-ds 2026-08-24
 ```
 
-## 5. Record each experiment, then submit its training backfill
-
-The record must exist before submission. Include **both** attribution variables
-on each command, with the experiment ID matching its record:
-
-```bash
-trial_cmd experiments record exp-control "$ZIPLINE_TRIAL_ID" \
-  --title 'History model, depth 6' --status RUNNING \
-  --model-conf-name instacart.instacart.instacart_basket_depth6_r1__19ca8c1c152c
-ZIPLINE_TRIAL_ID="$ZIPLINE_TRIAL_ID" ZIPLINE_EXPERIMENT_ID=exp-control \
-  zipline hub backfill compiled/models/instacart/instacart.instacart_basket_depth6_r1__19ca8c1c152c \
-  --start-ds 2026-08-24 --end-ds 2026-08-24 --hub-url "$INSTACART_HUB_URL"
-
-trial_cmd experiments record exp-deeper "$ZIPLINE_TRIAL_ID" \
-  --title 'History model, depth 8' --status RUNNING \
-  --model-conf-name instacart.instacart.instacart_basket_depth8_r1__19ca8c1c152c
-ZIPLINE_TRIAL_ID="$ZIPLINE_TRIAL_ID" ZIPLINE_EXPERIMENT_ID=exp-deeper \
-  zipline hub backfill compiled/models/instacart/instacart.instacart_basket_depth8_r1__19ca8c1c152c \
-  --start-ds 2026-08-24 --end-ds 2026-08-24 --hub-url "$INSTACART_HUB_URL"
-```
-
-The single backfill date chooses the training end date. These models' six-day
+The single backfill date chooses the training end date. The models' six-day
 lookback gives August 18–24 inclusive, with August 24 held out for validation.
-The date assignment holds out whole shoppers on a reconstructed calendar.
+The date assignment holds out whole shoppers on a reconstructed calendar; it does
+not establish real chronological generalization.
 
-## 6. Attach measured results and inspect the trial
-
-Wait for each training workflow and its report to finish. Submission success
-alone is not training success. Hub reads metrics from the trainer's own report;
-you do not supply AUC or logloss values yourself:
+Wait for the workflow to succeed, then attach its report. Hub reads the trainer's
+saved measurements; you do not supply AUC or logloss values yourself. The `&&`
+prevents a failed metrics import from marking the experiment successful:
 
 ```bash
-trial_cmd experiments metrics exp-control "$ZIPLINE_TRIAL_ID" \
-  --model-conf-name instacart.instacart.instacart_basket_depth6_r1__19ca8c1c152c --format json
-trial_cmd experiments metrics exp-deeper "$ZIPLINE_TRIAL_ID" \
-  --model-conf-name instacart.instacart.instacart_basket_depth8_r1__19ca8c1c152c --format json
+zipline hub trial experiments metrics baseline "$ZIPLINE_TRIAL_ID" \
+  --model-conf-name instacart.instacart.instacart_basket_baseline__19ca8c1c152c --format json && \
+zipline hub trial experiments record baseline "$ZIPLINE_TRIAL_ID" --status SUCCEEDED
 ```
 
-Only after each job succeeds and its report is attached, mark it successful:
+## 5. Record and run the history model
+
+The second model adds shopper-product history and ratios while keeping the
+trainer version, tree depth, learning rate, seed, and training dates the same:
 
 ```bash
-trial_cmd experiments record exp-control "$ZIPLINE_TRIAL_ID" --status SUCCEEDED
-trial_cmd experiments record exp-deeper "$ZIPLINE_TRIAL_ID" --status SUCCEEDED
-trial_cmd experiments list "$ZIPLINE_TRIAL_ID" --format json
+zipline hub trial experiments record history "$ZIPLINE_TRIAL_ID" \
+  --title 'Add shopper-product history and ratios' --status RUNNING \
+  --model-conf-name instacart.instacart.instacart_basket_model__19ca8c1c152c && \
+ZIPLINE_TRIAL_ID="$ZIPLINE_TRIAL_ID" ZIPLINE_EXPERIMENT_ID=history \
+  zipline hub backfill compiled/models/instacart/instacart.instacart_basket_model__19ca8c1c152c \
+  --start-ds 2026-08-24 --end-ds 2026-08-24
+```
+
+After this workflow succeeds, attach its report:
+
+```bash
+zipline hub trial experiments metrics history "$ZIPLINE_TRIAL_ID" \
+  --model-conf-name instacart.instacart.instacart_basket_model__19ca8c1c152c --format json && \
+zipline hub trial experiments record history "$ZIPLINE_TRIAL_ID" --status SUCCEEDED
+```
+
+## 6. Compare results and close out the trial
+
+```bash
+zipline hub trial experiments list "$ZIPLINE_TRIAL_ID" --format json
 ```
 
 Open the trial in the [demo UI](https://try.zipline.ai). Its experiments appear
 alongside one another in AUC/logloss graphs, with links through to the runs.
 Compare validation AUC (higher is better) and validation logloss (lower is better).
-A deeper model can overfit; higher training AUC alone does not establish an
-improvement. The configured acceptance threshold is not a measured result.
+Higher training AUC alone does not establish an improvement. The configured
+acceptance threshold is not a measured result.
 
-Trainer errors appear in the workflow's **Ray (All)** logs. `NoSuchKey` during
-runtime setup commonly means the archive for the new model name is missing.
-Missing feature-column errors require checking the materialized Join schema.
-For a failed candidate, record the failure instead of the success command above:
+After both reports are attached, write the conclusion and journal:
 
 ```bash
-trial_cmd experiments record exp-deeper "$ZIPLINE_TRIAL_ID" --status FAILED
+zipline hub trial summary '<measured validation AUC/logloss comparison and conclusion>' "$ZIPLINE_TRIAL_ID"
+zipline hub trial status SUCCEEDED "$ZIPLINE_TRIAL_ID"
+zipline hub trial journal append '<what the reports showed and what to try next>' "$ZIPLINE_TRIAL_ID"
 ```
 
-## 7. Close out the attempt before the next iteration
+If a run fails, mark that experiment `FAILED` instead of `SUCCEEDED`. If the
+comparison cannot be completed, summarize the blocker, mark the trial `FAILED`,
+and append a journal entry. Leave running work running.
 
-After a complete, report-backed comparison, write the conclusion and journal:
+## Troubleshooting
 
-```bash
-trial_cmd summary '<measured validation AUC/logloss comparison and conclusion>' "$ZIPLINE_TRIAL_ID"
-trial_cmd status SUCCEEDED "$ZIPLINE_TRIAL_ID"
-trial_cmd journal append '<what changed, what the reports showed, and what to try next>' "$ZIPLINE_TRIAL_ID"
-```
+Trainer errors appear in the workflow's **Ray (All)** logs.
 
-If the comparison failed, summarize the blocker, use `trial_cmd status FAILED
-"$ZIPLINE_TRIAL_ID"`, and still append the journal entry. Leave running work
-running. On the next iteration, search the journal again and choose fresh model
-names before changing a feature or hyperparameter.
+- **`Model conf ... not found`:** use the full name from the model table. If you
+  recorded the wrong name, repeat `experiments record` with the same trial and
+  experiment IDs and the correct `--model-conf-name`, then retry importing metrics.
+- **`Forbidden` while attaching metrics, or `NoSuchKey` during setup:** contact a
+  Zipline employee for help with the prepared model's files. You do not need to
+  upload or copy files yourself. Fixing report access does not require retraining
+  a successful model.
+- **A workflow stays `Submitted`:** check its status and logs before submitting
+  again. It may be waiting for demo capacity. If it fails with a startup timeout,
+  contact demo support, then repeat the same attributed backfill command after the
+  issue is resolved. Do not start duplicate runs while the workflow is active.
+
+## Try another model with Zipline's help
+
+These two models are ready to use. To compare an additional feature set, change
+`max-depth` or `eta`, or use another trainer, share your proposed change with a
+Zipline employee. They will be happy to help prepare and upload another model
+and provide its full config name and compiled path for a new experiment.
+
+Use a distinct model name for each variant. Changing only a trial or experiment
+ID does not isolate model outputs; reusing a model name and version can overwrite
+its previous report. Coordinate changes to the shared demo models with Zipline
+so comparisons retain the intended features, parameters, and reports.
