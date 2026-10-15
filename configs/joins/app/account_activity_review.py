@@ -1,7 +1,7 @@
 from group_bys.app import email_identity, email_request_activity
 from sources.app.user_identity import email_profile_requests
 
-from ai.chronon.types import Derivation, Join, JoinPart
+from ai.chronon.types import Derivation, EntitySource, Join, JoinPart, Query, selects
 
 
 last_visit_age_ms = "GREATEST(ts - activity_email_hash_visit_ts_last_6d, 0)"
@@ -67,5 +67,36 @@ account_activity_review = Join(
     enable_stats_compute=True,
     output_namespace="public_demo_data",
     version=7,
+    step_days=14,
+)
+
+
+# Entity snapshots do not receive the request-time `ts` that online fetching
+# supplies. A snapshot for ds includes that day's activity, so evaluate visit
+# age at the following midnight UTC, in epoch milliseconds.
+account_activity_review_v8 = Join(
+    left=EntitySource(
+        snapshot_table=email_profile_requests.entities.snapshotTable,
+        query=Query(
+            selects=selects(
+                "email_hash",
+                ts="unix_millis(to_timestamp(concat(date_add(to_date(ds), 1), 'T00:00:00Z')))",
+            ),
+            start_partition="2026-08-25",
+        ),
+    ),
+    row_ids=["email_hash"],
+    right_parts=[
+        JoinPart(group_by=email_identity.email_identity, prefix="identity"),
+        JoinPart(group_by=email_request_activity.email_request_activity, prefix="activity"),
+    ],
+    derivations=account_activity_review.derivations,
+    online=True,
+    online_schedule="@never",
+    check_consistency=True,
+    consistency_sample_percent=100.0,
+    enable_stats_compute=True,
+    output_namespace="public_demo_data",
+    version=8,
     step_days=14,
 )
