@@ -1,12 +1,7 @@
 name: Config eval
 
 on:
-  pull_request:
-    types: [opened, synchronize, reopened, labeled]
-  push:
-    branches: [main]
-    paths: ['configs/**']
-  workflow_dispatch:
+  workflow_call:
 
 permissions:
   contents: read
@@ -15,71 +10,13 @@ defaults:
   run:
     shell: bash
 
-concurrency:
-  # Unrelated label events must not cancel an active config evaluation.
-  group: config-eval-${{ github.workflow }}-${{ github.event.action == 'labeled' && github.event.label.name != 'run-eval' && github.run_id || github.ref }}
-  cancel-in-progress: true
-
 env:
   # Published local-eval nightly, pinned so all jobs use the same runtime.
   EVAL_IMAGE: ziplineai/local-eval@sha256:810166bdfa91d3cae5a54954479cb00f9798425687b16487f3e57dbdd77439c2
 
 jobs:
-  changes:
-    name: Detect config changes or eval request
-    if: github.event.action != 'labeled' || github.event.label.name == 'run-eval'
-    runs-on: ubuntu-latest
-    outputs:
-      run: ${{ steps.changes.outputs.run }}
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Check config changes
-        id: changes
-        env:
-          EVENT_NAME: ${{ github.event_name }}
-          EVENT_ACTION: ${{ github.event.action }}
-          EVENT_LABEL: ${{ github.event.label.name }}
-          PR_BASE: ${{ github.event.pull_request.base.sha }}
-          PR_HEAD: ${{ github.event.pull_request.head.sha }}
-          PUSH_BASE: ${{ github.event.before }}
-          PUSH_HEAD: ${{ github.sha }}
-        run: |
-          if [[ "$EVENT_NAME" == workflow_dispatch || ( "$EVENT_ACTION" == labeled && "$EVENT_LABEL" == run-eval ) ]]; then
-            echo 'run=true' >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-
-          if [[ "$EVENT_NAME" == pull_request ]]; then
-            base=$(git merge-base "$PR_BASE" "$PR_HEAD")
-            head="$PR_HEAD"
-          else
-            base="$PUSH_BASE"
-            head="$PUSH_HEAD"
-            if [[ "$base" == 0000000000000000000000000000000000000000 ]]; then
-              echo 'run=true' >> "$GITHUB_OUTPUT"
-              exit 0
-            fi
-          fi
-
-          if git diff --quiet "$base" "$head" -- configs/; then
-            echo 'run=false' >> "$GITHUB_OUTPUT"
-          else
-            diff_status=$?
-            if [[ "$diff_status" != 1 ]]; then exit "$diff_status"; fi
-            echo 'run=true' >> "$GITHUB_OUTPUT"
-          fi
-
-  compile:
-    name: Check compiled configs
-    needs: changes
-    if: needs.changes.outputs.run == 'true'
-    uses: ./.github/workflows/check-configs.yml
-
   prepare:
     name: Prepare eval configs and shared warehouse
-    needs: compile
     runs-on: ubuntu-latest
     timeout-minutes: 20
     outputs:
@@ -162,27 +99,15 @@ jobs:
           retention-days: 7
 
   result:
-    # A stable branch-protection check even when the config matrix changes.
-    # An irrelevant label must not replace a real result with a skipped check
-    # under the branch-protection check's name.
-    name: ${{ github.event.action == 'labeled' && github.event.label.name != 'run-eval' && 'Eval not requested' || 'All config evals' }}
-    if: always() && needs.changes.result != 'skipped'
-    needs: [changes, compile, prepare, eval]
+    name: All config evals
+    if: always()
+    needs: [prepare, eval]
     runs-on: ubuntu-latest
     steps:
-      - name: Require compile, preparation, and every requested eval to pass
+      - name: Require preparation and every eval to pass
         env:
-          CHANGES_RESULT: ${{ needs.changes.result }}
-          SHOULD_RUN: ${{ needs.changes.outputs.run }}
-          COMPILE_RESULT: ${{ needs.compile.result }}
           PREPARE_RESULT: ${{ needs.prepare.result }}
           EVAL_RESULT: ${{ needs.eval.result }}
         run: |
-          if [[ "$CHANGES_RESULT" == success && "$SHOULD_RUN" == false ]]; then
-            echo 'No config changes; compile and eval were not requested.'
-            exit 0
-          fi
-          test "$CHANGES_RESULT" = success
-          test "$COMPILE_RESULT" = success
           test "$PREPARE_RESULT" = success
           test "$EVAL_RESULT" = success
