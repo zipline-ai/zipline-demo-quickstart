@@ -13,9 +13,16 @@ enable Stats Compute and inspect feature distributions.
 For model training, follow [compare two models in a trial](docs/tutorials/model-experiment-comparison.md)
 to track the two prepared models in a trial and compare measured results.
 
-Coding agents can use the repository-local
-[Zipline demo skill](.agents/skills/zipline-demo/SKILL.md) to discover the data,
-follow lineage, deploy changes, and fetch features safely.
+Using a coding assistant? Install the Zipline CLI and initialize its agent context
+from the repository root:
+
+```bash
+python -m pip install --upgrade zipline-ai
+zipline init-agent
+```
+
+Choose your assistant when prompted, then ask it to help you explore the data,
+follow lineage, and work through the tutorials.
 
 See [demo data sources](docs/data_sources.md) for dataset schemas, feature lineage, and freshness behavior.
 
