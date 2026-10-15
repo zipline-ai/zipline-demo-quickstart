@@ -72,7 +72,8 @@ coding environment opened at the repository root:
 ```text
 Review the Zipline public-demo account activity for <YOUR_GOOGLE_ACCOUNT_EMAIL>.
 
-Work from this repository and use its Zipline demo skill and teams.py settings.
+Work from this repository and use the agent context installed by `zipline init-agent`
+and the settings in configs/teams.py.
 Find the appropriate account-activity Join, derive the eight-character email
 hash locally, and fetch the current online features through the Zipline CLI.
 Do not send the plaintext email to Zipline and do not modify or deploy configs.
