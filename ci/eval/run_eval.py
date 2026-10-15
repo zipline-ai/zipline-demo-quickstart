@@ -26,21 +26,6 @@ def check_response(result):
         check_response(upstream)
 
 
-def format_response(result, depth=0):
-    if not isinstance(result, dict):
-        return repr(result)
-    prefix = "  " * depth
-    flag = result.get("success")
-    status = "PASS" if type(flag) in (bool, int) and flag == 1 else "FAIL"
-    lines = [f"{prefix}{status} {result.get('confName', '<unknown>')}"]
-    message = result.get("shortMessage") if status == "PASS" else result.get("message")
-    if message:
-        lines.append(str(message))
-    lines.extend(str(error) for error in result.get("errors") or [])
-    lines.extend(format_response(upstream, depth + 1) for upstream in result.get("upstreamResponse") or [])
-    return "\n".join(lines)
-
-
 def computation_failures(log):
     """The pinned eval handlers can swallow compute errors and return success."""
     markers = tuple(f"Failed to run {kind} computation" for kind in ("GroupBy", "Join", "StagingQuery"))
@@ -63,9 +48,10 @@ def evaluate(url, name, output):
     (output / "response.txt").write_text(body)
     result = json.loads(body)
     (output / "response.json").write_text(json.dumps(result, indent=2) + "\n")
-    readable = format_response(result)
-    (output / "eval.log").write_text(readable + "\n")
-    print(readable, flush=True)
+    if isinstance(result, dict):
+        message = result.get("message") or result.get("shortMessage") or ""
+        (output / "eval.log").write_text(message + "\n")
+        print(result.get("shortMessage") or message, flush=True)
     check_response(result)
     if result.get("confName") != name:
         raise ValueError(f"Unexpected response config: {result.get('confName')}")

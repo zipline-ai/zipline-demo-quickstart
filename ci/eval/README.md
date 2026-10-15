@@ -59,7 +59,9 @@ This also works for fork PRs with only `contents: read`, without comment tokens
 or a privileged `pull_request_target` workflow.
 
 Artifacts contain `request.json`, the raw and parsed response, readable
-`eval.log`, `server.log`, `result.json`, and a summary. HTTP errors, timeouts, malformed responses, explicit
+`eval.log`, `server.log`, `result.json`, and a summary. Console output uses eval's
+`shortMessage`; `eval.log` contains its full `message`, without rebuilding the
+response tree. HTTP errors, timeouts, malformed responses, explicit
 eval failures, failed upstream responses, and logged computation fallbacks fail the job. The stable
 **All config evals** check fails if the compile check, preparation, or any requested
 matrix job fails or skips. It passes without running compile/eval for PRs with
