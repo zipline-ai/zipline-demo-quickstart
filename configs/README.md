@@ -60,7 +60,7 @@ zipline compile
 
 This will create a `compiled` directory.
 
-CI compiles all configs on every push and pull request using Python 3.12 and
+CI compiles all configs on pull requests and pushes to `main` using Python 3.12 and
 the latest `zipline-ai` release. It also checks that `compiled/` matches the generated output,
 including added and deleted files. Upgrade the CLI locally and commit
 the generated files alongside any config changes:
