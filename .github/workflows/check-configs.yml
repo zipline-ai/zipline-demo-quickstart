@@ -1,0 +1,39 @@
+name: Check configs
+
+on:
+  pull_request:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  compile:
+    name: Compile configs and check generated output
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Zipline CLI
+        run: python -m pip install --upgrade zipline-ai
+
+      - name: Compile all configs
+        working-directory: configs
+        run: zipline compile --format json
+
+      - name: Check compiled configs are up to date
+        shell: bash
+        run: |
+          changes=$(git status --porcelain --untracked-files=all -- configs/compiled/)
+          if [[ -n "$changes" ]]; then
+            echo "::error::Compiled configs are out of date. Run 'cd configs && zipline compile' and commit all changes in configs/compiled/."
+            printf '%s\n' "$changes"
+            git diff -- configs/compiled/
+            exit 1
+          fi
