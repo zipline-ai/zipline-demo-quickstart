@@ -1,7 +1,17 @@
 # Config eval CI
 
-Every pull request, push to `main`, and manual run compiles the Python configs
-from scratch and evaluates every GroupBy, Join, and StagingQuery. Currently that
+Pull requests and pushes to `main` run compile and eval when files under
+`configs/` change. Adding the **`run-eval`** label to a pull request forces the
+same sequence even without config changes; remove and re-add it to request
+another run. Manual runs of **Config eval** also force the sequence. Other label
+events do not run or cancel config checks. Merely keeping the label on a PR does
+not force runs on later updates without config changes.
+
+The entry point is `eval.yml`. It first calls the reusable `check-configs.yml`
+workflow to compile and verify that committed generated configs are up to date.
+Only after that check succeeds does it prepare the warehouse and evaluate every
+GroupBy, Join, and StagingQuery. Preparation compiles a separate clean copy for
+local source substitutions. Currently that
 is **20 configs**. Models are deliberately excluded: `LocalEvalVerticle`'s
 `InMemoryConfDao` does not load training Model configs.
 
@@ -51,8 +61,10 @@ or a privileged `pull_request_target` workflow.
 Artifacts contain `request.json`, the raw and parsed response, readable
 `eval.log`, `server.log`, `result.json`, and a summary. HTTP errors, timeouts, malformed responses, explicit
 eval failures, failed upstream responses, and logged computation fallbacks fail the job. The stable
-**All config evals** check fails if preparation or any matrix job fails or skips;
-use it for branch protection. Artifact retention is seven days.
+**All config evals** check fails if the compile check, preparation, or any requested
+matrix job fails or skips. It passes without running compile/eval for PRs with
+no config changes and no explicit eval request, so it can be used for branch
+protection. Artifact retention is seven days.
 
 Eval's success flag primarily describes schema/lineage validation. Upstream
 GroupBy, Join, and StagingQuery handlers can catch sample computation exceptions
