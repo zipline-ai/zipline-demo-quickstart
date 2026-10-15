@@ -12,7 +12,7 @@ workflow to compile and verify that committed generated configs are up to date.
 Only after that check succeeds does it prepare the warehouse and evaluate every
 GroupBy, Join, and StagingQuery. Preparation compiles a separate clean copy for
 local source substitutions. Currently that
-is **20 configs**. Models are deliberately excluded: `LocalEvalVerticle`'s
+is **21 configs**. Models are deliberately excluded: `LocalEvalVerticle`'s
 `InMemoryConfDao` does not load training Model configs.
 
 ## Shared source catalog
@@ -78,11 +78,11 @@ values, nonempty outputs, model execution, or production warehouse access. The
 request uses fixed dates `2026-08-01` through `2026-09-04` to bound sample work;
 timestamps are not aligned to guarantee nonempty joins or aggregations.
 
-Initial local validation found an existing computation failure in
-`app.account_activity_review.account_activity_review__7`: the derivation refers
-to `ts`, which is absent from its entity-left computation output. The service
-reports success after falling back, but this CI check correctly fails that target.
-The other 19 configs completed without these computation errors.
+The legacy `account_activity_review__7` config was retired because its
+entity-left computation omitted `ts`, even though eval reported success after
+falling back. The active `account_activity_review_v8__8` supplies the snapshot's
+evaluation timestamp explicitly. CI continues to reject computation fallbacks;
+no legacy-config exception is needed.
 
 ## Run locally
 

@@ -19,7 +19,7 @@ then computes activity over one-day and six-day windows:
 - Ten recent activity events
 - Latest and worst one-day ingestion freshness lag
 
-The `app.account_activity_review.account_activity_review` Join packages those
+The `app.account_activity_review.account_activity_review_v8__8` Join packages those
 signals with identity first-seen and last-seen fields for one online fetch.
 
 ## 1. Generate Activity
@@ -36,7 +36,7 @@ From `configs`, evaluate each new layer:
 
 ```bash
 zipline hub eval compiled/group_bys/app/email_request_activity.email_request_activity
-zipline hub eval compiled/joins/app/account_activity_review.account_activity_review
+zipline hub eval compiled/joins/app/account_activity_review.account_activity_review_v8__8
 ```
 
 Run the chained GroupBy and review Join so their offline results are uploaded
@@ -44,7 +44,7 @@ for online fetching:
 
 ```bash
 zipline hub run-adhoc compiled/group_bys/app/email_request_activity.email_request_activity
-zipline hub run-adhoc compiled/joins/app/account_activity_review.account_activity_review
+zipline hub run-adhoc compiled/joins/app/account_activity_review.account_activity_review_v8__8
 ```
 
 Deploy the GroupBy to start its Flink streaming job:
