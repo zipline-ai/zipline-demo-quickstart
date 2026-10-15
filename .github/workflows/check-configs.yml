@@ -2,34 +2,111 @@ name: Check configs
 
 on:
   pull_request:
+    types: [opened, synchronize, reopened, labeled]
   push:
-    branches:
-      - main
+    branches: [main]
+    paths: ['configs/**']
   workflow_dispatch:
 
 permissions:
   contents: read
 
+defaults:
+  run:
+    shell: bash
+
+concurrency:
+  # Unrelated label events must not cancel an active config evaluation.
+  group: check-configs-${{ github.workflow }}-${{ github.event.action == 'labeled' && github.event.label.name != 'run-eval' && github.run_id || github.ref }}
+  cancel-in-progress: true
+
 jobs:
+  changes:
+    name: Detect config changes or eval request
+    if: github.event.action != 'labeled' || github.event.label.name == 'run-eval'
+    runs-on: ubuntu-latest
+    outputs:
+      run: ${{ steps.changes.outputs.run }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Check config changes
+        id: changes
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          EVENT_ACTION: ${{ github.event.action }}
+          EVENT_LABEL: ${{ github.event.label.name }}
+          PR_BASE: ${{ github.event.pull_request.base.sha }}
+          PR_HEAD: ${{ github.event.pull_request.head.sha }}
+          PUSH_BASE: ${{ github.event.before }}
+          PUSH_HEAD: ${{ github.sha }}
+        run: |
+          if [[ "$EVENT_NAME" == workflow_dispatch || ( "$EVENT_ACTION" == labeled && "$EVENT_LABEL" == run-eval ) ]]; then
+            echo 'run=true' >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          if [[ "$EVENT_NAME" == pull_request ]]; then
+            base=$(git merge-base "$PR_BASE" "$PR_HEAD")
+            head="$PR_HEAD"
+          else
+            base="$PUSH_BASE"
+            head="$PUSH_HEAD"
+            if [[ "$base" == 0000000000000000000000000000000000000000 ]]; then
+              echo 'run=true' >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+          fi
+
+          if git diff --quiet "$base" "$head" -- configs/; then
+            echo 'run=false' >> "$GITHUB_OUTPUT"
+          else
+            diff_status=$?
+            if [[ "$diff_status" != 1 ]]; then exit "$diff_status"; fi
+            echo 'run=true' >> "$GITHUB_OUTPUT"
+          fi
+
   compile:
-    name: Compile configs and check generated output
+    # Keep the repository's required check name, including for docs-only PRs.
+    # Unrelated labels must not overwrite a real compile result.
+    name: ${{ github.event.action == 'labeled' && github.event.label.name != 'run-eval' && 'Compile not requested' || 'Compile configs and check generated output' }}
+    needs: changes
+    if: always() && needs.changes.result != 'skipped'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - name: Require successful change detection
+        env:
+          CHANGES_RESULT: ${{ needs.changes.result }}
+          SHOULD_RUN: ${{ needs.changes.outputs.run }}
+        run: |
+          test "$CHANGES_RESULT" = success
+          if [[ "$SHOULD_RUN" == false ]]; then
+            echo 'No config changes; compilation and eval were not requested.'
+          else
+            test "$SHOULD_RUN" = true
+          fi
 
-      - uses: actions/setup-python@v5
+      - if: needs.changes.outputs.run == 'true'
+        uses: actions/checkout@v4
+
+      - if: needs.changes.outputs.run == 'true'
+        uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
       - name: Install Zipline CLI
+        if: needs.changes.outputs.run == 'true'
         run: python -m pip install --upgrade zipline-ai
 
       - name: Compile all configs
+        if: needs.changes.outputs.run == 'true'
         working-directory: configs
         run: zipline compile --format json
 
       - name: Check compiled configs are up to date
+        if: needs.changes.outputs.run == 'true'
         shell: bash
         run: |
           changes=$(git status --porcelain --untracked-files=all -- configs/compiled/)
@@ -39,3 +116,9 @@ jobs:
             git diff -- configs/compiled/
             exit 1
           fi
+
+  eval:
+    name: Evaluate configs
+    needs: [changes, compile]
+    if: needs.changes.outputs.run == 'true'
+    uses: ./.github/workflows/eval.yml

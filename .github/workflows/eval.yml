@@ -1,0 +1,113 @@
+name: Config eval
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  # Published local-eval nightly, pinned so all jobs use the same runtime.
+  EVAL_IMAGE: ziplineai/local-eval@sha256:810166bdfa91d3cae5a54954479cb00f9798425687b16487f3e57dbdd77439c2
+
+jobs:
+  prepare:
+    name: Prepare eval configs and shared warehouse
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+          cache-dependency-path: ci/eval/requirements.txt
+      - run: python -m pip install -r ci/eval/requirements.txt
+      - name: Test CI helpers
+        run: python -m unittest discover -s ci/eval -p 'test_*.py' -v
+      - name: Compile clean configs and prepare fixture spec
+        run: python ci/eval/prepare.py --output "$RUNNER_TEMP/eval-bundle"
+      - name: Build warehouse once
+        run: |
+          mkdir -p "$RUNNER_TEMP/eval-bundle/warehouse"
+          docker pull "$EVAL_IMAGE"
+          docker run --rm --cpus 2 --memory 5g \
+            -v "$PWD/ci/eval:/scripts:ro" \
+            -v "$RUNNER_TEMP/eval-bundle/sources.json:/sources.json:ro" \
+            -v "$RUNNER_TEMP/eval-bundle/warehouse:/warehouse" \
+            -e JAVA_TOOL_OPTIONS='-XX:ActiveProcessorCount=2 -Xmx3g' \
+            "$EVAL_IMAGE" python3 /scripts/build_warehouse.py --spec /sources.json \
+            2>&1 | tee "$RUNNER_TEMP/warehouse-build.log"
+      - name: Generate matrix
+        id: matrix
+        run: echo "matrix=$(cat "$RUNNER_TEMP/eval-bundle/matrix.json")" >> "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: eval-inputs
+          path: ${{ runner.temp }}/eval-bundle
+          # Preserve Hadoop's .crc sidecars along with Iceberg metadata/data.
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 7
+      - name: Preserve preparation logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: eval-preparation
+          path: |
+            ${{ runner.temp }}/warehouse-build.log
+            ${{ runner.temp }}/eval-bundle/rewrites.json
+            ${{ runner.temp }}/eval-bundle/matrix.json
+          retention-days: 7
+
+  eval:
+    name: Eval ${{ matrix.kind }}/${{ matrix.name }}
+    needs: prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      max-parallel: 6
+      matrix: ${{ fromJSON(needs.prepare.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: eval-inputs
+          path: ${{ runner.temp }}/eval-bundle
+      - name: Eval config
+        env:
+          CONF_NAME: ${{ matrix.name }}
+        run: |
+          python3 ci/eval/run_eval.py \
+            --image "$EVAL_IMAGE" \
+            --bundle "$RUNNER_TEMP/eval-bundle" \
+            --name "$CONF_NAME" --output "$RUNNER_TEMP/eval-result"
+      - name: Preserve config response and logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: eval-${{ matrix.kind }}-${{ matrix.name }}
+          path: ${{ runner.temp }}/eval-result
+          if-no-files-found: error
+          retention-days: 7
+
+  result:
+    name: All config evals
+    if: always()
+    needs: [prepare, eval]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require preparation and every eval to pass
+        env:
+          PREPARE_RESULT: ${{ needs.prepare.result }}
+          EVAL_RESULT: ${{ needs.eval.result }}
+        run: |
+          test "$PREPARE_RESULT" = success
+          test "$EVAL_RESULT" = success

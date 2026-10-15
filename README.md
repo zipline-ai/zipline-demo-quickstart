@@ -26,6 +26,9 @@ follow lineage, and work through the tutorials.
 
 See [demo data sources](docs/data_sources.md) for dataset schemas, feature lineage, and freshness behavior.
 
+Pull requests run [local config eval](ci/eval/README.md) against a tiny shared
+fixture warehouse, with a separate CI result and logs for each config.
+
 The live public demo endpoints are:
 
 - UI: [https://try.zipline.ai](https://try.zipline.ai)
