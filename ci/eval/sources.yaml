@@ -1,0 +1,155 @@
+# Tiny synthetic upstream data for local eval. Types are Spark SQL types.
+# Keep each source to one or two rows. Dates are fixtures, not window assertions.
+version: 1
+tables:
+  public_demo_app.ui_access_logs_iceberg:
+    partition_by: [ds]
+    schema:
+      event_id: string
+      event_ts: bigint
+      client_ip: string
+      user_id: string
+      http_method: string
+      path: string
+      route_family: string
+      status_code: int
+      is_error: int
+      is_not_found: int
+      is_write: int
+      request_time_seconds: double
+      freshness_lag_seconds: bigint
+      user_agent: string
+      ds: string
+    rows:
+      - event_id: request-1
+        event_ts: 1788393600000
+        client_ip: 192.0.2.1
+        user_id: demo@example.test
+        http_method: GET
+        path: /services/hub/ping
+        route_family: /services/hub
+        status_code: 200
+        is_error: 0
+        is_not_found: 0
+        is_write: 0
+        request_time_seconds: 0.1
+        freshness_lag_seconds: 2
+        user_agent: ci-fixture
+        ds: '2026-09-03'
+
+  # Raw input to the identity StagingQuery; do not seed its derived output.
+  public_demo_app.user_identity_snapshots_iceberg:
+    partition_by: [snapshot_date]
+    schema:
+      user_id: string
+      email_hash: string
+      first_seen_ts: bigint
+      last_seen_ts: bigint
+      last_seen_time_iso: string
+      last_event: string
+      source_event_id: string
+      ingestion_id: string
+      ingested_at: string
+      snapshot_date: string
+    rows:
+      - user_id: demo@example.test
+        email_hash: 1234abcd
+        first_seen_ts: 1788307200000
+        last_seen_ts: 1788393600000
+        last_seen_time_iso: '2026-09-03T00:00:00Z'
+        last_event: authn_login_success
+        source_event_id: identity-1
+        ingestion_id: batch-1
+        ingested_at: '2026-09-03T00:00:02Z'
+        snapshot_date: '2026-09-03'
+
+  # Types match scripts/provision_taxi.py.
+  public_demo_app.featurestore_benchmark_taxi:
+    partition_by: [ds]
+    schema:
+      id: bigint
+      ride_id: string
+      pickup_datetime: bigint
+      pickup_longitude: double
+      dropoff_longitude: double
+      pickup_latitude: double
+      dropoff_latitude: double
+      passenger_count: bigint
+      taxi_id: bigint
+      driver_id: bigint
+      distance: double
+      pickup_distance_to_jfk: double
+      dropoff_distance_to_jfk: double
+      pickup_distance_to_ewr: double
+      dropoff_distance_to_ewr: double
+      pickup_distance_to_lgr: double
+      dropoff_distance_to_lgr: double
+      year: bigint
+      weekday: bigint
+      hour: bigint
+      ds: string
+    rows:
+      - id: 1
+        ride_id: ride-1
+        pickup_datetime: 1788393600
+        pickup_longitude: -73.98
+        dropoff_longitude: -73.97
+        pickup_latitude: 40.75
+        dropoff_latitude: 40.76
+        passenger_count: 1
+        taxi_id: 1
+        driver_id: 1
+        distance: 1.5
+        pickup_distance_to_jfk: 20.0
+        dropoff_distance_to_jfk: 21.0
+        pickup_distance_to_ewr: 18.0
+        dropoff_distance_to_ewr: 19.0
+        pickup_distance_to_lgr: 9.0
+        dropoff_distance_to_lgr: 8.0
+        year: 2026
+        weekday: 4
+        hour: 0
+        ds: '2026-09-03'
+
+  # Exact SQL input identifiers replaced ONLY in the disposable CI config copy.
+  ci_raw.instacart_orders:
+    sql_source: 'parquet.`s3://zipline-public-demo-curated/kaggle_instacart/iceberg/orders/data/`'
+    schema:
+      order_id: bigint
+      user_id: bigint
+      eval_set: string
+      order_number: bigint
+      order_dow: bigint
+      order_hour_of_day: bigint
+      days_since_prior_order: double
+    rows:
+      - {order_id: 1, user_id: 1, eval_set: prior, order_number: 1, order_dow: 0, order_hour_of_day: 10, days_since_prior_order: null}
+      - {order_id: 2, user_id: 1, eval_set: train, order_number: 2, order_dow: 1, order_hour_of_day: 11, days_since_prior_order: 7.0}
+
+  ci_raw.instacart_products:
+    sql_source: 'parquet.`s3://zipline-public-demo-curated/kaggle_instacart/iceberg/products/data/`'
+    schema:
+      product_id: bigint
+      product_name: string
+      aisle_id: bigint
+      department_id: bigint
+    rows:
+      - {product_id: 1, product_name: Apples, aisle_id: 1, department_id: 1}
+
+  ci_raw.instacart_prior:
+    sql_source: 'parquet.`s3://zipline-public-demo-curated/kaggle_instacart/iceberg/order_products_prior/data/`'
+    schema:
+      order_id: bigint
+      product_id: bigint
+      add_to_cart_order: bigint
+      reordered: bigint
+    rows:
+      - {order_id: 1, product_id: 1, add_to_cart_order: 1, reordered: 0}
+
+  ci_raw.instacart_train:
+    sql_source: 'parquet.`s3://zipline-public-demo-curated/kaggle_instacart/iceberg/order_products_train/data/`'
+    schema:
+      order_id: bigint
+      product_id: bigint
+    rows:
+      - {order_id: 2, product_id: 1}
