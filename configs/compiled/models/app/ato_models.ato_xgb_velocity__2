@@ -92,11 +92,11 @@
         }
       }
     },
-    "name": "app.ato_models.ato_xgb_velocity__19ca8c1c152c",
+    "name": "app.ato_models.ato_xgb_velocity__2",
     "outputNamespace": "public_demo_data",
     "sourceFile": "models/app/ato_models.py",
     "team": "app",
-    "version": "19ca8c1c152c"
+    "version": "2"
   },
   "modelArtifactBaseUri": "s3://zipline-public-demo-warehouse/ato_models",
   "outputMapping": {

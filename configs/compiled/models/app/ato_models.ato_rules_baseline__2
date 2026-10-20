@@ -2,12 +2,12 @@
   "inferenceSpec": {
     "modelBackend": 2,
     "modelBackendParams": {
-      "model_name": "ato_xgb_novelty",
+      "model_name": "ato_rules_baseline",
       "model_type": "custom"
     }
   },
   "inputMapping": {
-    "instance": "named_struct('requests_1h', account_id_request_count_sum_1h, 'requests_1d', account_id_request_count_sum_1d, 'requests_7d', account_id_request_count_sum_7d, 'writes_1h', account_id_write_event_sum_1h, 'writes_1d', account_id_write_event_sum_1d, 'writes_7d', account_id_write_event_sum_7d, 'auth_failures_1h', account_id_auth_failure_event_sum_1h, 'auth_failures_1d', account_id_auth_failure_event_sum_1d, 'auth_failures_7d', account_id_auth_failure_event_sum_7d, 'distinct_ips_1d', account_id_client_ip_approx_unique_count_1d, 'distinct_ips_7d', account_id_client_ip_approx_unique_count_7d, 'distinct_agents_1d', account_id_user_agent_approx_unique_count_1d, 'distinct_agents_7d', account_id_user_agent_approx_unique_count_7d, 'ip_age_hours', hours_since_ip_first_seen, 'agent_age_hours', hours_since_agent_first_seen, 'ip_requests_14d', account_id_client_ip_request_count_sum_14d, 'agent_requests_14d', account_id_user_agent_request_count_sum_14d, 'account_age_hours', account_age_hours, 'prior_requests_7d', prior_account_requests_7d, 'session_write_share', session_write_share, 'session_request_rate', session_requests_per_minute, 'session_hour_utc', session_hour_utc, 'automation_agent', is_automation_agent)"
+    "instance": "named_struct('rule_score', rule_score)"
   },
   "metaData": {
     "executionInfo": {
@@ -92,11 +92,11 @@
         }
       }
     },
-    "name": "app.ato_models.ato_xgb_novelty__19ca8c1c152c",
+    "name": "app.ato_models.ato_rules_baseline__2",
     "outputNamespace": "public_demo_data",
     "sourceFile": "models/app/ato_models.py",
     "team": "app",
-    "version": "19ca8c1c152c"
+    "version": "2"
   },
   "modelArtifactBaseUri": "s3://zipline-public-demo-warehouse/ato_models",
   "outputMapping": {
@@ -106,12 +106,12 @@
     "jobConfigs": {
       "catalog-region": "us-west-2",
       "catalog-type": "glue",
-      "eta": "0.1",
+      "eta": "0.3",
       "eval-days": "7",
-      "features": "account_id_request_count_sum_1h:requests_1h,account_id_request_count_sum_1d:requests_1d,account_id_request_count_sum_7d:requests_7d,account_id_write_event_sum_1h:writes_1h,account_id_write_event_sum_1d:writes_1d,account_id_write_event_sum_7d:writes_7d,account_id_auth_failure_event_sum_1h:auth_failures_1h,account_id_auth_failure_event_sum_1d:auth_failures_1d,account_id_auth_failure_event_sum_7d:auth_failures_7d,account_id_client_ip_approx_unique_count_1d:distinct_ips_1d,account_id_client_ip_approx_unique_count_7d:distinct_ips_7d,account_id_user_agent_approx_unique_count_1d:distinct_agents_1d,account_id_user_agent_approx_unique_count_7d:distinct_agents_7d,hours_since_ip_first_seen:ip_age_hours,hours_since_agent_first_seen:agent_age_hours,account_id_client_ip_request_count_sum_14d:ip_requests_14d,account_id_user_agent_request_count_sum_14d:agent_requests_14d,account_age_hours:account_age_hours,prior_account_requests_7d:prior_requests_7d,session_write_share:session_write_share,session_requests_per_minute:session_request_rate,session_hour_utc:session_hour_utc,is_automation_agent:automation_agent",
+      "features": "rule_score:rule_score",
       "label-column": "is_ato",
-      "max-depth": "4",
-      "num-boost-round": "200",
+      "max-depth": "1",
+      "num-boost-round": "20",
       "partition-column": "ds",
       "seed": "42"
     },
@@ -126,31 +126,9 @@
         "query": {
           "endPartition": "2026-10-18",
           "selects": {
-            "account_age_hours": "account_age_hours",
-            "account_id_auth_failure_event_sum_1d": "account_id_auth_failure_event_sum_1d",
-            "account_id_auth_failure_event_sum_1h": "account_id_auth_failure_event_sum_1h",
-            "account_id_auth_failure_event_sum_7d": "account_id_auth_failure_event_sum_7d",
-            "account_id_client_ip_approx_unique_count_1d": "account_id_client_ip_approx_unique_count_1d",
-            "account_id_client_ip_approx_unique_count_7d": "account_id_client_ip_approx_unique_count_7d",
-            "account_id_client_ip_request_count_sum_14d": "account_id_client_ip_request_count_sum_14d",
-            "account_id_request_count_sum_1d": "account_id_request_count_sum_1d",
-            "account_id_request_count_sum_1h": "account_id_request_count_sum_1h",
-            "account_id_request_count_sum_7d": "account_id_request_count_sum_7d",
-            "account_id_user_agent_approx_unique_count_1d": "account_id_user_agent_approx_unique_count_1d",
-            "account_id_user_agent_approx_unique_count_7d": "account_id_user_agent_approx_unique_count_7d",
-            "account_id_user_agent_request_count_sum_14d": "account_id_user_agent_request_count_sum_14d",
-            "account_id_write_event_sum_1d": "account_id_write_event_sum_1d",
-            "account_id_write_event_sum_1h": "account_id_write_event_sum_1h",
-            "account_id_write_event_sum_7d": "account_id_write_event_sum_7d",
             "ds": "ds",
-            "hours_since_agent_first_seen": "hours_since_agent_first_seen",
-            "hours_since_ip_first_seen": "hours_since_ip_first_seen",
             "is_ato": "is_ato",
-            "is_automation_agent": "is_automation_agent",
-            "prior_account_requests_7d": "prior_account_requests_7d",
-            "session_hour_utc": "session_hour_utc",
-            "session_requests_per_minute": "session_requests_per_minute",
-            "session_write_share": "session_write_share"
+            "rule_score": "rule_score"
           },
           "startPartition": "2026-09-09"
         },

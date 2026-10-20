@@ -110,7 +110,7 @@ Confirm `is_ato`, `ds`, and the `rule_*` columns are present.
 zipline hub trial journal list --run-name ato-detection
 zipline hub trial start ato-detection \
   --task 'Does an XGBoost model beat hand-tuned rules at catching account takeovers?' \
-  --model app.ato_models.ato_xgb_full__19ca8c1c152c
+  --model app.ato_models.ato_xgb_full__2
 export ZIPLINE_TRIAL_ID='<trial-id>'
 ```
 
@@ -123,18 +123,18 @@ attaching its metrics.
 ```bash
 run_experiment() {
   experiment=$1 model=$2 title=$3
-  conf=app.ato_models.${model}__19ca8c1c152c
+  conf=app.ato_models.${model}__2
   zipline hub trial experiments record "$experiment" "$ZIPLINE_TRIAL_ID" \
     --title "$title" --status RUNNING --model-conf-name "$conf" && \
   ZIPLINE_TRIAL_ID="$ZIPLINE_TRIAL_ID" ZIPLINE_EXPERIMENT_ID="$experiment" \
-    zipline hub backfill "compiled/models/app/ato_models.${model}__19ca8c1c152c" \
+    zipline hub backfill "compiled/models/app/ato_models.${model}__2" \
     --start-ds 2026-10-18 --end-ds 2026-10-18
 }
 
 finish_experiment() {
   experiment=$1 model=$2
   zipline hub trial experiments metrics "$experiment" "$ZIPLINE_TRIAL_ID" \
-    --model-conf-name "app.ato_models.${model}__19ca8c1c152c" && \
+    --model-conf-name "app.ato_models.${model}__2" && \
   zipline hub trial experiments record "$experiment" "$ZIPLINE_TRIAL_ID" --status SUCCEEDED
 }
 
@@ -169,17 +169,18 @@ zipline hub trial journal append '<what each feature group added>' "$ZIPLINE_TRI
 
 ## Trainer archives
 
-Ray downloads `<model_artifact_base_uri>/builds/<model_name>-19ca8c1c152c.zip`
+Ray downloads `<model_artifact_base_uri>/builds/<model_name>-<version>.zip`
 for each model and writes its report beside it. These models keep artifacts
 under `s3://zipline-public-demo-warehouse/ato_models`, rather than the demo
 artifacts bucket, because Hub can read the warehouse bucket when it attaches
-trainer reports to a trial. Each name has a copy of the shared trainer archive:
+trainer reports to a trial. The models are version `2`, and each name has a
+copy of the shared trainer archive (build `19ca8c1c152c`):
 
 ```text
-s3://zipline-public-demo-warehouse/ato_models/builds/ato_rules_baseline-19ca8c1c152c.zip
-s3://zipline-public-demo-warehouse/ato_models/builds/ato_xgb_velocity-19ca8c1c152c.zip
-s3://zipline-public-demo-warehouse/ato_models/builds/ato_xgb_novelty-19ca8c1c152c.zip
-s3://zipline-public-demo-warehouse/ato_models/builds/ato_xgb_full-19ca8c1c152c.zip
+s3://zipline-public-demo-warehouse/ato_models/builds/ato_rules_baseline-2.zip
+s3://zipline-public-demo-warehouse/ato_models/builds/ato_xgb_velocity-2.zip
+s3://zipline-public-demo-warehouse/ato_models/builds/ato_xgb_novelty-2.zip
+s3://zipline-public-demo-warehouse/ato_models/builds/ato_xgb_full-2.zip
 ```
 
 If a training run fails with `NoSuchKey` while preparing its runtime

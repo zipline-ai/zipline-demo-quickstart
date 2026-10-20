@@ -12,7 +12,7 @@ and the same date holdout, so only the inputs differ:
 
 Artifacts live under the warehouse bucket, which both the Ray trainer and Hub
 can read, so Hub can attach the trainer's report to a trial. Each model name
-needs a trainer archive at ``<_ARTIFACTS>/builds/<model_name>-<version>.zip``;
+needs a trainer archive at ``<_ARTIFACTS>/builds/<model_name>-2.zip``;
 see docs/ato.md.
 """
 
@@ -33,7 +33,10 @@ from ai.chronon.types import (
     selects,
 )
 
-_TRAINER_VERSION = "19ca8c1c152c"
+# The shared demo trainer, build 19ca8c1c152c, copied per model name. The model
+# version starts at 2 because version 19ca8c1c152c first wrote to the artifacts
+# bucket; Hub resolves a model conf by name, so each name keeps one location.
+_MODEL_VERSION = "2"
 _ARTIFACTS = f"{WAREHOUSE_PREFIX}/ato_models"
 
 # The access logs start on 2026-09-02; a week of warm-up precedes the first row.
@@ -90,7 +93,7 @@ _RULES_ONLY = {"eta": "0.3", "max-depth": "1", "num-boost-round": "20"}
 
 def _variant(model_name, features, hyperparameters):
     return Model(
-        version=_TRAINER_VERSION,
+        version=_MODEL_VERSION,
         inference_spec=InferenceSpec(
             model_backend=ModelBackend.RAY,
             model_backend_params={"model_name": model_name, "model_type": "custom"},
