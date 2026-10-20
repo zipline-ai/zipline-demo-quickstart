@@ -98,7 +98,7 @@
     "team": "app",
     "version": "19ca8c1c152c"
   },
-  "modelArtifactBaseUri": "s3://zipline-public-demo-artifacts",
+  "modelArtifactBaseUri": "s3://zipline-public-demo-warehouse/ato_models",
   "outputMapping": {
     "ato_probability": "score"
   },

@@ -169,15 +169,17 @@ zipline hub trial journal append '<what each feature group added>' "$ZIPLINE_TRI
 
 ## Trainer archives
 
-Ray downloads `<ARTIFACT_PREFIX>/builds/<model_name>-19ca8c1c152c.zip` for each
-model name. These four names reuse the shared trainer bytes, and each has its
-own copy of the archive in the demo bucket:
+Ray downloads `<model_artifact_base_uri>/builds/<model_name>-19ca8c1c152c.zip`
+for each model and writes its report beside it. These models keep artifacts
+under `s3://zipline-public-demo-warehouse/ato_models`, rather than the demo
+artifacts bucket, because Hub can read the warehouse bucket when it attaches
+trainer reports to a trial. Each name has a copy of the shared trainer archive:
 
 ```text
-s3://zipline-public-demo-artifacts/builds/ato_rules_baseline-19ca8c1c152c.zip
-s3://zipline-public-demo-artifacts/builds/ato_xgb_velocity-19ca8c1c152c.zip
-s3://zipline-public-demo-artifacts/builds/ato_xgb_novelty-19ca8c1c152c.zip
-s3://zipline-public-demo-artifacts/builds/ato_xgb_full-19ca8c1c152c.zip
+s3://zipline-public-demo-warehouse/ato_models/builds/ato_rules_baseline-19ca8c1c152c.zip
+s3://zipline-public-demo-warehouse/ato_models/builds/ato_xgb_velocity-19ca8c1c152c.zip
+s3://zipline-public-demo-warehouse/ato_models/builds/ato_xgb_novelty-19ca8c1c152c.zip
+s3://zipline-public-demo-warehouse/ato_models/builds/ato_xgb_full-19ca8c1c152c.zip
 ```
 
 If a training run fails with `NoSuchKey` while preparing its runtime

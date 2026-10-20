@@ -10,12 +10,14 @@ and the same date holdout, so only the inputs differ:
 * ``ato_xgb_novelty``: adds IP and device novelty plus session context.
 * ``ato_xgb_full``: adds IP reputation across accounts and the rule flags.
 
-Each model name needs a trainer archive at
-``<ARTIFACT_PREFIX>/builds/<model_name>-<version>.zip``; see docs/ato.md.
+Artifacts live under the warehouse bucket, which both the Ray trainer and Hub
+can read, so Hub can attach the trainer's report to a trial. Each model name
+needs a trainer archive at ``<_ARTIFACTS>/builds/<model_name>-<version>.zip``;
+see docs/ato.md.
 """
 
 from joins.app import ato_training
-from teams import ARTIFACT_PREFIX
+from teams import WAREHOUSE_PREFIX
 
 from ai.chronon.types import (
     DataType,
@@ -32,6 +34,7 @@ from ai.chronon.types import (
 )
 
 _TRAINER_VERSION = "19ca8c1c152c"
+_ARTIFACTS = f"{WAREHOUSE_PREFIX}/ato_models"
 
 # The access logs start on 2026-09-02; a week of warm-up precedes the first row.
 _TRAIN_START = "2026-09-09"
@@ -99,7 +102,7 @@ def _variant(model_name, features, hyperparameters):
         },
         output_mapping={"ato_probability": "score"},
         value_fields=[("score", DataType.DOUBLE)],
-        model_artifact_base_uri=ARTIFACT_PREFIX,
+        model_artifact_base_uri=_ARTIFACTS,
         output_namespace="public_demo_data",
         training_conf=TrainingSpec(
             training_data_source=EventSource(
