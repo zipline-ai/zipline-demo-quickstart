@@ -1,15 +1,41 @@
 {
-  "inferenceSpec": {
-    "modelBackend": 2,
-    "modelBackendParams": {
-      "model_name": "ato_rules_baseline",
-      "model_type": "custom"
+  "accuracy": 0,
+  "aggregations": [
+    {
+      "argMap": {},
+      "inputColumn": "seen_at_ms",
+      "operation": 0,
+      "windows": [
+        {
+          "length": 14,
+          "timeUnit": 1
+        }
+      ]
+    },
+    {
+      "argMap": {},
+      "inputColumn": "request_count",
+      "operation": 7,
+      "windows": [
+        {
+          "length": 14,
+          "timeUnit": 1
+        }
+      ]
     }
-  },
-  "inputMapping": {
-    "instance": "named_struct('rule_score', rule_score)"
-  },
+  ],
+  "keyColumns": [
+    "account_id",
+    "client_ip"
+  ],
   "metaData": {
+    "columnHashes": {
+      "account_id": "b1c3a47ac24f1ef390da5d17c41489ec",
+      "client_ip": "7fb48045bb8493b9b0766857a01a0e45",
+      "request_count_sum_14d": "74fc98b810e6b98f1989185841028f9e",
+      "seen_at_ms_min_14d": "299c973924dd5f0626fd0e97587b2f1e"
+    },
+    "customJson": "{\"airflowDependencies\": [{\"name\": \"wf_public_demo_data_app_ato_data_activity__1_with_offset_0\", \"spec\": \"public_demo_data.app_ato_data_activity__1/ds={{ macros.ds_add(ds, 0) }}\"}]}",
     "executionInfo": {
       "conf": {
         "common": {
@@ -17,7 +43,7 @@
           "spark.chronon.partition.column": "ds",
           "spark.chronon.partition.format": "yyyy-MM-dd",
           "spark.chronon.table_write.format": "iceberg",
-          "spark.chronon.table_write.upload.format": "ion",
+          "spark.chronon.table_write.upload.format": "parquet",
           "spark.chronon.table_write.upload.location": "s3://zipline-public-demo-warehouse/data/ion_uploads/",
           "spark.default.parallelism": "4",
           "spark.hadoop.hive.metastore.client.factory.class": "com.amazonaws.glue.catalog.metastore.AWSGlueDataCatalogHiveClientFactory",
@@ -90,66 +116,34 @@
             "WAREHOUSE_PREFIX": "s3://zipline-public-demo-warehouse"
           }
         }
-      }
+      },
+      "historicalBackfill": 0,
+      "offlineSchedule": "@never"
     },
-    "name": "ato.ato_models.ato_rules_baseline__19ca8c1c152c",
+    "name": "app.ato_features.account_ip__1",
+    "online": 0,
     "outputNamespace": "public_demo_data",
-    "sourceFile": "models/ato/ato_models.py",
-    "team": "ato",
-    "version": "19ca8c1c152c"
+    "sourceFile": "group_bys/app/ato_features.py",
+    "team": "app",
+    "version": "1"
   },
-  "modelArtifactBaseUri": "s3://zipline-public-demo-artifacts",
-  "outputMapping": {
-    "ato_probability": "score"
-  },
-  "trainingConf": {
-    "jobConfigs": {
-      "catalog-region": "us-west-2",
-      "catalog-type": "glue",
-      "eta": "0.3",
-      "eval-days": "7",
-      "features": "rule_score:rule_score",
-      "label-column": "is_ato",
-      "max-depth": "1",
-      "num-boost-round": "20",
-      "partition-column": "ds",
-      "seed": "42"
-    },
-    "pythonModule": "trainer.train",
-    "resourceConfig": {
-      "maxReplicaCount": 0,
-      "minReplicaCount": 0
-    },
-    "schedule": "@never",
-    "trainingDataSource": {
+  "sources": [
+    {
       "events": {
         "query": {
-          "endPartition": "2026-10-15",
           "selects": {
-            "ds": "ds",
-            "is_ato": "is_ato",
-            "rule_score": "rule_score"
+            "account_id": "account_id",
+            "auth_failure_event": "IF(status_code IN (401, 403), 1, 0)",
+            "client_ip": "client_ip",
+            "request_count": "1",
+            "seen_at_ms": "event_ts",
+            "user_agent": "user_agent",
+            "write_event": "IF(http_method IN ('POST', 'PUT', 'PATCH', 'DELETE'), 1, 0)"
           },
-          "startPartition": "2026-09-16"
+          "timeColumn": "event_ts"
         },
-        "table": "public_demo_data.ato_ato_training_v1__1"
+        "table": "public_demo_data.app_ato_data_activity__1"
       }
-    },
-    "trainingDataWindow": {
-      "length": 29,
-      "timeUnit": 1
     }
-  },
-  "valueSchema": {
-    "kind": 13,
-    "name": "model_value_schema",
-    "params": [
-      {
-        "dataType": {
-          "kind": 6
-        },
-        "name": "score"
-      }
-    ]
-  }
+  ]
 }

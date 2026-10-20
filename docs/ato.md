@@ -5,7 +5,7 @@ Can a learned model beat a hand-tuned rule set at catching account takeovers
 real access logs. It then tracks four models in one trial: a rules baseline and
 three XGBoost models with progressively richer features.
 
-All config paths below are relative to `configs/` and belong to the `ato` team.
+All config paths below are relative to `configs/` and belong to the `app` team.
 
 ## Where the labels come from
 
@@ -13,7 +13,7 @@ The demo has real user activity but no fraud outcomes, and this tutorial adds no
 input tables. Instead, two staging queries simulate an ATO program on top of
 `public_demo_app.ui_access_logs_iceberg`:
 
-- `staging_queries/ato/ato_data.py: activity` keeps every real request and adds
+- `staging_queries/app/ato_data.py: activity` keeps every real request and adds
   synthetic sessions to a hash-selected share of *established* account-days
   (accounts active in the prior 14 days):
 
@@ -38,7 +38,7 @@ results. Features never read it.
 
 ## Features and the training set
 
-`group_bys/ato/ato_features.py` defines four temporally accurate GroupBys over
+`group_bys/app/ato_features.py` defines four temporally accurate GroupBys over
 `activity`:
 
 - `account`: requests, writes, and auth failures (401/403) over 1 hour, 1 day,
@@ -47,7 +47,7 @@ results. Features never read it.
   user agent within 14 days, and how often.
 - `ip`: distinct accounts and auth failures per IP over 1 and 7 days.
 
-`joins/ato/ato_training.py: v1` joins them onto sessions at session close (1 ms
+`joins/app/ato_training.py: v1` joins them onto sessions at session close (1 ms
 after the last request). Derivations add IP and device age, account age, write
 share, request rate, the UTC hour, an automation-agent flag, and four rules:
 
@@ -62,7 +62,7 @@ share, request rate, the UTC hour, an automation-agent flag, and four rules:
 
 ## The four models
 
-`models/ato/ato_models.py` uses the shared Ray/XGBoost trainer for every variant,
+`models/app/ato_models.py` uses the shared Ray/XGBoost trainer for every variant,
 with the same rows and holdout. All train on September 16 – October 8, 2026 and
 validate on the final week, October 9–15.
 
@@ -91,13 +91,13 @@ the 14-day feature windows two weeks of history before the first training day.
 ```bash
 cd configs
 zipline compile
-zipline hub backfill compiled/staging_queries/ato/ato_data.activity__1 \
+zipline hub backfill compiled/staging_queries/app/ato_data.activity__1 \
   --start-ds 2026-09-02 --end-ds 2026-10-15
-zipline hub backfill compiled/staging_queries/ato/ato_data.sessions__1 \
+zipline hub backfill compiled/staging_queries/app/ato_data.sessions__1 \
   --start-ds 2026-09-16 --end-ds 2026-10-15
-zipline hub backfill compiled/joins/ato/ato_training.v1__1 \
+zipline hub backfill compiled/joins/app/ato_training.v1__1 \
   --start-ds 2026-09-16 --end-ds 2026-10-15
-zipline hub eval-table public_demo_data.ato_ato_training_v1__1 --team ato
+zipline hub eval-table public_demo_data.app_ato_training_v1__1 --team app
 ```
 
 Confirm `is_ato`, `ds`, and the `rule_*` columns are present.
@@ -108,7 +108,7 @@ Confirm `is_ato`, `ds`, and the `rule_*` columns are present.
 zipline hub trial journal list --run-name ato-detection
 zipline hub trial start ato-detection \
   --task 'Does an XGBoost model beat hand-tuned rules at catching account takeovers?' \
-  --model ato.ato_models.ato_xgb_full__19ca8c1c152c
+  --model app.ato_models.ato_xgb_full__19ca8c1c152c
 export ZIPLINE_TRIAL_ID='<trial-id>'
 ```
 
@@ -121,18 +121,18 @@ attaching its metrics.
 ```bash
 run_experiment() {
   experiment=$1 model=$2 title=$3
-  conf=ato.ato_models.${model}__19ca8c1c152c
+  conf=app.ato_models.${model}__19ca8c1c152c
   zipline hub trial experiments record "$experiment" "$ZIPLINE_TRIAL_ID" \
     --title "$title" --status RUNNING --model-conf-name "$conf" && \
   ZIPLINE_TRIAL_ID="$ZIPLINE_TRIAL_ID" ZIPLINE_EXPERIMENT_ID="$experiment" \
-    zipline hub backfill "compiled/models/ato/ato_models.${model}__19ca8c1c152c" \
+    zipline hub backfill "compiled/models/app/ato_models.${model}__19ca8c1c152c" \
     --start-ds 2026-10-15 --end-ds 2026-10-15
 }
 
 finish_experiment() {
   experiment=$1 model=$2
   zipline hub trial experiments metrics "$experiment" "$ZIPLINE_TRIAL_ID" \
-    --model-conf-name "ato.ato_models.${model}__19ca8c1c152c" && \
+    --model-conf-name "app.ato_models.${model}__19ca8c1c152c" && \
   zipline hub trial experiments record "$experiment" "$ZIPLINE_TRIAL_ID" --status SUCCEEDED
 }
 

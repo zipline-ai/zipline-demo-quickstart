@@ -80,9 +80,3 @@ instacart = Team(
     email="demo@zipline.ai",
     outputNamespace="public_demo_data",
 )
-
-ato = Team(
-    description="Account-takeover detection tutorial built on demo access logs",
-    email="demo@zipline.ai",
-    outputNamespace="public_demo_data",
-)

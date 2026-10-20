@@ -166,21 +166,21 @@
         ],
         "metaData": {
           "columnHashes": {
-            "account_id": "5d3587735978efc3ff7f09bd0df92f99",
-            "auth_failure_event_sum_1d": "f306515415100a34345c7b1ca12a452e",
-            "auth_failure_event_sum_1h": "f306515415100a34345c7b1ca12a452e",
-            "auth_failure_event_sum_7d": "f306515415100a34345c7b1ca12a452e",
-            "client_ip_approx_unique_count_1d": "fce4867d7833f373c80e235608565208",
-            "client_ip_approx_unique_count_7d": "fce4867d7833f373c80e235608565208",
-            "request_count_sum_1d": "1f47dcf3a9b08083a09ef3c49fb34d0a",
-            "request_count_sum_1h": "1f47dcf3a9b08083a09ef3c49fb34d0a",
-            "request_count_sum_7d": "1f47dcf3a9b08083a09ef3c49fb34d0a",
-            "seen_at_ms_min_14d": "c8735cc4e8d9b03d5ebb65f2ec14b5eb",
-            "user_agent_approx_unique_count_1d": "f10a47dcf15be137c31485c5ad6cb9bd",
-            "user_agent_approx_unique_count_7d": "f10a47dcf15be137c31485c5ad6cb9bd",
-            "write_event_sum_1d": "52b5c7d69d6ca47259ab6845743b653e",
-            "write_event_sum_1h": "52b5c7d69d6ca47259ab6845743b653e",
-            "write_event_sum_7d": "52b5c7d69d6ca47259ab6845743b653e"
+            "account_id": "37ab1098aee9e3cba52e560559d114d1",
+            "auth_failure_event_sum_1d": "871fff660362350f80724378b98538f3",
+            "auth_failure_event_sum_1h": "871fff660362350f80724378b98538f3",
+            "auth_failure_event_sum_7d": "871fff660362350f80724378b98538f3",
+            "client_ip_approx_unique_count_1d": "032f5f20aea450b09ca98f2df9707c74",
+            "client_ip_approx_unique_count_7d": "032f5f20aea450b09ca98f2df9707c74",
+            "request_count_sum_1d": "d6a7fe4050927f2dd53e480525c0c3fe",
+            "request_count_sum_1h": "d6a7fe4050927f2dd53e480525c0c3fe",
+            "request_count_sum_7d": "d6a7fe4050927f2dd53e480525c0c3fe",
+            "seen_at_ms_min_14d": "58e032b398dd97d6588ce32c0451020c",
+            "user_agent_approx_unique_count_1d": "dd91c7a011813e768f30939bebbb2f12",
+            "user_agent_approx_unique_count_7d": "dd91c7a011813e768f30939bebbb2f12",
+            "write_event_sum_1d": "482c127ff7f98a3a5973f1a9d038b44b",
+            "write_event_sum_1h": "482c127ff7f98a3a5973f1a9d038b44b",
+            "write_event_sum_7d": "482c127ff7f98a3a5973f1a9d038b44b"
           },
           "executionInfo": {
             "conf": {
@@ -189,7 +189,7 @@
                 "spark.chronon.partition.column": "ds",
                 "spark.chronon.partition.format": "yyyy-MM-dd",
                 "spark.chronon.table_write.format": "iceberg",
-                "spark.chronon.table_write.upload.format": "ion",
+                "spark.chronon.table_write.upload.format": "parquet",
                 "spark.chronon.table_write.upload.location": "s3://zipline-public-demo-warehouse/data/ion_uploads/",
                 "spark.default.parallelism": "4",
                 "spark.hadoop.hive.metastore.client.factory.class": "com.amazonaws.glue.catalog.metastore.AWSGlueDataCatalogHiveClientFactory",
@@ -266,10 +266,10 @@
             "historicalBackfill": 0,
             "offlineSchedule": "@never"
           },
-          "name": "ato.ato_features.account__1",
+          "name": "app.ato_features.account__1",
           "online": 0,
           "outputNamespace": "public_demo_data",
-          "team": "ato",
+          "team": "app",
           "version": "1"
         },
         "sources": [
@@ -287,7 +287,7 @@
                 },
                 "timeColumn": "event_ts"
               },
-              "table": "public_demo_data.ato_ato_data_activity__1"
+              "table": "public_demo_data.app_ato_data_activity__1"
             }
           }
         ]
@@ -327,10 +327,10 @@
         ],
         "metaData": {
           "columnHashes": {
-            "account_id": "59b13bef9e5b9a31c0d7d097bee4ef02",
-            "client_ip": "8c3b6cd6d23bfaa8356d77260bc6c071",
-            "request_count_sum_14d": "3085690650263e767fa16a94bdd4c71e",
-            "seen_at_ms_min_14d": "45937e068c292fd7651ac56baf081efc"
+            "account_id": "b1c3a47ac24f1ef390da5d17c41489ec",
+            "client_ip": "7fb48045bb8493b9b0766857a01a0e45",
+            "request_count_sum_14d": "74fc98b810e6b98f1989185841028f9e",
+            "seen_at_ms_min_14d": "299c973924dd5f0626fd0e97587b2f1e"
           },
           "executionInfo": {
             "conf": {
@@ -339,7 +339,7 @@
                 "spark.chronon.partition.column": "ds",
                 "spark.chronon.partition.format": "yyyy-MM-dd",
                 "spark.chronon.table_write.format": "iceberg",
-                "spark.chronon.table_write.upload.format": "ion",
+                "spark.chronon.table_write.upload.format": "parquet",
                 "spark.chronon.table_write.upload.location": "s3://zipline-public-demo-warehouse/data/ion_uploads/",
                 "spark.default.parallelism": "4",
                 "spark.hadoop.hive.metastore.client.factory.class": "com.amazonaws.glue.catalog.metastore.AWSGlueDataCatalogHiveClientFactory",
@@ -416,10 +416,10 @@
             "historicalBackfill": 0,
             "offlineSchedule": "@never"
           },
-          "name": "ato.ato_features.account_ip__1",
+          "name": "app.ato_features.account_ip__1",
           "online": 0,
           "outputNamespace": "public_demo_data",
-          "team": "ato",
+          "team": "app",
           "version": "1"
         },
         "sources": [
@@ -437,7 +437,7 @@
                 },
                 "timeColumn": "event_ts"
               },
-              "table": "public_demo_data.ato_ato_data_activity__1"
+              "table": "public_demo_data.app_ato_data_activity__1"
             }
           }
         ]
@@ -477,10 +477,10 @@
         ],
         "metaData": {
           "columnHashes": {
-            "account_id": "0f6911d747a0c3b0d8dc752b8a40f9bc",
-            "request_count_sum_14d": "484f99ebbec87c1a6a588cc1e03c14e2",
-            "seen_at_ms_min_14d": "86e6466cb8feee28b795de8ce7adc798",
-            "user_agent": "d624095f09c1805e066c67b6063bdaa1"
+            "account_id": "67a470de29fb1d3fe3cbb05c133763fd",
+            "request_count_sum_14d": "f303d9987d9907b8c84e22c10138c5eb",
+            "seen_at_ms_min_14d": "eb5c4a1908e57f3f2706e2f5c9974cb0",
+            "user_agent": "af25da50d29d4d00fb75e4b19a120df0"
           },
           "executionInfo": {
             "conf": {
@@ -489,7 +489,7 @@
                 "spark.chronon.partition.column": "ds",
                 "spark.chronon.partition.format": "yyyy-MM-dd",
                 "spark.chronon.table_write.format": "iceberg",
-                "spark.chronon.table_write.upload.format": "ion",
+                "spark.chronon.table_write.upload.format": "parquet",
                 "spark.chronon.table_write.upload.location": "s3://zipline-public-demo-warehouse/data/ion_uploads/",
                 "spark.default.parallelism": "4",
                 "spark.hadoop.hive.metastore.client.factory.class": "com.amazonaws.glue.catalog.metastore.AWSGlueDataCatalogHiveClientFactory",
@@ -566,10 +566,10 @@
             "historicalBackfill": 0,
             "offlineSchedule": "@never"
           },
-          "name": "ato.ato_features.account_user_agent__1",
+          "name": "app.ato_features.account_user_agent__1",
           "online": 0,
           "outputNamespace": "public_demo_data",
-          "team": "ato",
+          "team": "app",
           "version": "1"
         },
         "sources": [
@@ -587,7 +587,7 @@
                 },
                 "timeColumn": "event_ts"
               },
-              "table": "public_demo_data.ato_ato_data_activity__1"
+              "table": "public_demo_data.app_ato_data_activity__1"
             }
           }
         ]
@@ -645,12 +645,12 @@
         ],
         "metaData": {
           "columnHashes": {
-            "account_id_approx_unique_count_1d": "ba6e7eada4f37ae122429e7457279c06",
-            "account_id_approx_unique_count_7d": "ba6e7eada4f37ae122429e7457279c06",
-            "auth_failure_event_sum_1d": "16d03d5f0f699abe4ff64e1f1a43aa07",
-            "auth_failure_event_sum_7d": "16d03d5f0f699abe4ff64e1f1a43aa07",
-            "client_ip": "5683766485bcfa6dd2607c8b4247edc3",
-            "request_count_sum_1d": "21681d23da9c03c1b5d598a96e0984bb"
+            "account_id_approx_unique_count_1d": "67608981510310a1ad256cdedf2318ae",
+            "account_id_approx_unique_count_7d": "67608981510310a1ad256cdedf2318ae",
+            "auth_failure_event_sum_1d": "a7dd70cd71947f0071d8aebfbdbba4af",
+            "auth_failure_event_sum_7d": "a7dd70cd71947f0071d8aebfbdbba4af",
+            "client_ip": "6ca6bc305e5f88c0ef497f4f81612019",
+            "request_count_sum_1d": "45ae58079174b7cc10ba96b007fcdf78"
           },
           "executionInfo": {
             "conf": {
@@ -659,7 +659,7 @@
                 "spark.chronon.partition.column": "ds",
                 "spark.chronon.partition.format": "yyyy-MM-dd",
                 "spark.chronon.table_write.format": "iceberg",
-                "spark.chronon.table_write.upload.format": "ion",
+                "spark.chronon.table_write.upload.format": "parquet",
                 "spark.chronon.table_write.upload.location": "s3://zipline-public-demo-warehouse/data/ion_uploads/",
                 "spark.default.parallelism": "4",
                 "spark.hadoop.hive.metastore.client.factory.class": "com.amazonaws.glue.catalog.metastore.AWSGlueDataCatalogHiveClientFactory",
@@ -736,10 +736,10 @@
             "historicalBackfill": 0,
             "offlineSchedule": "@never"
           },
-          "name": "ato.ato_features.ip__1",
+          "name": "app.ato_features.ip__1",
           "online": 0,
           "outputNamespace": "public_demo_data",
-          "team": "ato",
+          "team": "app",
           "version": "1"
         },
         "sources": [
@@ -757,7 +757,7 @@
                 },
                 "timeColumn": "event_ts"
               },
-              "table": "public_demo_data.ato_ato_data_activity__1"
+              "table": "public_demo_data.app_ato_data_activity__1"
             }
           }
         ]
@@ -781,58 +781,58 @@
         },
         "timeColumn": "session_end_ts + 1"
       },
-      "table": "public_demo_data.ato_ato_data_sessions__1"
+      "table": "public_demo_data.app_ato_data_sessions__1"
     }
   },
   "metaData": {
     "columnHashes": {
-      "account_age_hours": "0774058252d47df92c78edcfd4ac7e5b",
-      "account_id": "30b815064d3383b9ffa1f467a6692d82",
-      "account_id_auth_failure_event_sum_1d": "ad219bc17cdf5dbca83e7a8b3e3dc208",
-      "account_id_auth_failure_event_sum_1h": "ad219bc17cdf5dbca83e7a8b3e3dc208",
-      "account_id_auth_failure_event_sum_7d": "ad219bc17cdf5dbca83e7a8b3e3dc208",
-      "account_id_client_ip_approx_unique_count_1d": "bd982d5edd11854be627a3dc386268d1",
-      "account_id_client_ip_approx_unique_count_7d": "bd982d5edd11854be627a3dc386268d1",
-      "account_id_client_ip_request_count_sum_14d": "132dd00d73ec66666b72efb78d4a9911",
-      "account_id_client_ip_seen_at_ms_min_14d": "5767e42ceaaaccf769014ef0742ed9a8",
-      "account_id_request_count_sum_1d": "39af9b5bece28af9c4d2bf506db1c915",
-      "account_id_request_count_sum_1h": "39af9b5bece28af9c4d2bf506db1c915",
-      "account_id_request_count_sum_7d": "39af9b5bece28af9c4d2bf506db1c915",
-      "account_id_seen_at_ms_min_14d": "6db5c34638731af4511d868163d05a74",
-      "account_id_user_agent_approx_unique_count_1d": "e187ffa38c363bdc70d0297422551e1f",
-      "account_id_user_agent_approx_unique_count_7d": "e187ffa38c363bdc70d0297422551e1f",
-      "account_id_user_agent_request_count_sum_14d": "ee70d629ffac669f4eb4627bf3abb4e2",
-      "account_id_user_agent_seen_at_ms_min_14d": "1c6c42d6edbfe44ef5160576f6bb3ffa",
-      "account_id_write_event_sum_1d": "213d4a1d142994be7bf4227cb0fc9a1c",
-      "account_id_write_event_sum_1h": "213d4a1d142994be7bf4227cb0fc9a1c",
-      "account_id_write_event_sum_7d": "213d4a1d142994be7bf4227cb0fc9a1c",
-      "client_ip": "9a06d3054d8a44e61aeeb640a65d788c",
-      "client_ip_account_id_approx_unique_count_1d": "7e736bbb5495853497c2765f33f3f7ec",
-      "client_ip_account_id_approx_unique_count_7d": "7e736bbb5495853497c2765f33f3f7ec",
-      "client_ip_auth_failure_event_sum_1d": "d463b003cd57f54fb2e34ca38b5431b9",
-      "client_ip_auth_failure_event_sum_7d": "d463b003cd57f54fb2e34ca38b5431b9",
-      "client_ip_request_count_sum_1d": "3c87eb93784e290ae5cbe907a08fd9e7",
-      "hours_since_agent_first_seen": "e42895135a756d0a44081e27442b4191",
-      "hours_since_ip_first_seen": "229c431e872d3037ae7784ce1d36800f",
-      "is_ato": "17b3e69d803dd4fb2301efe178e91186",
-      "is_automation_agent": "f41b8d53392407d5b5e86d9fa17d9e5f",
-      "prior_account_requests_7d": "2d3c8315930de387cbad0f54c7fb10f8",
-      "rule_auth_failures": "33ed71a2df9cd4b0c1f0be31e677d00d",
-      "rule_new_ip_and_device": "d15cff37b3d358a3a4d0cd342e9583eb",
-      "rule_score": "942f8bba7309ed32fcd0820bafe94535",
-      "rule_scripted_writes": "1af79351bdd89ff8d371c1d54b7580eb",
-      "rule_shared_ip": "d050cff26588c8e892a3e433c9731dd9",
-      "scenario": "ea85fc777d5837c82b06d8ced1fd7541",
-      "session_hour_utc": "5b40140b444963dd02063aec917fd0fb",
-      "session_id": "c2a23164d4b0a7e5a7e5602bd3ace290",
-      "session_requests": "c8b54263ecea1af267a2c81f1f867f4a",
-      "session_requests_per_minute": "6bb1218832875e46845b7d063fcd12f2",
-      "session_start_ts": "759bd118bf91eb085df332ad2954cc64",
-      "session_write_share": "056721fff4bb920813f39bd3ac3bc945",
-      "ts": "2468998dcf21774dc7b3d904383cc6e3",
-      "user_agent": "1ae66f005b0cc332edfde1af498282ef"
+      "account_age_hours": "98156fc1f85f809f511b21516306c0e1",
+      "account_id": "bc833b523c6299d20d6667de30b2f56e",
+      "account_id_auth_failure_event_sum_1d": "5d7ee38e850eecbe7dd6af1601eec1fe",
+      "account_id_auth_failure_event_sum_1h": "5d7ee38e850eecbe7dd6af1601eec1fe",
+      "account_id_auth_failure_event_sum_7d": "5d7ee38e850eecbe7dd6af1601eec1fe",
+      "account_id_client_ip_approx_unique_count_1d": "5b5feb6bd2df17096f2c634eb114e854",
+      "account_id_client_ip_approx_unique_count_7d": "5b5feb6bd2df17096f2c634eb114e854",
+      "account_id_client_ip_request_count_sum_14d": "660934aa68a178e7245acfe79d00fcf6",
+      "account_id_client_ip_seen_at_ms_min_14d": "6354fb839f0ae04aba27402e0f1520f3",
+      "account_id_request_count_sum_1d": "85242e7410a3277d1f25c28de95c17e8",
+      "account_id_request_count_sum_1h": "85242e7410a3277d1f25c28de95c17e8",
+      "account_id_request_count_sum_7d": "85242e7410a3277d1f25c28de95c17e8",
+      "account_id_seen_at_ms_min_14d": "ab8c732c29daf2e44a9a057644e8d63d",
+      "account_id_user_agent_approx_unique_count_1d": "3cfe898331280e74407b9f3d31b152ab",
+      "account_id_user_agent_approx_unique_count_7d": "3cfe898331280e74407b9f3d31b152ab",
+      "account_id_user_agent_request_count_sum_14d": "888a03cf27bbc16dde4085e2f606bc3e",
+      "account_id_user_agent_seen_at_ms_min_14d": "4cd126272a22a5c0605470a98f9ad226",
+      "account_id_write_event_sum_1d": "75fdd4eb486536faacd8f39c4f8d48e6",
+      "account_id_write_event_sum_1h": "75fdd4eb486536faacd8f39c4f8d48e6",
+      "account_id_write_event_sum_7d": "75fdd4eb486536faacd8f39c4f8d48e6",
+      "client_ip": "2702001ae437915b0148b0c2a581d9df",
+      "client_ip_account_id_approx_unique_count_1d": "a727850c75d4051b99b7af2a0e86c0ce",
+      "client_ip_account_id_approx_unique_count_7d": "a727850c75d4051b99b7af2a0e86c0ce",
+      "client_ip_auth_failure_event_sum_1d": "4457a46d935a08d0cb4b54a2defb14df",
+      "client_ip_auth_failure_event_sum_7d": "4457a46d935a08d0cb4b54a2defb14df",
+      "client_ip_request_count_sum_1d": "4d4b84b14264bd76c6b0db75eb2523c9",
+      "hours_since_agent_first_seen": "572217a04d8d4450a4ce5b6b290e4b58",
+      "hours_since_ip_first_seen": "175f0d4e3dbed5784c4996f4d991e758",
+      "is_ato": "5f247490d836a9d2626862a048050fed",
+      "is_automation_agent": "c823d59933806e5e87b545b46303620b",
+      "prior_account_requests_7d": "dd3fd74ecf88b47424520a5d08b2e26f",
+      "rule_auth_failures": "d8f7ac691e6f23c493d8917dd11cab62",
+      "rule_new_ip_and_device": "db7bb4f031c9592548a5d4039ad18035",
+      "rule_score": "20048abfc423ae16bcafd26ba7fd2692",
+      "rule_scripted_writes": "ef8c4342fc93a726785d938a68bfe101",
+      "rule_shared_ip": "f66eafc2204350a9bc335930e1f6003a",
+      "scenario": "38fa5b07f3d2bb72a098e481858d530c",
+      "session_hour_utc": "5bff8aa8bd8400472b86268428d37327",
+      "session_id": "75e3c5d5764ca5846dc0ef7194353c56",
+      "session_requests": "29ee4fa5326d314c89569d439eb3fef5",
+      "session_requests_per_minute": "71fd3ba584f45da632a8fd7278a09b44",
+      "session_start_ts": "f3e8f2e7a6310772c0f9f5f3949857c2",
+      "session_write_share": "21b503b0750c41ba96dc9f114160b684",
+      "ts": "e13e8d379f78ca8b172183b6d3e2c2e2",
+      "user_agent": "933ea5087316e60d4ea903d31259e7cb"
     },
-    "customJson": "{\"airflowDependencies\": [{\"name\": \"wf_public_demo_data_ato_ato_data_sessions__1_with_offset_0\", \"spec\": \"public_demo_data.ato_ato_data_sessions__1/ds={{ macros.ds_add(ds, 0) }}\"}, {\"name\": \"wf_public_demo_data_ato_ato_data_activity__1_with_offset_0\", \"spec\": \"public_demo_data.ato_ato_data_activity__1/ds={{ macros.ds_add(ds, 0) }}\"}]}",
+    "customJson": "{\"airflowDependencies\": [{\"name\": \"wf_public_demo_data_app_ato_data_sessions__1_with_offset_0\", \"spec\": \"public_demo_data.app_ato_data_sessions__1/ds={{ macros.ds_add(ds, 0) }}\"}, {\"name\": \"wf_public_demo_data_app_ato_data_activity__1_with_offset_0\", \"spec\": \"public_demo_data.app_ato_data_activity__1/ds={{ macros.ds_add(ds, 0) }}\"}]}",
     "executionInfo": {
       "conf": {
         "common": {
@@ -840,7 +840,7 @@
           "spark.chronon.partition.column": "ds",
           "spark.chronon.partition.format": "yyyy-MM-dd",
           "spark.chronon.table_write.format": "iceberg",
-          "spark.chronon.table_write.upload.format": "ion",
+          "spark.chronon.table_write.upload.format": "parquet",
           "spark.chronon.table_write.upload.location": "s3://zipline-public-demo-warehouse/data/ion_uploads/",
           "spark.default.parallelism": "4",
           "spark.hadoop.hive.metastore.client.factory.class": "com.amazonaws.glue.catalog.metastore.AWSGlueDataCatalogHiveClientFactory",
@@ -918,13 +918,13 @@
       },
       "offlineSchedule": "@never"
     },
-    "name": "ato.ato_training.v1__1",
+    "name": "app.ato_training.v1__1",
     "online": 0,
     "outputNamespace": "public_demo_data",
     "production": 0,
     "samplePercent": 100.0,
-    "sourceFile": "joins/ato/ato_training.py",
-    "team": "ato",
+    "sourceFile": "joins/app/ato_training.py",
+    "team": "app",
     "version": "1"
   },
   "rowIds": [

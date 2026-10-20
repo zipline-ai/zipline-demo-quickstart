@@ -8,8 +8,8 @@ Derivations add the hand-written rules used by the rules baseline, plus the
 novelty and session-context signals the XGBoost variants learn from.
 """
 
-from group_bys.ato import ato_features
-from staging_queries.ato import ato_data
+from group_bys.app import ato_features
+from staging_queries.app import ato_data
 
 from ai.chronon.types import ConfigProperties, Derivation, EventSource, Join, JoinPart, Query, selects
 

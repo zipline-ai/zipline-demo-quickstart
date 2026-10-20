@@ -1,41 +1,7 @@
 {
-  "accuracy": 0,
-  "aggregations": [
-    {
-      "argMap": {},
-      "inputColumn": "seen_at_ms",
-      "operation": 0,
-      "windows": [
-        {
-          "length": 14,
-          "timeUnit": 1
-        }
-      ]
-    },
-    {
-      "argMap": {},
-      "inputColumn": "request_count",
-      "operation": 7,
-      "windows": [
-        {
-          "length": 14,
-          "timeUnit": 1
-        }
-      ]
-    }
-  ],
-  "keyColumns": [
-    "account_id",
-    "user_agent"
-  ],
+  "engineType": 0,
   "metaData": {
-    "columnHashes": {
-      "account_id": "0f6911d747a0c3b0d8dc752b8a40f9bc",
-      "request_count_sum_14d": "484f99ebbec87c1a6a588cc1e03c14e2",
-      "seen_at_ms_min_14d": "86e6466cb8feee28b795de8ce7adc798",
-      "user_agent": "d624095f09c1805e066c67b6063bdaa1"
-    },
-    "customJson": "{\"airflowDependencies\": [{\"name\": \"wf_public_demo_data_ato_ato_data_activity__1_with_offset_0\", \"spec\": \"public_demo_data.ato_ato_data_activity__1/ds={{ macros.ds_add(ds, 0) }}\"}]}",
+    "customJson": "{\"airflowDependencies\": [{\"name\": \"wf_public_demo_data_app_ato_data_activity__1_with_offset_0\", \"spec\": \"public_demo_data.app_ato_data_activity__1/ds={{ macros.ds_add(ds, 0) }}\"}]}",
     "executionInfo": {
       "conf": {
         "common": {
@@ -43,7 +9,7 @@
           "spark.chronon.partition.column": "ds",
           "spark.chronon.partition.format": "yyyy-MM-dd",
           "spark.chronon.table_write.format": "iceberg",
-          "spark.chronon.table_write.upload.format": "ion",
+          "spark.chronon.table_write.upload.format": "parquet",
           "spark.chronon.table_write.upload.location": "s3://zipline-public-demo-warehouse/data/ion_uploads/",
           "spark.default.parallelism": "4",
           "spark.hadoop.hive.metastore.client.factory.class": "com.amazonaws.glue.catalog.metastore.AWSGlueDataCatalogHiveClientFactory",
@@ -54,6 +20,7 @@
           "spark.sql.catalogImplementation": "hive",
           "spark.sql.defaultUrlStreamHandlerFactory.enabled": "false",
           "spark.sql.extensions": "org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions",
+          "spark.sql.session.timeZone": "UTC",
           "spark.sql.shuffle.partitions": "4"
         }
       },
@@ -117,32 +84,33 @@
           }
         }
       },
-      "historicalBackfill": 0,
-      "offlineSchedule": "@never"
+      "offlineSchedule": "@never",
+      "stepDays": 14
     },
-    "name": "ato.ato_features.account_user_agent__1",
-    "online": 0,
+    "name": "app.ato_data.sessions__1",
     "outputNamespace": "public_demo_data",
-    "sourceFile": "group_bys/ato/ato_features.py",
-    "team": "ato",
+    "sourceFile": "staging_queries/app/ato_data.py",
+    "team": "app",
     "version": "1"
   },
-  "sources": [
+  "query": "\nSELECT\n    session_id,\n    account_id,\n    client_ip,\n    user_agent,\n    MIN(event_ts) AS session_start_ts,\n    MAX(event_ts) AS session_end_ts,\n    COUNT(*) AS session_requests,\n    MAX(scenario) AS scenario,\n    CAST(\n        MAX(scenario) IN ('ato_scripted', 'ato_stealth')\n        AND CAST(PMOD(XXHASH64(session_id, 'confirmed'), 100) AS INT) < 85\n        AS INT\n    ) AS is_ato,\n    ds\nFROM public_demo_data.app_ato_data_activity__1\nWHERE ds BETWEEN {{ start_date }} AND {{ end_date }}\nGROUP BY session_id, account_id, client_ip, user_agent, ds\n",
+  "tableDependencies": [
     {
-      "events": {
-        "query": {
-          "selects": {
-            "account_id": "account_id",
-            "auth_failure_event": "IF(status_code IN (401, 403), 1, 0)",
-            "client_ip": "client_ip",
-            "request_count": "1",
-            "seen_at_ms": "event_ts",
-            "user_agent": "user_agent",
-            "write_event": "IF(http_method IN ('POST', 'PUT', 'PATCH', 'DELETE'), 1, 0)"
-          },
-          "timeColumn": "event_ts"
+      "endOffset": {
+        "length": 0,
+        "timeUnit": 1
+      },
+      "startOffset": {
+        "length": 0,
+        "timeUnit": 1
+      },
+      "tableInfo": {
+        "partitionColumn": "ds",
+        "partitionInterval": {
+          "length": 1,
+          "timeUnit": 1
         },
-        "table": "public_demo_data.ato_ato_data_activity__1"
+        "table": "public_demo_data.app_ato_data_activity__1"
       }
     }
   ]

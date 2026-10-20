@@ -3,95 +3,19 @@
   "aggregations": [
     {
       "argMap": {},
-      "inputColumn": "request_count",
-      "operation": 7,
-      "windows": [
-        {
-          "length": 1,
-          "timeUnit": 0
-        },
-        {
-          "length": 1,
-          "timeUnit": 1
-        },
-        {
-          "length": 7,
-          "timeUnit": 1
-        }
-      ]
-    },
-    {
-      "argMap": {},
-      "inputColumn": "write_event",
-      "operation": 7,
-      "windows": [
-        {
-          "length": 1,
-          "timeUnit": 0
-        },
-        {
-          "length": 1,
-          "timeUnit": 1
-        },
-        {
-          "length": 7,
-          "timeUnit": 1
-        }
-      ]
-    },
-    {
-      "argMap": {},
-      "inputColumn": "auth_failure_event",
-      "operation": 7,
-      "windows": [
-        {
-          "length": 1,
-          "timeUnit": 0
-        },
-        {
-          "length": 1,
-          "timeUnit": 1
-        },
-        {
-          "length": 7,
-          "timeUnit": 1
-        }
-      ]
-    },
-    {
-      "argMap": {},
-      "inputColumn": "client_ip",
-      "operation": 5,
-      "windows": [
-        {
-          "length": 1,
-          "timeUnit": 1
-        },
-        {
-          "length": 7,
-          "timeUnit": 1
-        }
-      ]
-    },
-    {
-      "argMap": {},
-      "inputColumn": "user_agent",
-      "operation": 5,
-      "windows": [
-        {
-          "length": 1,
-          "timeUnit": 1
-        },
-        {
-          "length": 7,
-          "timeUnit": 1
-        }
-      ]
-    },
-    {
-      "argMap": {},
       "inputColumn": "seen_at_ms",
       "operation": 0,
+      "windows": [
+        {
+          "length": 14,
+          "timeUnit": 1
+        }
+      ]
+    },
+    {
+      "argMap": {},
+      "inputColumn": "request_count",
+      "operation": 7,
       "windows": [
         {
           "length": 14,
@@ -101,27 +25,17 @@
     }
   ],
   "keyColumns": [
-    "account_id"
+    "account_id",
+    "user_agent"
   ],
   "metaData": {
     "columnHashes": {
-      "account_id": "5d3587735978efc3ff7f09bd0df92f99",
-      "auth_failure_event_sum_1d": "f306515415100a34345c7b1ca12a452e",
-      "auth_failure_event_sum_1h": "f306515415100a34345c7b1ca12a452e",
-      "auth_failure_event_sum_7d": "f306515415100a34345c7b1ca12a452e",
-      "client_ip_approx_unique_count_1d": "fce4867d7833f373c80e235608565208",
-      "client_ip_approx_unique_count_7d": "fce4867d7833f373c80e235608565208",
-      "request_count_sum_1d": "1f47dcf3a9b08083a09ef3c49fb34d0a",
-      "request_count_sum_1h": "1f47dcf3a9b08083a09ef3c49fb34d0a",
-      "request_count_sum_7d": "1f47dcf3a9b08083a09ef3c49fb34d0a",
-      "seen_at_ms_min_14d": "c8735cc4e8d9b03d5ebb65f2ec14b5eb",
-      "user_agent_approx_unique_count_1d": "f10a47dcf15be137c31485c5ad6cb9bd",
-      "user_agent_approx_unique_count_7d": "f10a47dcf15be137c31485c5ad6cb9bd",
-      "write_event_sum_1d": "52b5c7d69d6ca47259ab6845743b653e",
-      "write_event_sum_1h": "52b5c7d69d6ca47259ab6845743b653e",
-      "write_event_sum_7d": "52b5c7d69d6ca47259ab6845743b653e"
+      "account_id": "67a470de29fb1d3fe3cbb05c133763fd",
+      "request_count_sum_14d": "f303d9987d9907b8c84e22c10138c5eb",
+      "seen_at_ms_min_14d": "eb5c4a1908e57f3f2706e2f5c9974cb0",
+      "user_agent": "af25da50d29d4d00fb75e4b19a120df0"
     },
-    "customJson": "{\"airflowDependencies\": [{\"name\": \"wf_public_demo_data_ato_ato_data_activity__1_with_offset_0\", \"spec\": \"public_demo_data.ato_ato_data_activity__1/ds={{ macros.ds_add(ds, 0) }}\"}]}",
+    "customJson": "{\"airflowDependencies\": [{\"name\": \"wf_public_demo_data_app_ato_data_activity__1_with_offset_0\", \"spec\": \"public_demo_data.app_ato_data_activity__1/ds={{ macros.ds_add(ds, 0) }}\"}]}",
     "executionInfo": {
       "conf": {
         "common": {
@@ -129,7 +43,7 @@
           "spark.chronon.partition.column": "ds",
           "spark.chronon.partition.format": "yyyy-MM-dd",
           "spark.chronon.table_write.format": "iceberg",
-          "spark.chronon.table_write.upload.format": "ion",
+          "spark.chronon.table_write.upload.format": "parquet",
           "spark.chronon.table_write.upload.location": "s3://zipline-public-demo-warehouse/data/ion_uploads/",
           "spark.default.parallelism": "4",
           "spark.hadoop.hive.metastore.client.factory.class": "com.amazonaws.glue.catalog.metastore.AWSGlueDataCatalogHiveClientFactory",
@@ -206,11 +120,11 @@
       "historicalBackfill": 0,
       "offlineSchedule": "@never"
     },
-    "name": "ato.ato_features.account__1",
+    "name": "app.ato_features.account_user_agent__1",
     "online": 0,
     "outputNamespace": "public_demo_data",
-    "sourceFile": "group_bys/ato/ato_features.py",
-    "team": "ato",
+    "sourceFile": "group_bys/app/ato_features.py",
+    "team": "app",
     "version": "1"
   },
   "sources": [
@@ -228,7 +142,7 @@
           },
           "timeColumn": "event_ts"
         },
-        "table": "public_demo_data.ato_ato_data_activity__1"
+        "table": "public_demo_data.app_ato_data_activity__1"
       }
     }
   ]

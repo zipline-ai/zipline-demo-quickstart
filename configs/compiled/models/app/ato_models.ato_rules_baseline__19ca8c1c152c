@@ -1,41 +1,15 @@
 {
-  "accuracy": 0,
-  "aggregations": [
-    {
-      "argMap": {},
-      "inputColumn": "seen_at_ms",
-      "operation": 0,
-      "windows": [
-        {
-          "length": 14,
-          "timeUnit": 1
-        }
-      ]
-    },
-    {
-      "argMap": {},
-      "inputColumn": "request_count",
-      "operation": 7,
-      "windows": [
-        {
-          "length": 14,
-          "timeUnit": 1
-        }
-      ]
+  "inferenceSpec": {
+    "modelBackend": 2,
+    "modelBackendParams": {
+      "model_name": "ato_rules_baseline",
+      "model_type": "custom"
     }
-  ],
-  "keyColumns": [
-    "account_id",
-    "client_ip"
-  ],
+  },
+  "inputMapping": {
+    "instance": "named_struct('rule_score', rule_score)"
+  },
   "metaData": {
-    "columnHashes": {
-      "account_id": "59b13bef9e5b9a31c0d7d097bee4ef02",
-      "client_ip": "8c3b6cd6d23bfaa8356d77260bc6c071",
-      "request_count_sum_14d": "3085690650263e767fa16a94bdd4c71e",
-      "seen_at_ms_min_14d": "45937e068c292fd7651ac56baf081efc"
-    },
-    "customJson": "{\"airflowDependencies\": [{\"name\": \"wf_public_demo_data_ato_ato_data_activity__1_with_offset_0\", \"spec\": \"public_demo_data.ato_ato_data_activity__1/ds={{ macros.ds_add(ds, 0) }}\"}]}",
     "executionInfo": {
       "conf": {
         "common": {
@@ -43,7 +17,7 @@
           "spark.chronon.partition.column": "ds",
           "spark.chronon.partition.format": "yyyy-MM-dd",
           "spark.chronon.table_write.format": "iceberg",
-          "spark.chronon.table_write.upload.format": "ion",
+          "spark.chronon.table_write.upload.format": "parquet",
           "spark.chronon.table_write.upload.location": "s3://zipline-public-demo-warehouse/data/ion_uploads/",
           "spark.default.parallelism": "4",
           "spark.hadoop.hive.metastore.client.factory.class": "com.amazonaws.glue.catalog.metastore.AWSGlueDataCatalogHiveClientFactory",
@@ -116,34 +90,66 @@
             "WAREHOUSE_PREFIX": "s3://zipline-public-demo-warehouse"
           }
         }
-      },
-      "historicalBackfill": 0,
-      "offlineSchedule": "@never"
+      }
     },
-    "name": "ato.ato_features.account_ip__1",
-    "online": 0,
+    "name": "app.ato_models.ato_rules_baseline__19ca8c1c152c",
     "outputNamespace": "public_demo_data",
-    "sourceFile": "group_bys/ato/ato_features.py",
-    "team": "ato",
-    "version": "1"
+    "sourceFile": "models/app/ato_models.py",
+    "team": "app",
+    "version": "19ca8c1c152c"
   },
-  "sources": [
-    {
+  "modelArtifactBaseUri": "s3://zipline-public-demo-artifacts",
+  "outputMapping": {
+    "ato_probability": "score"
+  },
+  "trainingConf": {
+    "jobConfigs": {
+      "catalog-region": "us-west-2",
+      "catalog-type": "glue",
+      "eta": "0.3",
+      "eval-days": "7",
+      "features": "rule_score:rule_score",
+      "label-column": "is_ato",
+      "max-depth": "1",
+      "num-boost-round": "20",
+      "partition-column": "ds",
+      "seed": "42"
+    },
+    "pythonModule": "trainer.train",
+    "resourceConfig": {
+      "maxReplicaCount": 0,
+      "minReplicaCount": 0
+    },
+    "schedule": "@never",
+    "trainingDataSource": {
       "events": {
         "query": {
+          "endPartition": "2026-10-15",
           "selects": {
-            "account_id": "account_id",
-            "auth_failure_event": "IF(status_code IN (401, 403), 1, 0)",
-            "client_ip": "client_ip",
-            "request_count": "1",
-            "seen_at_ms": "event_ts",
-            "user_agent": "user_agent",
-            "write_event": "IF(http_method IN ('POST', 'PUT', 'PATCH', 'DELETE'), 1, 0)"
+            "ds": "ds",
+            "is_ato": "is_ato",
+            "rule_score": "rule_score"
           },
-          "timeColumn": "event_ts"
+          "startPartition": "2026-09-16"
         },
-        "table": "public_demo_data.ato_ato_data_activity__1"
+        "table": "public_demo_data.app_ato_training_v1__1"
       }
+    },
+    "trainingDataWindow": {
+      "length": 29,
+      "timeUnit": 1
     }
-  ]
+  },
+  "valueSchema": {
+    "kind": 13,
+    "name": "model_value_schema",
+    "params": [
+      {
+        "dataType": {
+          "kind": 6
+        },
+        "name": "score"
+      }
+    ]
+  }
 }

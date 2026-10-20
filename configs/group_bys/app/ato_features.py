@@ -11,7 +11,7 @@ sees every earlier request, including the session's own.
 * ``ip``: how many accounts and failed logins an IP has served.
 """
 
-from staging_queries.ato import ato_data
+from staging_queries.app import ato_data
 
 from ai.chronon.types import Accuracy, Aggregation, EventSource, GroupBy, Operation, Query, selects
 

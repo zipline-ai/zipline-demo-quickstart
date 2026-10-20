@@ -14,7 +14,7 @@ Each model name needs a trainer archive at
 ``<ARTIFACT_PREFIX>/builds/<model_name>-<version>.zip``; see docs/ato.md.
 """
 
-from joins.ato import ato_training
+from joins.app import ato_training
 from teams import ARTIFACT_PREFIX
 
 from ai.chronon.types import (
