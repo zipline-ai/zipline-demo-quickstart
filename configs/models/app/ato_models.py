@@ -12,7 +12,7 @@ and the same date holdout, so only the inputs differ:
 
 Artifacts live under the warehouse bucket, which both the Ray trainer and Hub
 can read, so Hub can attach the trainer's report to a trial. Each model name
-needs a trainer archive at ``<_ARTIFACTS>/builds/<model_name>-2.zip``;
+needs a trainer archive at ``<_ARTIFACTS>/builds/<model_name>-<version>.zip``;
 see docs/ato.md.
 """
 
@@ -33,10 +33,11 @@ from ai.chronon.types import (
     selects,
 )
 
-# The shared demo trainer, build 19ca8c1c152c, copied per model name. The model
-# version starts at 2 because version 19ca8c1c152c first wrote to the artifacts
-# bucket; Hub resolves a model conf by name, so each name keeps one location.
-_MODEL_VERSION = "2"
+# The shared demo trainer, build 19ca8c1c152c, copied per model name. Crucible
+# requires a SHA-256-prefix version, and Hub resolves a model conf by name, so
+# these models use sha256("19ca8c1c152c:warehouse")[:12] rather than the build
+# hash, which first pointed at the artifacts bucket.
+_MODEL_VERSION = "fb2ec671ae2b"
 _ARTIFACTS = f"{WAREHOUSE_PREFIX}/ato_models"
 
 # The access logs start on 2026-09-02; a week of warm-up precedes the first row.
