@@ -48,14 +48,14 @@
   ],
   "metaData": {
     "columnHashes": {
-      "account_id_approx_unique_count_1d": "67608981510310a1ad256cdedf2318ae",
-      "account_id_approx_unique_count_7d": "67608981510310a1ad256cdedf2318ae",
-      "auth_failure_event_sum_1d": "a7dd70cd71947f0071d8aebfbdbba4af",
-      "auth_failure_event_sum_7d": "a7dd70cd71947f0071d8aebfbdbba4af",
-      "client_ip": "6ca6bc305e5f88c0ef497f4f81612019",
-      "request_count_sum_1d": "45ae58079174b7cc10ba96b007fcdf78"
+      "account_id_approx_unique_count_1d": "c3e653eda0a31efc9cddf4d0e48d6f0f",
+      "account_id_approx_unique_count_7d": "c3e653eda0a31efc9cddf4d0e48d6f0f",
+      "auth_failure_event_sum_1d": "b3b43bc2c143aaea0e1ea39f05b4ef94",
+      "auth_failure_event_sum_7d": "b3b43bc2c143aaea0e1ea39f05b4ef94",
+      "client_ip": "b58c57c0f17eeb250659a69bb24d479d",
+      "request_count_sum_1d": "95c5917d0cf655eb86e59121e483d325"
     },
-    "customJson": "{\"airflowDependencies\": [{\"name\": \"wf_public_demo_data_app_ato_data_activity__1_with_offset_0\", \"spec\": \"public_demo_data.app_ato_data_activity__1/ds={{ macros.ds_add(ds, 0) }}\"}]}",
+    "customJson": "{\"airflowDependencies\": [{\"name\": \"wf_public_demo_data_app_ato_data_activity__2_with_offset_0\", \"spec\": \"public_demo_data.app_ato_data_activity__2/ds={{ macros.ds_add(ds, 0) }}\"}]}",
     "executionInfo": {
       "conf": {
         "common": {
@@ -162,7 +162,7 @@
           },
           "timeColumn": "event_ts"
         },
-        "table": "public_demo_data.app_ato_data_activity__1"
+        "table": "public_demo_data.app_ato_data_activity__2"
       }
     }
   ]

@@ -30,12 +30,12 @@
   ],
   "metaData": {
     "columnHashes": {
-      "account_id": "b1c3a47ac24f1ef390da5d17c41489ec",
-      "client_ip": "7fb48045bb8493b9b0766857a01a0e45",
-      "request_count_sum_14d": "74fc98b810e6b98f1989185841028f9e",
-      "seen_at_ms_min_14d": "299c973924dd5f0626fd0e97587b2f1e"
+      "account_id": "a75be4479f7860e553551732da689882",
+      "client_ip": "9f00c5d84d532b98096c7acab4fb0c8e",
+      "request_count_sum_14d": "2329392dca03a0af523f351d1237f258",
+      "seen_at_ms_min_14d": "bfc7a4bc9cf9b11d2ae0db2aa20be0ee"
     },
-    "customJson": "{\"airflowDependencies\": [{\"name\": \"wf_public_demo_data_app_ato_data_activity__1_with_offset_0\", \"spec\": \"public_demo_data.app_ato_data_activity__1/ds={{ macros.ds_add(ds, 0) }}\"}]}",
+    "customJson": "{\"airflowDependencies\": [{\"name\": \"wf_public_demo_data_app_ato_data_activity__2_with_offset_0\", \"spec\": \"public_demo_data.app_ato_data_activity__2/ds={{ macros.ds_add(ds, 0) }}\"}]}",
     "executionInfo": {
       "conf": {
         "common": {
@@ -142,7 +142,7 @@
           },
           "timeColumn": "event_ts"
         },
-        "table": "public_demo_data.app_ato_data_activity__1"
+        "table": "public_demo_data.app_ato_data_activity__2"
       }
     }
   ]

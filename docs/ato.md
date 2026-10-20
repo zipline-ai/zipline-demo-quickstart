@@ -14,15 +14,17 @@ input tables. Instead, two staging queries simulate an ATO program on top of
 `public_demo_app.ui_access_logs_iceberg`:
 
 - `staging_queries/app/ato_data.py: activity` keeps every real request and adds
-  synthetic sessions to a hash-selected share of *established* account-days
-  (accounts active in the prior 14 days):
+  synthetic sessions to *established* account-days (accounts active in the
+  prior 14 days). The demo has only about 60 organic sessions a day, so each
+  account-day gets 12 independent injection slots, and each slot becomes one
+  scenario at the rate shown:
 
-  | Scenario | Share | What it looks like |
+  | Scenario | Per slot | What it looks like |
   | --- | ---: | --- |
-  | `ato_scripted` | 1.5% | Credential stuffing from 24 shared hosting IPs, a script or spoofed browser agent, 0–7 failed logins, machine-speed requests, and 45% writes such as token creation or email/MFA changes. |
-  | `ato_stealth` | 1.5% | A residential IP, the victim's own user agent, business hours, human pace, and occasional writes. |
-  | `new_device` | 2.5% | Benign: the owner on a new phone or laptop, sometimes travelling overnight. |
-  | `vpn_new_device` | 1.5% | Benign: a new device behind a commercial VPN shared by many accounts. |
+  | `ato_scripted` | 3.0% | Credential stuffing from 48 shared hosting IPs, a script or spoofed browser agent, 0–7 failed logins, machine-speed requests, and 45% writes such as token creation or email/MFA changes. |
+  | `ato_stealth` | 3.0% | A residential IP, the victim's own user agent, business hours, human pace, and occasional writes. |
+  | `new_device` | 4.5% | Benign: the owner on a new phone or laptop, sometimes travelling overnight. |
+  | `vpn_new_device` | 2.5% | Benign: a new device behind a commercial VPN shared by many accounts. |
 
 - `sessions` groups activity into account, IP, user-agent, and hour sessions.
   `is_ato` is 1 for 85% of attack sessions. The other 15% stay unlabelled,
@@ -63,8 +65,8 @@ share, request rate, the UTC hour, an automation-agent flag, and four rules:
 ## The four models
 
 `models/app/ato_models.py` uses the shared Ray/XGBoost trainer for every variant,
-with the same rows and holdout. All train on September 16 – October 8, 2026 and
-validate on the final week, October 9–15.
+with the same rows and holdout. All train on September 9 – October 11, 2026 and
+validate on the final week, October 12–18.
 
 | Experiment | Model | Inputs |
 | --- | --- | --- |
@@ -74,7 +76,7 @@ validate on the final week, October 9–15.
 | `full` | `ato_xgb_full` | Novelty plus IP reputation and the four rule flags. |
 
 The trainer reports validation AUC, logloss, precision, recall, and a
-precision-recall curve. Positives are about 1% of sessions, so read the
+precision-recall curve. Positives are under 10% of sessions, so read the
 precision-recall curve alongside AUC.
 
 A local dry run of this SQL on synthetic traffic gave the expected ordering:
@@ -86,17 +88,17 @@ nearly all of both. Real demo traffic is noisier, so expect lower numbers.
 
 Use a clean, pushed branch with a valid demo login. Wait for each backfill to
 succeed before starting the next. Access logs begin on 2026-09-02, which gives
-the 14-day feature windows two weeks of history before the first training day.
+the features a week of history before the first training day.
 
 ```bash
 cd configs
 zipline compile
-zipline hub backfill compiled/staging_queries/app/ato_data.activity__1 \
-  --start-ds 2026-09-02 --end-ds 2026-10-15
-zipline hub backfill compiled/staging_queries/app/ato_data.sessions__1 \
-  --start-ds 2026-09-16 --end-ds 2026-10-15
+zipline hub backfill compiled/staging_queries/app/ato_data.activity__2 \
+  --start-ds 2026-09-02 --end-ds 2026-10-18
+zipline hub backfill compiled/staging_queries/app/ato_data.sessions__2 \
+  --start-ds 2026-09-09 --end-ds 2026-10-18
 zipline hub backfill compiled/joins/app/ato_training.v1__1 \
-  --start-ds 2026-09-16 --end-ds 2026-10-15
+  --start-ds 2026-09-09 --end-ds 2026-10-18
 zipline hub eval-table public_demo_data.app_ato_training_v1__1 --team app
 ```
 
@@ -126,7 +128,7 @@ run_experiment() {
     --title "$title" --status RUNNING --model-conf-name "$conf" && \
   ZIPLINE_TRIAL_ID="$ZIPLINE_TRIAL_ID" ZIPLINE_EXPERIMENT_ID="$experiment" \
     zipline hub backfill "compiled/models/app/ato_models.${model}__19ca8c1c152c" \
-    --start-ds 2026-10-15 --end-ds 2026-10-15
+    --start-ds 2026-10-18 --end-ds 2026-10-18
 }
 
 finish_experiment() {

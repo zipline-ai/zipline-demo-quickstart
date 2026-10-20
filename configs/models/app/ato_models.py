@@ -33,9 +33,9 @@ from ai.chronon.types import (
 
 _TRAINER_VERSION = "19ca8c1c152c"
 
-# Features need up to 14 days of history; the access logs start on 2026-09-02.
-_TRAIN_START = "2026-09-16"
-_TRAIN_END = "2026-10-15"
+# The access logs start on 2026-09-02; a week of warm-up precedes the first row.
+_TRAIN_START = "2026-09-09"
+_TRAIN_END = "2026-10-18"
 
 _RULES = [("rule_score", "rule_score")]
 
@@ -110,8 +110,8 @@ def _variant(model_name, features, hyperparameters):
                     end_partition=_TRAIN_END,
                 ),
             ),
-            # The trainer includes both ends: Oct 15 minus 29 days is Sep 16.
-            training_data_window=Window(length=29, time_unit=TimeUnit.DAYS),
+            # The trainer includes both ends: Oct 18 minus 39 days is Sep 9.
+            training_data_window=Window(length=39, time_unit=TimeUnit.DAYS),
             schedule="@never",
             python_module="trainer.train",
             resource_config=ResourceConfig(min_replica_count=0, max_replica_count=0),
@@ -122,7 +122,7 @@ def _variant(model_name, features, hyperparameters):
                 "seed": "42",
                 "catalog-type": "glue",
                 "catalog-region": "us-west-2",
-                # Train on Sep 16 - Oct 8 and validate on the final week, Oct 9 - 15.
+                # Train on Sep 9 - Oct 11 and validate on the final week, Oct 12 - 18.
                 "eval-days": "7",
                 **hyperparameters,
             },

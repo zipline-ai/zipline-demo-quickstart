@@ -124,19 +124,19 @@
     "trainingDataSource": {
       "events": {
         "query": {
-          "endPartition": "2026-10-15",
+          "endPartition": "2026-10-18",
           "selects": {
             "ds": "ds",
             "is_ato": "is_ato",
             "rule_score": "rule_score"
           },
-          "startPartition": "2026-09-16"
+          "startPartition": "2026-09-09"
         },
         "table": "public_demo_data.app_ato_training_v1__1"
       }
     },
     "trainingDataWindow": {
-      "length": 29,
+      "length": 39,
       "timeUnit": 1
     }
   },

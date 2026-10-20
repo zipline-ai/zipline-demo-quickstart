@@ -105,23 +105,23 @@
   ],
   "metaData": {
     "columnHashes": {
-      "account_id": "37ab1098aee9e3cba52e560559d114d1",
-      "auth_failure_event_sum_1d": "871fff660362350f80724378b98538f3",
-      "auth_failure_event_sum_1h": "871fff660362350f80724378b98538f3",
-      "auth_failure_event_sum_7d": "871fff660362350f80724378b98538f3",
-      "client_ip_approx_unique_count_1d": "032f5f20aea450b09ca98f2df9707c74",
-      "client_ip_approx_unique_count_7d": "032f5f20aea450b09ca98f2df9707c74",
-      "request_count_sum_1d": "d6a7fe4050927f2dd53e480525c0c3fe",
-      "request_count_sum_1h": "d6a7fe4050927f2dd53e480525c0c3fe",
-      "request_count_sum_7d": "d6a7fe4050927f2dd53e480525c0c3fe",
-      "seen_at_ms_min_14d": "58e032b398dd97d6588ce32c0451020c",
-      "user_agent_approx_unique_count_1d": "dd91c7a011813e768f30939bebbb2f12",
-      "user_agent_approx_unique_count_7d": "dd91c7a011813e768f30939bebbb2f12",
-      "write_event_sum_1d": "482c127ff7f98a3a5973f1a9d038b44b",
-      "write_event_sum_1h": "482c127ff7f98a3a5973f1a9d038b44b",
-      "write_event_sum_7d": "482c127ff7f98a3a5973f1a9d038b44b"
+      "account_id": "4f4a5da74d52be34227fad0222771a2d",
+      "auth_failure_event_sum_1d": "e7e86d01eca6497c35707edf68f7ee0d",
+      "auth_failure_event_sum_1h": "e7e86d01eca6497c35707edf68f7ee0d",
+      "auth_failure_event_sum_7d": "e7e86d01eca6497c35707edf68f7ee0d",
+      "client_ip_approx_unique_count_1d": "a81b693f00996d774c0fa2334d57a726",
+      "client_ip_approx_unique_count_7d": "a81b693f00996d774c0fa2334d57a726",
+      "request_count_sum_1d": "2e8a5d253f06a1c0789dfac31d310499",
+      "request_count_sum_1h": "2e8a5d253f06a1c0789dfac31d310499",
+      "request_count_sum_7d": "2e8a5d253f06a1c0789dfac31d310499",
+      "seen_at_ms_min_14d": "bf29c0bdf92168744ddde9d7094bdd3e",
+      "user_agent_approx_unique_count_1d": "2ee79d88ecb6319d92d8c8cd467adeab",
+      "user_agent_approx_unique_count_7d": "2ee79d88ecb6319d92d8c8cd467adeab",
+      "write_event_sum_1d": "1d8dd698361c1abe6b7e7c8442a5fc87",
+      "write_event_sum_1h": "1d8dd698361c1abe6b7e7c8442a5fc87",
+      "write_event_sum_7d": "1d8dd698361c1abe6b7e7c8442a5fc87"
     },
-    "customJson": "{\"airflowDependencies\": [{\"name\": \"wf_public_demo_data_app_ato_data_activity__1_with_offset_0\", \"spec\": \"public_demo_data.app_ato_data_activity__1/ds={{ macros.ds_add(ds, 0) }}\"}]}",
+    "customJson": "{\"airflowDependencies\": [{\"name\": \"wf_public_demo_data_app_ato_data_activity__2_with_offset_0\", \"spec\": \"public_demo_data.app_ato_data_activity__2/ds={{ macros.ds_add(ds, 0) }}\"}]}",
     "executionInfo": {
       "conf": {
         "common": {
@@ -228,7 +228,7 @@
           },
           "timeColumn": "event_ts"
         },
-        "table": "public_demo_data.app_ato_data_activity__1"
+        "table": "public_demo_data.app_ato_data_activity__2"
       }
     }
   ]

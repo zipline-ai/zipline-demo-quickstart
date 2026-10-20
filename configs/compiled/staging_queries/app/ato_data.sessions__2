@@ -1,7 +1,7 @@
 {
   "engineType": 0,
   "metaData": {
-    "customJson": "{\"airflowDependencies\": [{\"name\": \"wf_public_demo_data_app_ato_data_activity__1_with_offset_0\", \"spec\": \"public_demo_data.app_ato_data_activity__1/ds={{ macros.ds_add(ds, 0) }}\"}]}",
+    "customJson": "{\"airflowDependencies\": [{\"name\": \"wf_public_demo_data_app_ato_data_activity__2_with_offset_0\", \"spec\": \"public_demo_data.app_ato_data_activity__2/ds={{ macros.ds_add(ds, 0) }}\"}]}",
     "executionInfo": {
       "conf": {
         "common": {
@@ -87,13 +87,13 @@
       "offlineSchedule": "@never",
       "stepDays": 14
     },
-    "name": "app.ato_data.sessions__1",
+    "name": "app.ato_data.sessions__2",
     "outputNamespace": "public_demo_data",
     "sourceFile": "staging_queries/app/ato_data.py",
     "team": "app",
-    "version": "1"
+    "version": "2"
   },
-  "query": "\nSELECT\n    session_id,\n    account_id,\n    client_ip,\n    user_agent,\n    MIN(event_ts) AS session_start_ts,\n    MAX(event_ts) AS session_end_ts,\n    COUNT(*) AS session_requests,\n    MAX(scenario) AS scenario,\n    CAST(\n        MAX(scenario) IN ('ato_scripted', 'ato_stealth')\n        AND CAST(PMOD(XXHASH64(session_id, 'confirmed'), 100) AS INT) < 85\n        AS INT\n    ) AS is_ato,\n    ds\nFROM public_demo_data.app_ato_data_activity__1\nWHERE ds BETWEEN {{ start_date }} AND {{ end_date }}\nGROUP BY session_id, account_id, client_ip, user_agent, ds\n",
+  "query": "\nSELECT\n    session_id,\n    account_id,\n    client_ip,\n    user_agent,\n    MIN(event_ts) AS session_start_ts,\n    MAX(event_ts) AS session_end_ts,\n    COUNT(*) AS session_requests,\n    MAX(scenario) AS scenario,\n    CAST(\n        MAX(scenario) IN ('ato_scripted', 'ato_stealth')\n        AND CAST(PMOD(XXHASH64(session_id, 'confirmed'), 100) AS INT) < 85\n        AS INT\n    ) AS is_ato,\n    ds\nFROM public_demo_data.app_ato_data_activity__2\nWHERE ds BETWEEN {{ start_date }} AND {{ end_date }}\nGROUP BY session_id, account_id, client_ip, user_agent, ds\n",
   "tableDependencies": [
     {
       "endOffset": {
@@ -110,7 +110,7 @@
           "length": 1,
           "timeUnit": 1
         },
-        "table": "public_demo_data.app_ato_data_activity__1"
+        "table": "public_demo_data.app_ato_data_activity__2"
       }
     }
   ]

@@ -4,8 +4,9 @@ The public demo has no fraud outcomes, so these staging queries build a labelled
 ATO scenario without adding any new input tables:
 
 * ``activity`` keeps every real request from ``ui_access_logs_iceberg`` and adds
-  synthetic sessions for a small, hash-selected share of established
-  account-days. Two kinds are attacks (scripted credential stuffing from a shared
+  synthetic sessions to established account-days. The demo has only a few
+  dozen organic sessions a day, so each account-day gets several independent
+  injection slots to yield enough labelled attacks to train and validate on. Two kinds are attacks (scripted credential stuffing from a shared
   hosting pool, and stealthy takeovers that spoof the victim's browser from a
   residential IP). Two kinds are benign look-alikes (a new personal device, and a
   login through a shared VPN egress) so that "new IP" or "shared IP" alone is not
@@ -28,11 +29,14 @@ _LOGS = "public_demo_app.ui_access_logs_iceberg"
 # so attacks land on established accounts instead of first-time visitors.
 _LOOKBACK_DAYS = 14
 
-# Scenario buckets out of 1000 eligible account-days.
-_ATO_SCRIPTED = 15  # 1.5%
-_ATO_STEALTH = 30  # +1.5%
-_NEW_DEVICE = 55  # +2.5%
-_VPN_NEW_DEVICE = 70  # +1.5%
+# Independent injection slots per eligible account-day.
+_SLOTS = 12
+
+# Scenario buckets out of 1000 per slot.
+_ATO_SCRIPTED = 30  # 3.0%
+_ATO_STEALTH = 60  # +3.0%
+_NEW_DEVICE = 105  # +4.5%
+_VPN_NEW_DEVICE = 130  # +2.5%
 
 # Share of attack sessions that receive a confirmed fraud label.
 _CONFIRMED_PERCENT = 85
@@ -62,7 +66,7 @@ _READ_PATHS = ["/", "/workflows", "/services/hub/api/confs", "/services/hub/api/
 
 
 def _hash(salt, buckets, *keys):
-    columns = ", ".join(keys or ("account_id", "ds"))
+    columns = ", ".join(keys or ("account_id", "ds", "slot"))
     return f"CAST(PMOD(XXHASH64({columns}, '{salt}'), {buckets}) AS INT)"
 
 
@@ -72,7 +76,7 @@ def _pick(values, salt, *keys):
 
 
 _DAY_START_MS = "UNIX_TIMESTAMP(TO_TIMESTAMP(ds, 'yyyy-MM-dd')) * 1000"
-_STEP_KEYS = ("account_id", "ds", "step")
+_STEP_KEYS = ("account_id", "ds", "slot", "step")
 
 activity = StagingQuery(
     query=f"""
@@ -112,10 +116,16 @@ established AS (
                            AND DATE_SUB(TO_DATE(d.ds), 1)
     WHERE d.ds BETWEEN {{{{ start_date }}}} AND {{{{ end_date }}}}
 ),
+slots AS (
+    SELECT e.*, slot
+    FROM established e
+    LATERAL VIEW EXPLODE(SEQUENCE(1, {_SLOTS})) s AS slot
+),
 scenarios AS (
     SELECT
         account_id,
         ds,
+        slot,
         usual_user_agent,
         CASE
             WHEN bucket < {_ATO_SCRIPTED} THEN 'ato_scripted'
@@ -123,17 +133,18 @@ scenarios AS (
             WHEN bucket < {_NEW_DEVICE} THEN 'new_device'
             ELSE 'vpn_new_device'
         END AS scenario
-    FROM (SELECT *, {_hash('scenario', 1000)} AS bucket FROM established) e
+    FROM (SELECT *, {_hash('scenario', 1000)} AS bucket FROM slots) e
     WHERE bucket < {_VPN_NEW_DEVICE}
 ),
 plans AS (
     SELECT
         account_id,
         ds,
+        slot,
         scenario,
         CASE scenario
-            -- Credential-stuffing infrastructure: 24 hosting IPs reused across victims.
-            WHEN 'ato_scripted' THEN CONCAT('185.220.', 100 + {_hash('subnet', 4)}, '.', 10 + {_hash('host', 6)})
+            -- Credential-stuffing infrastructure: 48 hosting IPs reused across victims.
+            WHEN 'ato_scripted' THEN CONCAT('185.220.', 100 + {_hash('subnet', 4)}, '.', 10 + {_hash('host', 12)})
             -- Residential proxies and home networks: effectively unique per session.
             WHEN 'ato_stealth' THEN CONCAT('98.', {_hash('o2', 256)}, '.', {_hash('o3', 256)}, '.', 1 + {_hash('o4', 254)})
             WHEN 'new_device' THEN CONCAT('73.', {_hash('o2', 256)}, '.', {_hash('o3', 256)}, '.', 1 + {_hash('o4', 254)})
@@ -181,7 +192,8 @@ steps AS (
 ),
 injected AS (
     SELECT
-        SHA2(CONCAT_WS('|', 'simulated', account_id, ds, CAST(step AS STRING)), 256) AS event_id,
+        SHA2(CONCAT_WS('|', 'simulated', account_id, ds, CAST(slot AS STRING), CAST(step AS STRING)), 256)
+            AS event_id,
         account_id,
         client_ip,
         user_agent,
@@ -197,7 +209,7 @@ injected AS (
         END AS path,
         IF(step <= failed_logins, 401, 200) AS status_code,
         {_DAY_START_MS} + start_hour * 3600000 + start_minute * 60000 + step * step_ms AS event_ts,
-        CONCAT('simulated:', account_id, ':', ds) AS session_id,
+        CONCAT('simulated:', account_id, ':', ds, ':', slot) AS session_id,
         scenario,
         ds
     FROM steps
@@ -242,7 +254,7 @@ FROM injected
         TableDependency(table=_LOGS, partition_column="ds", start_offset=0, end_offset=0),
     ],
     step_days=14,
-    version=1,
+    version=2,
 )
 
 sessions = StagingQuery(
@@ -274,5 +286,5 @@ GROUP BY session_id, account_id, client_ip, user_agent, ds
         TableDependency(table=activity.table, partition_column="ds", start_offset=0, end_offset=0),
     ],
     step_days=14,
-    version=1,
+    version=2,
 )
