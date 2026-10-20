@@ -79,10 +79,19 @@ The trainer reports validation AUC, logloss, precision, recall, and a
 precision-recall curve. Positives are under 10% of sessions, so read the
 precision-recall curve alongside AUC.
 
-A local dry run of this SQL on synthetic traffic gave the expected ordering:
-the rules flagged most benign new devices and missed more than half the stealth
-attacks, velocity caught the scripted attacks, and novelty features caught
-nearly all of both. Real demo traffic is noisier, so expect lower numbers.
+Measured on the demo (trial `ato-detection`, validation week of 1,153 sessions,
+4.3% labelled ATO):
+
+| Experiment | AUC | Logloss | Precision | Recall |
+| --- | ---: | ---: | ---: | ---: |
+| `rules` | 0.690 | 0.175 | 0.48 | 0.28 |
+| `velocity` | 0.914 | 0.131 | 0.50 | 0.40 |
+| `novelty` | 0.987 | 0.062 | 0.79 | 0.54 |
+| `full` | 0.989 | 0.057 | 0.83 | 0.60 |
+
+Precision and recall use a 0.5 threshold. IP age is the top feature by gain in
+both novelty models. The rules fire on benign new devices and VPN logins, and
+they miss stealth takeovers that reuse the victim's user agent.
 
 ## 1. Materialize the training data
 
