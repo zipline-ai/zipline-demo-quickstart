@@ -54,6 +54,10 @@ Two Zipline event sources select from this table:
 
 They feed `endpoint_health`, `method_health`, and `client_activity`, plus the `client_request_context` and `user_request_identity` joins.
 
+The [account-takeover tutorial](ato.md) reads this table through the
+`ato` staging queries, which add simulated attack and look-alike sessions and
+label them. Its features never read the simulation's ground-truth column.
+
 The `email_access_logs` source selects authenticated requests, consumes the
 same event shape for online updates, and derives the
 same eight-character `email_hash` directly in Spark without selecting the raw

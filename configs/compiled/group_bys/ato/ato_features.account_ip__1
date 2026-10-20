@@ -1,0 +1,149 @@
+{
+  "accuracy": 0,
+  "aggregations": [
+    {
+      "argMap": {},
+      "inputColumn": "seen_at_ms",
+      "operation": 0,
+      "windows": [
+        {
+          "length": 14,
+          "timeUnit": 1
+        }
+      ]
+    },
+    {
+      "argMap": {},
+      "inputColumn": "request_count",
+      "operation": 7,
+      "windows": [
+        {
+          "length": 14,
+          "timeUnit": 1
+        }
+      ]
+    }
+  ],
+  "keyColumns": [
+    "account_id",
+    "client_ip"
+  ],
+  "metaData": {
+    "columnHashes": {
+      "account_id": "59b13bef9e5b9a31c0d7d097bee4ef02",
+      "client_ip": "8c3b6cd6d23bfaa8356d77260bc6c071",
+      "request_count_sum_14d": "3085690650263e767fa16a94bdd4c71e",
+      "seen_at_ms_min_14d": "45937e068c292fd7651ac56baf081efc"
+    },
+    "customJson": "{\"airflowDependencies\": [{\"name\": \"wf_public_demo_data_ato_ato_data_activity__1_with_offset_0\", \"spec\": \"public_demo_data.ato_ato_data_activity__1/ds={{ macros.ds_add(ds, 0) }}\"}]}",
+    "executionInfo": {
+      "conf": {
+        "common": {
+          "spark.chronon.coalesce.factor": "2",
+          "spark.chronon.partition.column": "ds",
+          "spark.chronon.partition.format": "yyyy-MM-dd",
+          "spark.chronon.table_write.format": "iceberg",
+          "spark.chronon.table_write.upload.format": "ion",
+          "spark.chronon.table_write.upload.location": "s3://zipline-public-demo-warehouse/data/ion_uploads/",
+          "spark.default.parallelism": "4",
+          "spark.hadoop.hive.metastore.client.factory.class": "com.amazonaws.glue.catalog.metastore.AWSGlueDataCatalogHiveClientFactory",
+          "spark.scheduler.maxRegisteredResourcesWaitingTime": "120s",
+          "spark.sql.catalog.spark_catalog": "org.apache.iceberg.spark.SparkSessionCatalog",
+          "spark.sql.catalog.spark_catalog.catalog-impl": "org.apache.iceberg.aws.glue.GlueCatalog",
+          "spark.sql.catalog.spark_catalog.warehouse": "s3://zipline-public-demo-warehouse/data/tables/",
+          "spark.sql.catalogImplementation": "hive",
+          "spark.sql.defaultUrlStreamHandlerFactory.enabled": "false",
+          "spark.sql.extensions": "org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions",
+          "spark.sql.shuffle.partitions": "4"
+        }
+      },
+      "env": {
+        "common": {
+          "ARTIFACT_PREFIX": "s3://zipline-public-demo-artifacts",
+          "AWS_REGION": "us-west-2",
+          "CLOUD_PROVIDER": "aws",
+          "CUSTOMER_ID": "public-demo",
+          "EVAL_URL": "https://try.zipline.ai/services/eval",
+          "FETCHER_URL": "https://try.zipline.ai/services/fetcher",
+          "FLINK_JARS_URI": "s3://zipline-spark-libs/spark-4.1.3/libs/",
+          "FLINK_STATE_URI": "s3://zipline-public-demo-warehouse/flink-state",
+          "FRONTEND_URL": "https://try.zipline.ai",
+          "HUB_URL": "https://try.zipline.ai/services/hub",
+          "VERSION": "latest",
+          "WAREHOUSE_PREFIX": "s3://zipline-public-demo-warehouse"
+        },
+        "modeEnvironments": {
+          "backfill": {
+            "ARTIFACT_PREFIX": "s3://zipline-public-demo-artifacts",
+            "AWS_REGION": "us-west-2",
+            "CLOUD_PROVIDER": "aws",
+            "CUSTOMER_ID": "public-demo",
+            "EVAL_URL": "https://try.zipline.ai/services/eval",
+            "FETCHER_URL": "https://try.zipline.ai/services/fetcher",
+            "FLINK_JARS_URI": "s3://zipline-spark-libs/spark-4.1.3/libs/",
+            "FLINK_STATE_URI": "s3://zipline-public-demo-warehouse/flink-state",
+            "FRONTEND_URL": "https://try.zipline.ai",
+            "HUB_URL": "https://try.zipline.ai/services/hub",
+            "VERSION": "latest",
+            "WAREHOUSE_PREFIX": "s3://zipline-public-demo-warehouse"
+          },
+          "streaming": {
+            "ARTIFACT_PREFIX": "s3://zipline-public-demo-artifacts",
+            "AWS_REGION": "us-west-2",
+            "CLOUD_PROVIDER": "aws",
+            "CUSTOMER_ID": "public-demo",
+            "EVAL_URL": "https://try.zipline.ai/services/eval",
+            "FETCHER_URL": "https://try.zipline.ai/services/fetcher",
+            "FLINK_JARS_URI": "s3://zipline-spark-libs/spark-4.1.3/libs/",
+            "FLINK_STATE_URI": "s3://zipline-public-demo-warehouse/flink-state",
+            "FRONTEND_URL": "https://try.zipline.ai",
+            "HUB_URL": "https://try.zipline.ai/services/hub",
+            "VERSION": "latest",
+            "WAREHOUSE_PREFIX": "s3://zipline-public-demo-warehouse"
+          },
+          "upload": {
+            "ARTIFACT_PREFIX": "s3://zipline-public-demo-artifacts",
+            "AWS_REGION": "us-west-2",
+            "CLOUD_PROVIDER": "aws",
+            "CUSTOMER_ID": "public-demo",
+            "EVAL_URL": "https://try.zipline.ai/services/eval",
+            "FETCHER_URL": "https://try.zipline.ai/services/fetcher",
+            "FLINK_JARS_URI": "s3://zipline-spark-libs/spark-4.1.3/libs/",
+            "FLINK_STATE_URI": "s3://zipline-public-demo-warehouse/flink-state",
+            "FRONTEND_URL": "https://try.zipline.ai",
+            "HUB_URL": "https://try.zipline.ai/services/hub",
+            "VERSION": "latest",
+            "WAREHOUSE_PREFIX": "s3://zipline-public-demo-warehouse"
+          }
+        }
+      },
+      "historicalBackfill": 0,
+      "offlineSchedule": "@never"
+    },
+    "name": "ato.ato_features.account_ip__1",
+    "online": 0,
+    "outputNamespace": "public_demo_data",
+    "sourceFile": "group_bys/ato/ato_features.py",
+    "team": "ato",
+    "version": "1"
+  },
+  "sources": [
+    {
+      "events": {
+        "query": {
+          "selects": {
+            "account_id": "account_id",
+            "auth_failure_event": "IF(status_code IN (401, 403), 1, 0)",
+            "client_ip": "client_ip",
+            "request_count": "1",
+            "seen_at_ms": "event_ts",
+            "user_agent": "user_agent",
+            "write_event": "IF(http_method IN ('POST', 'PUT', 'PATCH', 'DELETE'), 1, 0)"
+          },
+          "timeColumn": "event_ts"
+        },
+        "table": "public_demo_data.ato_ato_data_activity__1"
+      }
+    }
+  ]
+}
