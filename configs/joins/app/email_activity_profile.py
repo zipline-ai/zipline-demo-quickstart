@@ -34,3 +34,23 @@ email_activity_profile = Join(
     output_namespace="public_demo_data",
     version=2,
 )
+
+
+# Isolated version for verifying the public demo after infrastructure resizing.
+email_activity_profile_cost_validation = Join(
+    left=email_profile_requests,
+    row_ids=["email_hash"],
+    right_parts=[JoinPart(group_by=email_identity.email_identity, prefix="profile")],
+    derivations=email_activity_profile.derivations + [
+        Derivation(
+            name="identity_age_hours",
+            expression=(
+                "(profile_email_hash_last_seen_ts - "
+                "profile_email_hash_first_seen_ts) / 3600000.0"
+            ),
+        ),
+    ],
+    online=True,
+    output_namespace="public_demo_data",
+    version=20261023,
+)
