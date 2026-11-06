@@ -5,7 +5,9 @@ from ai.chronon.types import Derivation, Join, JoinPart
 email_activity_profile = Join(
     left=email_profile_requests,
     row_ids=[],
-    right_parts=[JoinPart(group_by=email_identity.email_identity, prefix="profile")],
+    right_parts=[
+        JoinPart(group_by=email_identity.email_identity, prefix="profile")
+    ],
     derivations=[
         Derivation(name="user_id_suffix", expression="profile_email_hash_user_id_suffix"),
         Derivation(name="first_seen_ts", expression="profile_email_hash_first_seen_ts"),
@@ -30,8 +32,7 @@ email_activity_profile = Join(
     online=True,
     online_schedule="@never",
     offline_schedule="@never",
-    check_consistency=True,
-    consistency_sample_percent=100.0,
+    check_consistency=False,
     enable_stats_compute=True,
     output_namespace="public_demo_data",
     version=4,

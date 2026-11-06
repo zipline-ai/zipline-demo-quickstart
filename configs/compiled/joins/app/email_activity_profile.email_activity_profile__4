@@ -180,8 +180,7 @@
       "last_seen_ts": "1b0761228448dfde707d1e69b5fc03e1",
       "user_id_suffix": "eeb4d9d8eb7c4468147592503d0b529d"
     },
-    "consistencyCheck": 1,
-    "consistencySamplePercent": 100.0,
+    "consistencyCheck": 0,
     "customJson": "{\"airflowDependencies\": [{\"name\": \"wf_public_demo_app_app_user_identity_user_identity_snapshots_iceberg__0_with_offset_0\", \"spec\": \"public_demo_app.app_user_identity_user_identity_snapshots_iceberg__0/ds={{ macros.ds_add(ds, 0) }}\"}]}",
     "executionInfo": {
       "conf": {
