@@ -1,0 +1,87 @@
+{
+  "features": [
+    "amount_usd",
+    "hours_since_last_txn",
+    "txn_count_last_24h",
+    "distance_from_home_km",
+    "card_age_months",
+    "customer_age",
+    "account_balance_usd",
+    "cvv_retry_count",
+    "velocity_score",
+    "time_of_day_hour",
+    "day_of_week",
+    "merchant_risk_score",
+    "prior_disputes",
+    "merchant_category",
+    "card_type",
+    "auth_method",
+    "channel",
+    "device_type",
+    "is_foreign_transaction",
+    "is_new_merchant",
+    "used_vpn",
+    "ip_country_mismatch",
+    "billing_shipping_mismatch",
+    "is_ai_generated_scam_attempt"
+  ],
+  "files": {
+    "folds": {
+      "sha256": "6d73421634b25cd6339c40a558dc5bed537b4be30f761fcbe5334de9bc0b95fb",
+      "uri": "s3://zipline-artifacts-crucible/gpt2-s6e11/data/6d73421634b25cd6339c40a558dc5bed537b4be30f761fcbe5334de9bc0b95fb/folds.csv"
+    },
+    "pilot_predictions": {
+      "sha256": "cee1a87d2bdc7d7929f2aafe636635a6d422966388f8c7bb8a03d04124f5e7f2",
+      "uri": "s3://zipline-artifacts-crucible/gpt2-s6e11/data/cee1a87d2bdc7d7929f2aafe636635a6d422966388f8c7bb8a03d04124f5e7f2/validation.csv"
+    },
+    "source": {
+      "sha256": "4e32b1ad4880cae452d1f2e5aa53224d38eb913c185455c00a3759df5eb3da61",
+      "uri": "s3://zipline-artifacts-crucible/gpt2-s6e11/data/4e32b1ad4880cae452d1f2e5aa53224d38eb913c185455c00a3759df5eb3da61/credit_card_fraud_2026.csv"
+    },
+    "source_ids": {
+      "sha256": "52b032dd1cb90ded2389bc49962f5f262d7667e73fe546752a8a82792ee21d29",
+      "uri": "s3://zipline-artifacts-crucible/gpt2-s6e11/data/52b032dd1cb90ded2389bc49962f5f262d7667e73fe546752a8a82792ee21d29/source_ids.csv"
+    },
+    "split": {
+      "sha256": "d6d82738950e9a4b5984910934fd2e526ece481603358f8cb8b017585affd6a1",
+      "uri": "s3://zipline-artifacts-crucible/gpt2-s6e11/data/d6d82738950e9a4b5984910934fd2e526ece481603358f8cb8b017585affd6a1/manifest.json"
+    },
+    "test": {
+      "sha256": "10f516959020357b565abaaa4fd25baae97fc2f536d0805695bb7cc15c1660f0",
+      "uri": "s3://zipline-artifacts-crucible/gpt2-s6e11/data/10f516959020357b565abaaa4fd25baae97fc2f536d0805695bb7cc15c1660f0/test.csv"
+    },
+    "train": {
+      "sha256": "87eaa10b8d17a7e4f657b8da1c66242431338bdd8b6ad45861521ac0c0e9fbd5",
+      "uri": "s3://zipline-artifacts-crucible/gpt2-s6e11/data/87eaa10b8d17a7e4f657b8da1c66242431338bdd8b6ad45861521ac0c0e9fbd5/train.csv"
+    },
+    "training_ids": {
+      "sha256": "51cd3c32a9cb999f81ac12f8544f82a84535615b5d8214771a60615411a9dcf8",
+      "uri": "s3://zipline-artifacts-crucible/gpt2-s6e11/data/51cd3c32a9cb999f81ac12f8544f82a84535615b5d8214771a60615411a9dcf8/training_ids.csv"
+    },
+    "validation_ids": {
+      "sha256": "17c270f5220d6850328697a16ac74c7c0779a5d38b51119bd9f21b1ded65b0e2",
+      "uri": "s3://zipline-artifacts-crucible/gpt2-s6e11/data/17c270f5220d6850328697a16ac74c7c0779a5d38b51119bd9f21b1ded65b0e2/validation_ids.csv"
+    }
+  },
+  "format": "pilot-pandas-raw-v1",
+  "model": {
+    "repo": "openai-community/gpt2",
+    "revision": "607a30d783dfa663caf39e06633721c8d4cfcd7e",
+    "sha256": {
+      "config.json": "0daed7749b4f02b8f76240d5444551d7b08712dab4d0adb8239c56ba823bb7b4",
+      "generation_config.json": "ed0b32ac72c0f5f44a719abb2d7786ea5146c871f83717b7f2018065954de02b",
+      "merges.txt": "1ce1664773c50f3e0cc8842619a93edc4624525b728b188a9e0be33b7726adc5",
+      "model.safetensors": "248dfc3911869ec493c76e65bf2fcf7f615828b0254c12b473182f0f81d3a707",
+      "tokenizer.json": "8414cab924d8b9b33013f0d221c5862f365ee9be39c5c2bfae8a5a9e970478a6",
+      "tokenizer_config.json": "5e04eb606e3a1583530a42e36c2a6b6615c86f34fe77e44d9ddeb43ff940931f",
+      "vocab.json": "196139668be63f3b5d6574427317ae82f612a97c5d1cdaf36ed2256dbf636783"
+    }
+  },
+  "pilot_code_sha256": "26d8eb65ab1a2c198a0c61a24d6689ff15f6d03e3424f82ae1d7598419aaef8c",
+  "rows": {
+    "eligible_source": 20000,
+    "test": 299984,
+    "train": 699960
+  },
+  "schema_version": 1
+}

@@ -1,0 +1,129 @@
+{
+  "Name": "s6e11_gpt2_train_87eaa10b",
+  "TableType": "EXTERNAL_TABLE",
+  "Parameters": {
+    "classification": "csv",
+    "skip.header.line.count": "1",
+    "EXTERNAL": "TRUE"
+  },
+  "PartitionKeys": [],
+  "StorageDescriptor": {
+    "Columns": [
+      {
+        "Name": "id",
+        "Type": "string"
+      },
+      {
+        "Name": "amount_usd",
+        "Type": "string"
+      },
+      {
+        "Name": "hours_since_last_txn",
+        "Type": "string"
+      },
+      {
+        "Name": "txn_count_last_24h",
+        "Type": "string"
+      },
+      {
+        "Name": "distance_from_home_km",
+        "Type": "string"
+      },
+      {
+        "Name": "card_age_months",
+        "Type": "string"
+      },
+      {
+        "Name": "customer_age",
+        "Type": "string"
+      },
+      {
+        "Name": "account_balance_usd",
+        "Type": "string"
+      },
+      {
+        "Name": "cvv_retry_count",
+        "Type": "string"
+      },
+      {
+        "Name": "velocity_score",
+        "Type": "string"
+      },
+      {
+        "Name": "time_of_day_hour",
+        "Type": "string"
+      },
+      {
+        "Name": "day_of_week",
+        "Type": "string"
+      },
+      {
+        "Name": "merchant_risk_score",
+        "Type": "string"
+      },
+      {
+        "Name": "prior_disputes",
+        "Type": "string"
+      },
+      {
+        "Name": "merchant_category",
+        "Type": "string"
+      },
+      {
+        "Name": "card_type",
+        "Type": "string"
+      },
+      {
+        "Name": "auth_method",
+        "Type": "string"
+      },
+      {
+        "Name": "channel",
+        "Type": "string"
+      },
+      {
+        "Name": "device_type",
+        "Type": "string"
+      },
+      {
+        "Name": "is_foreign_transaction",
+        "Type": "string"
+      },
+      {
+        "Name": "is_new_merchant",
+        "Type": "string"
+      },
+      {
+        "Name": "used_vpn",
+        "Type": "string"
+      },
+      {
+        "Name": "ip_country_mismatch",
+        "Type": "string"
+      },
+      {
+        "Name": "billing_shipping_mismatch",
+        "Type": "string"
+      },
+      {
+        "Name": "is_ai_generated_scam_attempt",
+        "Type": "string"
+      },
+      {
+        "Name": "is_fraud",
+        "Type": "string"
+      }
+    ],
+    "Location": "s3://zipline-artifacts-crucible/gpt2-s6e11/data/87eaa10b8d17a7e4f657b8da1c66242431338bdd8b6ad45861521ac0c0e9fbd5/",
+    "InputFormat": "org.apache.hadoop.mapred.TextInputFormat",
+    "OutputFormat": "org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat",
+    "SerdeInfo": {
+      "SerializationLibrary": "org.apache.hadoop.hive.serde2.OpenCSVSerde",
+      "Parameters": {
+        "separatorChar": ",",
+        "quoteChar": "\"",
+        "escapeChar": "\\"
+      }
+    }
+  }
+}

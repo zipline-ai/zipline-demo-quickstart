@@ -1,0 +1,38 @@
+{
+  "date": "2026-11-11",
+  "evidence_scope": "CPU/local; no GPU run",
+  "cpu_tests_passed": 12,
+  "dataset_audit": {
+    "train_rows": 699960,
+    "test_rows": 299984,
+    "eligible_source_rows": 20000,
+    "predictors": 24,
+    "sample_training_rows": 20000,
+    "sample_validation_rows": 10000,
+    "saved_order_seed_matches": 2025,
+    "source_overlap_exclusions": 0,
+    "split_regenerated": false
+  },
+  "preserved_pilot_predictions_metric_recheck": {
+    "validation_auc": 0.7553922968666552,
+    "validation_average_precision": 0.1838156242939751,
+    "validation_logloss": 0.07314126965139413,
+    "validation_rows": 10000
+  },
+  "gpu_execution_performed": false,
+  "infrastructure_apply_performed": false,
+  "source_schema_validation": {
+    "success": true,
+    "table": "data.s6e11_gpt2_train_87eaa10b",
+    "fields": 26,
+    "service": "http://localhost:3904"
+  },
+  "container_cpu_tests_passed": 12,
+  "image_pip_check": "passed",
+  "image_runtime": {
+    "ray": "2.55.1",
+    "torch": "2.15.0+cu132",
+    "cuda": "13.2"
+  },
+  "cpu_only_ray_head_start": "passed: zero GPU resources, torch.cuda.is_available=false"
+}

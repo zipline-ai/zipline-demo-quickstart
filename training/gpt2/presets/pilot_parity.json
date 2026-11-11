@@ -1,0 +1,7 @@
+{
+  "preset": "pilot_parity", "fold": 0, "sampled": true,
+  "source_epochs": 1, "competition_epochs": 1,
+  "microbatch": 16, "source_accumulation": 2, "competition_accumulation": 2,
+  "lr": 0.00005, "bf16": false, "score_batch": 8, "orders": 1,
+  "order_seed": 2025, "prior_mode": "fold_training_prior", "checkpoint_steps": 200
+}

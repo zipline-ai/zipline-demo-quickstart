@@ -1,0 +1,6 @@
+*
+!Dockerfile
+!requirements.txt
+!work/
+work/*
+!work/weights/

@@ -1,0 +1,39 @@
+{
+  "contract": {
+    "schema_version": 1,
+    "splitter": "StratifiedKFold",
+    "n_splits": 5,
+    "shuffle": true,
+    "seed": 42,
+    "train_sha256": "87eaa10b8d17a7e4f657b8da1c66242431338bdd8b6ad45861521ac0c0e9fbd5",
+    "rows": 699960
+  },
+  "folds_sha256": "6d73421634b25cd6339c40a558dc5bed537b4be30f761fcbe5334de9bc0b95fb",
+  "fold_counts": [
+    {
+      "fold": 0,
+      "rows": 139992,
+      "positives": 2337
+    },
+    {
+      "fold": 1,
+      "rows": 139992,
+      "positives": 2338
+    },
+    {
+      "fold": 2,
+      "rows": 139992,
+      "positives": 2338
+    },
+    {
+      "fold": 3,
+      "rows": 139992,
+      "positives": 2338
+    },
+    {
+      "fold": 4,
+      "rows": 139992,
+      "positives": 2338
+    }
+  ]
+}

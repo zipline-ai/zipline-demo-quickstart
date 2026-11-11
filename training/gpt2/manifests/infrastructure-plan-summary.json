@@ -1,0 +1,38 @@
+{
+  "prepared_date": "2026-11-11",
+  "aws_account": "345594603419",
+  "region": "us-west-2",
+  "cluster": "crucible-eks",
+  "state_bucket": "zipline-crucible-opentofu-state",
+  "state_key": "zipline-orchestration/terraform.tfstate",
+  "apply_performed": false,
+  "changes": [
+    {
+      "address": "aws_eks_node_group.default",
+      "actions": [
+        "update"
+      ]
+    },
+    {
+      "address": "helm_release.s6e11_l40s[0]",
+      "actions": [
+        "create"
+      ]
+    },
+    {
+      "address": "kubernetes_daemon_set_v1.s6e11_nvidia_device_plugin[0]",
+      "actions": [
+        "create"
+      ]
+    },
+    {
+      "address": "kubernetes_resource_quota_v1.s6e11_gpu[0]",
+      "actions": [
+        "create"
+      ]
+    }
+  ],
+  "control_change": "labels only; no nodegroup scaling or launch-template changes",
+  "instance": "g6e.xlarge",
+  "usd_per_hour": 1.861
+}
