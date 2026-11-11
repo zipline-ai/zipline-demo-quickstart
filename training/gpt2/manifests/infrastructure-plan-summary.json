@@ -5,7 +5,7 @@
   "cluster": "crucible-eks",
   "state_bucket": "zipline-crucible-opentofu-state",
   "state_key": "zipline-orchestration/terraform.tfstate",
-  "apply_performed": false,
+  "apply_performed": true,
   "changes": [
     {
       "address": "aws_eks_node_group.default",
@@ -34,5 +34,6 @@
   ],
   "control_change": "labels only; no nodegroup scaling or launch-template changes",
   "instance": "g6e.xlarge",
-  "usd_per_hour": 1.861
+  "usd_per_hour": 1.861,
+  "applied_date": "2026-11-11"
 }

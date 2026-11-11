@@ -1,0 +1,119 @@
+{
+  "date": "2026-11-11",
+  "approval": "User approved the scoped infrastructure apply and one 60-minute, USD 5 smoke attempt.",
+  "aws_account": "345594603419",
+  "region": "us-west-2",
+  "cluster": "crucible-eks",
+  "namespace": "zipline-default",
+  "trial_id": "56538208-dd78-4922-b760-3ed7264fb424",
+  "experiment_id": "pilot-parity-f0-s42",
+  "workflow_id": "180fd741-e59f-42f9-ad0f-69a6450aeb66",
+  "attempt_id": "a452f2c2-98db-495f-a8b6-e048c0928841-1",
+  "rayjob": "training-9f0d7e22-13ac-38ae-9692-2fc5edec9362",
+  "model_conf_name": "default.gpt2.smoke__914323868f4f",
+  "infrastructure_apply": {
+    "added": 3,
+    "changed": 1,
+    "destroyed": 0,
+    "update_scope": "existing managed nodegroup labels only"
+  },
+  "requested_instance": "g6e.xlarge",
+  "requested_gpus": 1,
+  "job_deadline_seconds": 3600,
+  "startup_deadline_seconds": 900,
+  "automatic_job_retries": 0,
+  "job_start": "2026-11-11T20:41:08Z",
+  "job_end": "2026-11-11T20:56:10Z",
+  "outcome": "FAILED_BEFORE_TRAINING",
+  "reason": "PreRunningDeadlineExceeded",
+  "message": "The RayJob has passed the preRunningDeadlineSeconds. StartTime: 2026-11-11 20:41:08 +0000 UTC. PreRunningDeadlineSeconds: 900",
+  "capacity_failures": [
+    {
+      "time": "2026-11-11T20:41:13.503Z",
+      "message": "failed launching nodeclaim",
+      "NodeClaim": {
+        "name": "s6e11-l40s-c55gx"
+      },
+      "aws-error-code": "UnfulfillableCapacity",
+      "error": "creating instance, insufficient capacity, with fleet error(s), InsufficientInstanceCapacity: We currently do not have sufficient g6e.xlarge capacity in the Availability Zone you requested (us-west-2b). Our system will be working on provisioning additional capacity. You can currently get g6e.xlarge capacity by not specifying an Availability Zone in your request or choosing us-west-2a, us-west-2c, us-west-2d.; InsufficientInstanceCapacity: We currently do not have sufficient g6e.xlarge capacity in the Availability Zone you requested (us-west-2a). Our system will be working on provisioning additional capacity. You can currently get g6e.xlarge capacity by not specifying an Availability Zone in your request or choosing us-west-2b, us-west-2c, us-west-2d. (aws-error-code=UnfulfillableCapacity, aws-operation-name=CreateFleet, aws-request-id=055ed3f8-ed56-4744-9200-ae229a10c840, aws-service-name=EC2, aws-status-code=200)"
+    },
+    {
+      "time": "2026-11-11T20:44:33.426Z",
+      "message": "failed launching nodeclaim",
+      "NodeClaim": {
+        "name": "s6e11-l40s-mk6xw"
+      },
+      "aws-error-code": "UnfulfillableCapacity",
+      "error": "creating instance, insufficient capacity, with fleet error(s), InsufficientInstanceCapacity: We currently do not have sufficient g6e.xlarge capacity in the Availability Zone you requested (us-west-2a). Our system will be working on provisioning additional capacity. You can currently get g6e.xlarge capacity by not specifying an Availability Zone in your request or choosing us-west-2b, us-west-2c, us-west-2d.; InsufficientInstanceCapacity: We currently do not have sufficient g6e.xlarge capacity in the Availability Zone you requested (us-west-2b). Our system will be working on provisioning additional capacity. You can currently get g6e.xlarge capacity by not specifying an Availability Zone in your request or choosing us-west-2a, us-west-2c, us-west-2d. (aws-error-code=UnfulfillableCapacity, aws-operation-name=CreateFleet, aws-request-id=4b65830b-d5dd-4ff9-9887-fbc2fa8dbb13, aws-service-name=EC2, aws-status-code=200)"
+    },
+    {
+      "time": "2026-11-11T20:47:53.549Z",
+      "message": "failed launching nodeclaim",
+      "NodeClaim": {
+        "name": "s6e11-l40s-98nq4"
+      },
+      "aws-error-code": "UnfulfillableCapacity",
+      "error": "creating instance, insufficient capacity, with fleet error(s), InsufficientInstanceCapacity: We currently do not have sufficient g6e.xlarge capacity in the Availability Zone you requested (us-west-2a). Our system will be working on provisioning additional capacity. You can currently get g6e.xlarge capacity by not specifying an Availability Zone in your request or choosing us-west-2b, us-west-2c, us-west-2d.; InsufficientInstanceCapacity: We currently do not have sufficient g6e.xlarge capacity in the Availability Zone you requested (us-west-2b). Our system will be working on provisioning additional capacity. You can currently get g6e.xlarge capacity by not specifying an Availability Zone in your request or choosing us-west-2a, us-west-2c, us-west-2d. (aws-error-code=UnfulfillableCapacity, aws-operation-name=CreateFleet, aws-request-id=387b3a8d-f9e1-4a62-b518-a02d445fd9d7, aws-service-name=EC2, aws-status-code=200)"
+    },
+    {
+      "time": "2026-11-11T20:51:13.342Z",
+      "message": "failed launching nodeclaim",
+      "NodeClaim": {
+        "name": "s6e11-l40s-f7vmb"
+      },
+      "aws-error-code": "UnfulfillableCapacity",
+      "error": "creating instance, insufficient capacity, with fleet error(s), InsufficientInstanceCapacity: We currently do not have sufficient g6e.xlarge capacity in the Availability Zone you requested (us-west-2b). Our system will be working on provisioning additional capacity. You can currently get g6e.xlarge capacity by not specifying an Availability Zone in your request or choosing us-west-2a, us-west-2c, us-west-2d.; InsufficientInstanceCapacity: We currently do not have sufficient g6e.xlarge capacity in the Availability Zone you requested (us-west-2a). Our system will be working on provisioning additional capacity. You can currently get g6e.xlarge capacity by not specifying an Availability Zone in your request or choosing us-west-2b, us-west-2c, us-west-2d. (aws-error-code=UnfulfillableCapacity, aws-operation-name=CreateFleet, aws-request-id=74967e79-9022-409d-a2e6-981cae8e2870, aws-service-name=EC2, aws-status-code=200)"
+    },
+    {
+      "time": "2026-11-11T20:54:33.468Z",
+      "message": "failed launching nodeclaim",
+      "NodeClaim": {
+        "name": "s6e11-l40s-54d5c"
+      },
+      "aws-error-code": "UnfulfillableCapacity",
+      "error": "creating instance, insufficient capacity, with fleet error(s), InsufficientInstanceCapacity: We currently do not have sufficient g6e.xlarge capacity in the Availability Zone you requested (us-west-2b). Our system will be working on provisioning additional capacity. You can currently get g6e.xlarge capacity by not specifying an Availability Zone in your request or choosing us-west-2a, us-west-2c, us-west-2d.; InsufficientInstanceCapacity: We currently do not have sufficient g6e.xlarge capacity in the Availability Zone you requested (us-west-2a). Our system will be working on provisioning additional capacity. You can currently get g6e.xlarge capacity by not specifying an Availability Zone in your request or choosing us-west-2b, us-west-2c, us-west-2d. (aws-error-code=UnfulfillableCapacity, aws-operation-name=CreateFleet, aws-request-id=9e360a50-1a24-4637-a6da-96864f746d79, aws-service-name=EC2, aws-status-code=200)"
+    },
+    {
+      "time": "2026-11-11T20:57:53.497Z",
+      "message": "failed launching nodeclaim",
+      "NodeClaim": {
+        "name": "s6e11-l40s-9sgs4"
+      },
+      "aws-error-code": "UnfulfillableCapacity",
+      "error": "creating instance, insufficient capacity, with fleet error(s), InsufficientInstanceCapacity: We currently do not have sufficient g6e.xlarge capacity in the Availability Zone you requested (us-west-2b). Our system will be working on provisioning additional capacity. You can currently get g6e.xlarge capacity by not specifying an Availability Zone in your request or choosing us-west-2a, us-west-2c, us-west-2d.; InsufficientInstanceCapacity: We currently do not have sufficient g6e.xlarge capacity in the Availability Zone you requested (us-west-2a). Our system will be working on provisioning additional capacity. You can currently get g6e.xlarge capacity by not specifying an Availability Zone in your request or choosing us-west-2b, us-west-2c, us-west-2d. (aws-error-code=UnfulfillableCapacity, aws-operation-name=CreateFleet, aws-request-id=f6d53de1-3b31-4d5e-bda5-106cdfe0c52a, aws-service-name=EC2, aws-status-code=200)"
+    }
+  ],
+  "gpu_instances_launched": 0,
+  "gpu_training_started": false,
+  "cpu_head_ready": true,
+  "trainer_progress_records": 0,
+  "artifact_root": "s3://zipline-artifacts-crucible/gpt2-s6e11/runs/180fd741-e59f-42f9-ad0f-69a6450aeb66/a452f2c2-98db-495f-a8b6-e048c0928841/1/",
+  "artifacts_present": [
+    "run_context.json"
+  ],
+  "experiment_report_present": false,
+  "checkpoints_present": false,
+  "predictions_present": false,
+  "new_metrics": null,
+  "cleanup": {
+    "verified_at": "2026-11-11T20:58:48Z",
+    "automatic": true,
+    "rayclusters": 0,
+    "job_pods": 0,
+    "gpu_nodes": 0,
+    "gpu_nodeclaims": 0,
+    "active_g6e_xlarge_instances": 0,
+    "requested_gpu_quota_used": 0,
+    "device_plugin_desired_pods": 0,
+    "failed_rayjob_retention_seconds": 21600
+  },
+  "trial_status": "FAILED",
+  "experiment_status": "FAILED",
+  "journal_entry_id": "c2f93df6-1975-423a-ab47-e918464aa5db",
+  "remaining_verification": [
+    "GPU visibility and driver/image compatibility",
+    "trainer progress and GPU checkpoint/resume",
+    "report-backed metrics and prediction/checkpoint artifacts"
+  ],
+  "next_step": "Retry the unchanged configuration in a separately authorized bounded attempt when g6e.xlarge capacity returns in the existing AZs. No replacement attempt was submitted."
+}

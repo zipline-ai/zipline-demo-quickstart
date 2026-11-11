@@ -22,19 +22,38 @@ validation. This does not validate GPU execution or inference. See
 `manifests/verification.json`; no new GPU metrics exist.
 
 The existing local trial is `56538208-dd78-4922-b760-3ed7264fb424`, experiment
-`pilot-parity-f0-s42` (**PLANNED**). Resume these IDs for the approved smoke;
-do not create another trial merely to continue this preparation.
+`pilot-parity-f0-s42` (**FAILED before training: AWS capacity unavailable**).
+These IDs identify the completed first attempt; no replacement was submitted.
 [Open the local experiment](http://localhost:3000/trials/56538208-dd78-4922-b760-3ed7264fb424/experiments).
 
-## Scope and approval gate
+## Execution outcome
 
-No infrastructure apply or GPU execution is authorized yet. Proposed single run:
+The user approved the scoped apply and one attempt on November 11, 2026. Apply
+completed with **3 additions, 1 labels-only update, 0 deletions**. Workflow
+`180fd741-e59f-42f9-ad0f-69a6450aeb66` failed before training: AWS repeatedly
+returned `InsufficientInstanceCapacity` for `g6e.xlarge` in both configured AZs.
+The CPU head became ready, but **zero GPU instances launched**. KubeRay enforced
+`PreRunningDeadlineExceeded` at **20:56:10 UTC**, following its 900-second startup
+bound. Automatic cleanup was verified at **20:58:48 UTC**: no RayCluster, job pods,
+GPU nodes or NodeClaims; GPU quota usage returned to 0/1.
+
+Only `run_context.json` exists under this attempt's S3 root. No trainer progress,
+report, checkpoint, predictions or new metrics were produced. Trial/experiment
+status is FAILED and the journal records the capacity failure. See
+`manifests/execution.json` for exact identities and AWS errors. GPU execution and
+artifact/report verification remain untested. The smallest next step is a new
+bounded attempt with the unchanged configuration when capacity returns; this
+approval covered one attempt. The opt-in profile remains installed at zero capacity.
+
+## Approved scope and runtime bounds
+
+The following bounds describe the approved first attempt:
 
 - Existing AWS account `345594603419`, `us-west-2`, `crucible-eks`, namespace/team
   `zipline-default` / `default`, service account `spark-operator-spark`, role
   `crucible-spark-compute-execution`, profile `s6e11-l40s`.
 - One On-Demand `g6e.xlarge` / L40S. AWS Pricing API returned **$1.861/hour** on
-  November 11, 2026. Offered in both configured AZs; launch capacity unproven.
+  November 11, 2026. Offered in both configured AZs; actual launches failed for lack of capacity.
 - `ray.timeout.seconds=3600`: 60 minutes including initialization. KubeRay also
   fails jobs that have not reached Running within 900 seconds. No task/job retries.
   Planning allowance: 5–15 minutes setup, up to 35 minutes training, up to
@@ -42,7 +61,7 @@ No infrastructure apply or GPU execution is authorized yet. Proposed single run:
 - Terminal RayCluster deletion after 2 minutes, then empty-node consolidation
   after 1 minute. Allow 10 minutes for cleanup: about **$2.18** compute for 70
   minutes. Node expiry at 2 hours with 5-minute termination grace is an independent
-  fallback (~**$3.88** compute for 125 minutes). Propose **$5** for this one attempt
+  fallback (~**$3.88** compute for 125 minutes). Approved **$5** for this one attempt
   including small EBS/S3 request overhead; no automatic retry or full campaign.
   Retained checkpoint storage continues after compute stops. Controller/API faults
   can delay cleanup; verify actual EC2 termination before declaring completion.
@@ -204,7 +223,7 @@ zipline hub trial list --run-name s6e11-gpt2-crucible-smoke \
 # Start a new trial only when deliberately beginning a new attempt:
 # zipline hub trial start s6e11-gpt2-crucible-smoke --task 'One L40S: verified GPT-2 pilot through local Trials' --model "$MODEL" \
 #   --chronon-root "$CONF_ROOT" --hub-url "$HUB" --cloud aws --customer-id crucible --env prod --no-use-auth -f json
-# For the already prepared trial:
+# Historical trial/experiment IDs; only resubmit under a new bounded authorization:
 export ZIPLINE_TRIAL_ID=56538208-dd78-4922-b760-3ed7264fb424
 # For a genuinely new trial, use its returned ID instead.
 export ZIPLINE_EXPERIMENT_ID=pilot-parity-f0-s42

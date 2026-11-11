@@ -1,6 +1,6 @@
 {
   "date": "2026-11-11",
-  "evidence_scope": "CPU/local; no GPU run",
+  "evidence_scope": "CPU/container checks plus live Crucible provisioning, deadline and cleanup; GPU training did not start",
   "cpu_tests_passed": 12,
   "dataset_audit": {
     "train_rows": 699960,
@@ -20,7 +20,7 @@
     "validation_rows": 10000
   },
   "gpu_execution_performed": false,
-  "infrastructure_apply_performed": false,
+  "infrastructure_apply_performed": true,
   "source_schema_validation": {
     "success": true,
     "table": "data.s6e11_gpt2_train_87eaa10b",
@@ -45,7 +45,7 @@
   "trainer_manifest_s3_readback_sha256": "3a6c8423a93717b75c8e02e4c9f52a2751e145c02209d50a435c55e93eb87ed2",
   "trial_id": "56538208-dd78-4922-b760-3ed7264fb424",
   "experiment_id": "pilot-parity-f0-s42",
-  "experiment_status": "PLANNED",
+  "experiment_status": "FAILED",
   "ecr_digest_verified": "sha256:1b1bbc4bdf174645e4a6acf87648d6c0fcb071c8a354c50f6fe603bee873861b",
   "packaged_model": {
     "sha256_checks": "passed",
@@ -53,5 +53,6 @@
     "parameters": 124439808,
     "cpu_forward_finite": true
   },
-  "local_trial_ui": "http://localhost:3000/trials/56538208-dd78-4922-b760-3ed7264fb424/experiments"
+  "local_trial_ui": "http://localhost:3000/trials/56538208-dd78-4922-b760-3ed7264fb424/experiments",
+  "execution_evidence": "manifests/execution.json"
 }
