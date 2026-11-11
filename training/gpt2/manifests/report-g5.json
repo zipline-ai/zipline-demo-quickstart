@@ -1,0 +1,60 @@
+{
+  "artifacts": [
+    {
+      "id": "validation",
+      "kind": "predictions",
+      "path": "predictions/validation.csv"
+    },
+    {
+      "id": "coverage",
+      "kind": "manifest",
+      "path": "predictions/validation.json"
+    },
+    {
+      "id": "dataset",
+      "kind": "dataset_manifest",
+      "path": "manifests/dataset.json"
+    },
+    {
+      "id": "split",
+      "kind": "split_manifest",
+      "path": "manifests/split.json"
+    },
+    {
+      "id": "profile",
+      "kind": "profile",
+      "path": "profile.json"
+    },
+    {
+      "id": "recipe",
+      "kind": "manifest",
+      "path": "manifests/recipe.json"
+    },
+    {
+      "id": "checkpoint",
+      "kind": "checkpoint",
+      "path": "checkpoints/competition-00000625.pt"
+    }
+  ],
+  "attempt_id": "c76921e0-956f-4161-8a44-232b27020381-1",
+  "complete": true,
+  "conf_hash": "af975d2ca364ba8349cfe67dee390ad8",
+  "dataset_manifest_hash": "802675cfd652bea99179b2f47402f906d581969773e3f57e6defca4689fc32ea",
+  "evaluation_scope": "sampled_fold0_10k;fold=0;prior=fold_training_prior;orders=1;purpose=validation",
+  "experiment_id": "pilot-g5-f0-s42",
+  "metrics": {
+    "source_rows": 20000,
+    "trainable_parameters": 124439808,
+    "training_rows": 20000,
+    "validation_auc": 0.7422719901395216,
+    "validation_average_precision": 0.1756680123021404,
+    "validation_logloss": 0.07291537851011404,
+    "validation_rows": 10000
+  },
+  "model_conf_name": "default.gpt2_g5.smoke__914323868f4f",
+  "schema_version": 1,
+  "split_manifest_hash": "d6d82738950e9a4b5984910934fd2e526ece481603358f8cb8b017585affd6a1",
+  "step_id": "c76921e0-956f-4161-8a44-232b27020381",
+  "trial_id": "56538208-dd78-4922-b760-3ed7264fb424",
+  "workflow_id": "b5c3173a-5811-4fd6-b41a-6b89e8f880a0"
+}

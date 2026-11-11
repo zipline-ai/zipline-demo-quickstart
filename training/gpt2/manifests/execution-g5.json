@@ -1,0 +1,141 @@
+{
+  "date": "2026-11-11",
+  "trial_id": "56538208-dd78-4922-b760-3ed7264fb424",
+  "experiment_id": "pilot-g5-f0-s42",
+  "model_conf_name": "default.gpt2_g5.smoke__914323868f4f",
+  "workflow_id": "b5c3173a-5811-4fd6-b41a-6b89e8f880a0",
+  "attempt_id": "c76921e0-956f-4161-8a44-232b27020381-1",
+  "rayjob": "training-ac040dd4-9612-3351-adf6-e2ea36385813",
+  "artifact_root": "s3://zipline-artifacts-crucible/gpt2-s6e11/runs/b5c3173a-5811-4fd6-b41a-6b89e8f880a0/c76921e0-956f-4161-8a44-232b27020381/1/",
+  "instance_id": "i-02a39cbed6e5afef7",
+  "instance_type": "g5.xlarge",
+  "availability_zone": "us-west-2a",
+  "instance_launch_time": "2026-11-11T21:48:51Z",
+  "on_demand_rate_usd_hour": 1.006,
+  "gpu": {
+    "name": "NVIDIA A10G",
+    "driver": "580.159.03",
+    "memory_total_mib": 23028,
+    "observed_utilization_percent": 97,
+    "observed_memory_used_mib": 4524
+  },
+  "bounds": {
+    "activeDeadlineSeconds": 3600,
+    "preRunningDeadlineSeconds": 900,
+    "backoffLimit": 0,
+    "deletionStrategy": {
+      "deletionRules": [
+        {
+          "condition": {
+            "jobStatus": "SUCCEEDED",
+            "ttlSeconds": 120
+          },
+          "policy": "DeleteCluster"
+        },
+        {
+          "condition": {
+            "jobStatus": "SUCCEEDED",
+            "ttlSeconds": 21600
+          },
+          "policy": "DeleteSelf"
+        },
+        {
+          "condition": {
+            "jobDeploymentStatus": "Failed",
+            "ttlSeconds": 120
+          },
+          "policy": "DeleteCluster"
+        },
+        {
+          "condition": {
+            "jobDeploymentStatus": "Failed",
+            "ttlSeconds": 21600
+          },
+          "policy": "DeleteSelf"
+        }
+      ]
+    }
+  },
+  "infrastructure": {
+    "added": 0,
+    "changed": 1,
+    "destroyed": 0,
+    "resource": "helm_release.s6e11_l40s[0]",
+    "instance_type": "g5.xlarge",
+    "limits": {
+      "cpu": "4",
+      "memory": "16Gi",
+      "nvidia.com/gpu": "1"
+    }
+  },
+  "trainer_manifest_sha256": "011156c9f66d5700a3a49463aa6565abb0fdae07727e7e978dfae6478931ae2c",
+  "capacity_preflight": {
+    "api": "GetCapacityManagerSupportabilityScores",
+    "result": "CapacityManager.Disabled",
+    "enabled_service": false,
+    "instance_count": 1,
+    "instance_types": [
+      "g5.xlarge",
+      "g6e.xlarge"
+    ],
+    "zones": [
+      "usw2-az1",
+      "usw2-az2"
+    ]
+  },
+  "initial_local_submission": {
+    "workflow_id": "b640af0e-7149-4e24-8e4c-a8476699a773",
+    "error": "Experiment model does not match workflow",
+    "rayjob_created": false,
+    "gpu_launched": false,
+    "fix": "Recorded model association using CLI --model-conf-name before resubmitting"
+  },
+  "status": "SUCCEEDED",
+  "gpu_execution_performed": true,
+  "local_trial_progress_verified": true,
+  "cleanup_verified": true,
+  "metrics": {
+    "source_rows": 20000,
+    "trainable_parameters": 124439808,
+    "training_rows": 20000,
+    "validation_auc": 0.7422719901395216,
+    "validation_average_precision": 0.1756680123021404,
+    "validation_logloss": 0.07291537851011404,
+    "validation_rows": 10000
+  },
+  "evaluation_scope": "sampled_fold0_10k;fold=0;prior=fold_training_prior;orders=1;purpose=validation",
+  "independent_verification": {
+    "validation_ids_exact_match": true,
+    "unique_rows": 10000,
+    "prediction_sha256": "bebf7c866f26ebeb137125d0f0db0f0e73e22af44a295833cc1bffcbc7145916",
+    "independently_recomputed_metrics": {
+      "validation_auc": 0.7422719901395216,
+      "validation_average_precision": 0.1756680123021404,
+      "validation_logloss": 0.07291537851011404
+    },
+    "all_report_artifacts_present": true
+  },
+  "rayjob_start": "2026-11-11T21:48:46Z",
+  "rayjob_end": "2026-11-11T22:10:46Z",
+  "job_seconds_including_startup": 1320,
+  "trainer_ray_job_start": "2026-11-11T21:53:18Z",
+  "trainer_ray_job_end": "2026-11-11T22:10:39Z",
+  "gpu_peak_allocated_bytes": 3564400128,
+  "local_hub_execution_state": "success",
+  "local_hub_evaluation_state": "valid",
+  "final_checkpoint": "checkpoints/competition-00000625.pt",
+  "final_checkpoint_sha256": "90294ed3eef179fd0cb8ed39aad4f0654432320095e5a9a57f82825d40da8ed9",
+  "cleanup": {
+    "state": "terminated",
+    "reason": "User initiated (2026-11-11 22:14:16 GMT)",
+    "verified_at": "2026-11-11T22:19:37.780550+00:00"
+  },
+  "gpu_nodes_remaining": 0,
+  "gpu_nodeclaims_remaining": 0,
+  "gpu_quota_used": 0,
+  "device_plugin_desired": 0,
+  "estimated_ec2_compute_usd": 0.4262,
+  "estimate_scope": "Launch to shutdown initiation; excludes EBS/S3/network and existing shared CPU infrastructure",
+  "trainer_manifest_s3_hash_verified": true,
+  "archive_s3_hash_verified": true
+}

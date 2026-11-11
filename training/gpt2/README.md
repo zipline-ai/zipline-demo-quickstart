@@ -19,11 +19,12 @@ weight checksums and a full GPT-2 CPU forward pass also passed. ECR confirmed
 the exact digest recorded in `manifests/artifacts.json`. The exact
 compiled model `default.gpt2.smoke__914323868f4f` passed local training-source
 validation. This does not validate GPU execution or inference. See
-`manifests/verification.json`; no new GPU metrics exist.
+`manifests/verification.json`; the subsequent A10G execution results are below.
 
 The existing local trial is `56538208-dd78-4922-b760-3ed7264fb424`, experiment
 `pilot-parity-f0-s42` (**FAILED before training: AWS capacity unavailable**).
-These IDs identify the completed first attempt; no replacement was submitted.
+These IDs identify the completed first attempt. The requested g5 retry is recorded
+as `pilot-g5-f0-s42` in the same trial.
 [Open the local experiment](http://localhost:3000/trials/56538208-dd78-4922-b760-3ed7264fb424/experiments).
 
 ## Execution outcome
@@ -39,11 +40,88 @@ GPU nodes or NodeClaims; GPU quota usage returned to 0/1.
 
 Only `run_context.json` exists under this attempt's S3 root. No trainer progress,
 report, checkpoint, predictions or new metrics were produced. Trial/experiment
-status is FAILED and the journal records the capacity failure. See
+status was FAILED and the journal records the capacity failure. See
 `manifests/execution.json` for exact identities and AWS errors. GPU execution and
-artifact/report verification remain untested. The smallest next step is a new
-bounded attempt with the unchanged configuration when capacity returns; this
-approval covered one attempt. The opt-in profile remains installed at zero capacity.
+artifact/report verification remained untested after this first attempt. The user
+subsequently requested the g5 retry described below.
+
+## Requested g5 retry
+
+On November 11 the user requested one `g5.xlarge` retry under the same $5,
+900-second startup and 3600-second job bounds. AWS pricing returned $1.006/hour
+in us-west-2. This is one A10G (24 GB GPU memory), 4 vCPU and 16 GiB host RAM.
+The existing `s6e11-l40s` profile name is retained for compatibility; its current
+instance selection is g5, not L40S. Only its instance requirement and memory
+limit changed (0 add, 1 change, 0 destroy); the previous default remains g6e.
+The isolated team's current worker requests are 12 GiB RAM and 4 GiB shared
+memory, so recompiling either smoke model uses that host sizing.
+
+Variant `default.gpt2_g5.smoke__914323868f4f` / backend
+`s6e11_gpt2_smoke_g5` uses `manifests/trainer-g5.json`: microbatch 4,
+accumulation 8 in both stages (effective batch 32), scoring batch 4, otherwise
+the same FP32 pilot/data/weights. It reuses the pinned image and byte-identical
+trainer archive, copied under the new backend name. Compilation and local
+training-data validation passed. The live GPU run subsequently succeeded.
+
+Applied scoped infrastructure command:
+
+```sh
+tofu plan -var=enable_s6e11_l40s=true -var=s6e11_instance_type=g5.xlarge \
+  -target=helm_release.s6e11_l40s -out=tfplan-gpt2-g5
+tofu apply tfplan-gpt2-g5
+```
+
+For this variant the compile/validate/record/submit commands below use
+`MODEL=default.gpt2_g5.smoke__914323868f4f`,
+`CONF="$CONF_ROOT/compiled/models/default/gpt2_g5.smoke__914323868f4f"`, and
+`ZIPLINE_EXPERIMENT_ID=pilot-g5-f0-s42`, with the same trial ID. Publish
+`trainer-g5.json` to the content-addressed URI in `artifacts-g5.json`, and copy
+the existing archive to `builds/s6e11_gpt2_smoke_g5-914323868f4f.zip`.
+Do not rerun an already submitted paid attempt without new authorization.
+
+The initial local submission `b640af0e-7149-4e24-8e4c-a8476699a773` was rejected
+before creating a RayJob because the experiment model association was missing.
+The association was corrected using the CLI's `--model-conf-name` argument;
+actual workflow: `b5c3173a-5811-4fd6-b41a-6b89e8f880a0`.
+
+**Result: SUCCEEDED**, 21:48:46–22:10:46 UTC (22 minutes including startup).
+AWS launched instance `i-02a39cbed6e5afef7` in `us-west-2a` at 21:48:51 UTC.
+Actual NVIDIA A10G/driver 580.159.03 verified; peak allocated GPU memory was
+3.320 GiB. Source and competition stages each completed 625 optimizer steps,
+20,000 rows and effective batch 32. Their measured stage times including
+checkpoint handling were 445.13 and 444.57 seconds respectively.
+
+On the saved **10,000-row fold-0 sample**: ROC-AUC **0.7422719901**,
+average precision **0.1756680123**, log loss **0.0729153785**. Exact unique
+validation-ID coverage, prediction-file SHA256 and independent metric
+recomputation all passed. This is sampled validation, not full-fold or pooled
+OOF performance. Local Trials ingested fresh progress, the final checkpoint,
+and the final report (`execution_state=success`, `evaluation_state=valid`).
+All seven report artifacts exist in S3. See `manifests/report-g5.json`,
+`manifests/profile-g5.json`, and `manifests/execution-g5.json`.
+
+Artifact root:
+`s3://zipline-artifacts-crucible/gpt2-s6e11/runs/b5c3173a-5811-4fd6-b41a-6b89e8f880a0/c76921e0-956f-4161-8a44-232b27020381/1/`.
+Final resumable checkpoint: `checkpoints/competition-00000625.pt`;
+predictions: `predictions/validation.csv`; report: `experiment_report.json`.
+GPU checkpoint publication was verified; an interrupted live GPU resume was
+not executed (resume correctness has CPU test coverage).
+
+Automatic RayCluster deletion released GPU quota to 0/1. Karpenter selected the
+empty node for deletion at 22:14:10 UTC and EC2 entered shutting-down at
+22:14:16 UTC, with no replacement. From launch to shutdown initiation was
+25m25s, approximately **$0.43 EC2 compute** at the quoted rate (estimate,
+excluding EBS/S3/network and existing shared CPU infrastructure). The completed
+CPU submitter pod and RayJob record can remain as status history; they hold no
+running GPU allocation. EC2 `terminated` and zero GPU nodes/NodeClaims were
+verified at **22:19:37 UTC**. The profile remains installed at zero capacity.
+
+AWS's [real-time capacity scores](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/capacity-manager-supportability.html)
+require the Unified Operations support plan and enabled EC2 Capacity Manager.
+Our read-only check for one g5/g6e across the existing AZs returned
+`CapacityManager.Disabled`. No account-wide service was enabled. Scores are
+advisory, not reservations or launch guarantees. Instance-type offerings only
+show supported locations; API DryRun checks permissions, not free capacity.
 
 ## Approved scope and runtime bounds
 
@@ -275,8 +353,8 @@ zipline hub cancel "$WORKFLOW_ID" --chronon-root "$CONF_ROOT" --hub-url "$HUB" \
 curl -fsS "$HUB/trials/v1/$ZIPLINE_TRIAL_ID/experiments/$ZIPLINE_EXPERIMENT_ID/attempts"
 # Set ATTEMPT_ID from that response. Each download URL is obtained via:
 curl -fsS "$HUB/trials/v1/$ZIPLINE_TRIAL_ID/experiments/$ZIPLINE_EXPERIMENT_ID/attempts/$ATTEMPT_ID/artifacts/validation"
-zipline hub trial experiments metrics "$ZIPLINE_EXPERIMENT_ID" "$ZIPLINE_TRIAL_ID" --model-conf-name "$MODEL" \
-  --chronon-root "$CONF_ROOT" --hub-url "$HUB" --cloud aws --customer-id crucible --env prod --no-use-auth -f json
+# Attempt-scoped reports reconcile automatically; do not use the legacy
+# `trial experiments metrics` attachment command (it returns HTTP 400 here).
 zipline hub trial experiments list "$ZIPLINE_TRIAL_ID" \
   --chronon-root "$CONF_ROOT" --hub-url "$HUB" --cloud aws --customer-id crucible --env prod --no-use-auth -f json
 ```
