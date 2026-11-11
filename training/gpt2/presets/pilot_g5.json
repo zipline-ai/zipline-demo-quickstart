@@ -1,0 +1,17 @@
+{
+  "bf16": false,
+  "checkpoint_steps": 200,
+  "competition_accumulation": 8,
+  "competition_epochs": 1,
+  "fold": 0,
+  "lr": 5e-05,
+  "microbatch": 4,
+  "order_seed": 2025,
+  "orders": 1,
+  "preset": "pilot_g5",
+  "prior_mode": "fold_training_prior",
+  "sampled": true,
+  "score_batch": 4,
+  "source_accumulation": 8,
+  "source_epochs": 1
+}
