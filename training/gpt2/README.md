@@ -316,8 +316,12 @@ it retains the six-hour default, permits a bounded local environment override
 up to 48 hours, forwards that override through Compose, and adds boundary tests.
 The intended local override is `CRUCIBLE_RAY_TIMEOUT_MAX_SECONDS=151200`.
 The patch passes `git apply --check`; it has not been applied, compiled or tested.
+The new model compiled and passed local training-data validation.
 The infrastructure variant adds `s6e11_node_expire_hours` (default 2, maximum 48),
-with 44 selected only in the targeted full-fold plan. That plan is not applied.
+with 44 selected only in the targeted full-fold plan. OpenTofu validation passed;
+plan `tfplan-gpt2-fullfold` contains exactly one in-place Helm release update.
+Decoded before/after values differ only in `expireAfter: 2h` to `44h`.
+That plan is not applied.
 
 After the runtime scope is approved: apply/test the patch and rebuild the local
 stack, apply only the reviewed NodePool release plan, publish the immutable
