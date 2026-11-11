@@ -34,5 +34,16 @@
     "torch": "2.15.0+cu132",
     "cuda": "13.2"
   },
-  "cpu_only_ray_head_start": "passed: zero GPU resources, torch.cuda.is_available=false"
+  "cpu_only_ray_head_start": "passed: zero GPU resources, torch.cuda.is_available=false",
+  "compiled_model": "default.gpt2.smoke__914323868f4f",
+  "model_validation": {
+    "success": true,
+    "scope": "Training data only; no training, inference or deployment evaluated",
+    "hub": "http://localhost:3000/services/hub"
+  },
+  "archive_s3_readback_sha256": "914323868f4f03e98ee037895fc483e1cff9374eec7396cd8c9ea98b44fe5840",
+  "trainer_manifest_s3_readback_sha256": "3a6c8423a93717b75c8e02e4c9f52a2751e145c02209d50a435c55e93eb87ed2",
+  "trial_id": "56538208-dd78-4922-b760-3ed7264fb424",
+  "experiment_id": "pilot-parity-f0-s42",
+  "experiment_status": "PLANNED"
 }

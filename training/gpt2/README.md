@@ -13,6 +13,16 @@ GPT-2 revision: `openai-community/gpt2@607a30d783dfa663caf39e06633721c8d4cfcd7e`
 Ray is 2.55.1. The trainer runs as one `ray.remote(num_gpus=1)` task; the head
 advertises zero task CPUs/GPUs. No Chronon runtime or modelpg files were changed.
 
+Preparation evidence: 12 native CPU tests and 12 tests inside the AMD64 image
+passed; the image passed `pip check` and started a zero-GPU Ray head. The exact
+compiled model `default.gpt2.smoke__914323868f4f` passed local training-source
+validation. This does not validate GPU execution or inference. See
+`manifests/verification.json`; no new GPU metrics exist.
+
+The existing local trial is `56538208-dd78-4922-b760-3ed7264fb424`, experiment
+`pilot-parity-f0-s42` (**PLANNED**). Resume these IDs for the approved smoke;
+do not create another trial merely to continue this preparation.
+
 ## Scope and approval gate
 
 No infrastructure apply or GPU execution is authorized yet. Proposed single run:
@@ -154,7 +164,9 @@ The archive implementation is the existing deterministic `build_archive.py`
 convention. Code version is the archive SHA256's first 12 characters. The build
 writes `manifests/artifacts.json` and `manifests/trainer.json`; the archive contains
 only setup metadata and trainer Python sources, never data or checkpoints.
-The published digest pins dependencies as well as the model snapshot.
+The published digest pins dependencies as well as the model snapshot. Ray's
+unused CuPy package is removed because its NumPy constraint conflicts with the
+verified pilot. No dependency checks are bypassed.
 
 ```sh
 aws s3 sync work/data/ s3://zipline-artifacts-crucible/gpt2-s6e11/data/ \
@@ -186,19 +198,34 @@ zipline hub trial journal list --run-name s6e11-gpt2-crucible-smoke \
   --chronon-root "$CONF_ROOT" --hub-url "$HUB" --cloud aws --customer-id crucible --env prod --no-use-auth -f json
 zipline hub trial list --run-name s6e11-gpt2-crucible-smoke \
   --chronon-root "$CONF_ROOT" --hub-url "$HUB" --cloud aws --customer-id crucible --env prod --no-use-auth -f json
-# Resume an existing trial ID when appropriate; otherwise:
-zipline hub trial start s6e11-gpt2-crucible-smoke --task 'One L40S: verified GPT-2 pilot through local Trials' --model "$MODEL" \
-  --chronon-root "$CONF_ROOT" --hub-url "$HUB" --cloud aws --customer-id crucible --env prod --no-use-auth -f json
-# Set ZIPLINE_TRIAL_ID to the returned real ID, then:
+# Start a new trial only when deliberately beginning a new attempt:
+# zipline hub trial start s6e11-gpt2-crucible-smoke --task 'One L40S: verified GPT-2 pilot through local Trials' --model "$MODEL" \
+#   --chronon-root "$CONF_ROOT" --hub-url "$HUB" --cloud aws --customer-id crucible --env prod --no-use-auth -f json
+# For the already prepared trial:
+export ZIPLINE_TRIAL_ID=56538208-dd78-4922-b760-3ed7264fb424
+# For a genuinely new trial, use its returned ID instead.
 export ZIPLINE_EXPERIMENT_ID=pilot-parity-f0-s42
 zipline hub validate-table data.s6e11_gpt2_train_87eaa10b --engine-type SPARK --team default \
   --chronon-root "$CONF_ROOT" --hub-url "$HUB" --validate-url http://localhost:3904 --env prod --no-use-auth -f json
 zipline hub validate --skip-compile "$CONF" --chronon-root "$CONF_ROOT" \
   --hub-url "$HUB" --validate-url http://localhost:3904 --no-use-auth -f json
 zipline hub trial experiments record "$ZIPLINE_EXPERIMENT_ID" "$ZIPLINE_TRIAL_ID" \
-  --title 'FP32 saved 20k/10k pilot, one L40S' --status RUNNING --model-conf-name "$MODEL" \
+  --title 'FP32 saved 20k/10k pilot, one L40S' --status PLANNED --model-conf-name "$MODEL" \
   --chronon-root "$CONF_ROOT" --hub-url "$HUB" --cloud aws --customer-id crucible --env prod --no-use-auth -f json
+# PR #1461's CLI has no params flag; its existing client accepts this metadata.
+python - <<'PYMETADATA'
+import json, os
+from ai.chronon.repo.hub_runner import _trial_hub
+from ai.chronon.cli.formatter import Format
+hub, _, _ = _trial_hub(os.environ["CONF_ROOT"], os.environ["HUB"], False,
+                       Format.JSON, "aws", "crucible", "prod")
+hub.call_trial_experiment_record_api(os.environ["ZIPLINE_TRIAL_ID"],
+    os.environ["ZIPLINE_EXPERIMENT_ID"], params=json.dumps({
+        "variant": "pilot_parity", "fold": 0, "seed": 42, "purpose": "validation"}))
+PYMETADATA
 # ONLY AFTER APPROVED APPLY/RUN; both IDs must be nonempty:
+zipline hub trial experiments record "$ZIPLINE_EXPERIMENT_ID" "$ZIPLINE_TRIAL_ID" --status RUNNING \
+  --chronon-root "$CONF_ROOT" --hub-url "$HUB" --cloud aws --customer-id crucible --env prod --no-use-auth -f json
 ZIPLINE_TRIAL_ID="$ZIPLINE_TRIAL_ID" ZIPLINE_EXPERIMENT_ID="$ZIPLINE_EXPERIMENT_ID" \
   zipline hub backfill "$CONF" --skip-compile --start-ds 2026-11-11 --end-ds 2026-11-11 \
   --chronon-root "$CONF_ROOT" --hub-url "$HUB" --no-use-auth --yes -f json
@@ -206,7 +233,9 @@ ZIPLINE_TRIAL_ID="$ZIPLINE_TRIAL_ID" ZIPLINE_EXPERIMENT_ID="$ZIPLINE_EXPERIMENT_
 
 `backfill` and `validate` derive cloud/customer/environment from the compiled
 conf and explicit compile root/path; they do not have invented `--env` flags.
-Commit reviewable config changes before Hub sync (the CLI enforces clean Git).
+Commit and push reviewable config changes before Hub sync (the CLI enforces a
+clean, pushed branch): `git add training/gpt2 && git commit -m "Prepare GPT-2 smoke"`
+and `git push -u origin codex/gpt2-crucible-smoke` from the demo repository root.
 The source table is for transport/schema validation; training always consumes
 manifest-hashed original CSVs. IDs and ingestion dates are not predictors.
 
