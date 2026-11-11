@@ -14,7 +14,9 @@ Ray is 2.55.1. The trainer runs as one `ray.remote(num_gpus=1)` task; the head
 advertises zero task CPUs/GPUs. No Chronon runtime or modelpg files were changed.
 
 Preparation evidence: 12 native CPU tests and 12 tests inside the AMD64 image
-passed; the image passed `pip check` and started a zero-GPU Ray head. The exact
+passed; the image passed `pip check` and started a zero-GPU Ray head. Packaged
+weight checksums and a full GPT-2 CPU forward pass also passed. ECR confirmed
+the exact digest recorded in `manifests/artifacts.json`. The exact
 compiled model `default.gpt2.smoke__914323868f4f` passed local training-source
 validation. This does not validate GPU execution or inference. See
 `manifests/verification.json`; no new GPU metrics exist.
@@ -22,6 +24,7 @@ validation. This does not validate GPU execution or inference. See
 The existing local trial is `56538208-dd78-4922-b760-3ed7264fb424`, experiment
 `pilot-parity-f0-s42` (**PLANNED**). Resume these IDs for the approved smoke;
 do not create another trial merely to continue this preparation.
+[Open the local experiment](http://localhost:3000/trials/56538208-dd78-4922-b760-3ed7264fb424/experiments).
 
 ## Scope and approval gate
 

@@ -45,5 +45,13 @@
   "trainer_manifest_s3_readback_sha256": "3a6c8423a93717b75c8e02e4c9f52a2751e145c02209d50a435c55e93eb87ed2",
   "trial_id": "56538208-dd78-4922-b760-3ed7264fb424",
   "experiment_id": "pilot-parity-f0-s42",
-  "experiment_status": "PLANNED"
+  "experiment_status": "PLANNED",
+  "ecr_digest_verified": "sha256:1b1bbc4bdf174645e4a6acf87648d6c0fcb071c8a354c50f6fe603bee873861b",
+  "packaged_model": {
+    "sha256_checks": "passed",
+    "revision": "607a30d783dfa663caf39e06633721c8d4cfcd7e",
+    "parameters": 124439808,
+    "cpu_forward_finite": true
+  },
+  "local_trial_ui": "http://localhost:3000/trials/56538208-dd78-4922-b760-3ed7264fb424/experiments"
 }
