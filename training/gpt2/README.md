@@ -123,6 +123,75 @@ Our read-only check for one g5/g6e across the existing AZs returned
 advisory, not reservations or launch guarantees. Instance-type offerings only
 show supported locations; API DryRun checks permissions, not free capacity.
 
+## Short BF16 throughput benchmark
+
+Requested after the FP32 cost estimate, under the same one-GPU, 900-second
+startup / 3600-second job / $5 bounds. Experiment
+`benchmark-bf16-g5-f0-s42` in trial `56538208-dd78-4922-b760-3ed7264fb424`,
+workflow `aef6529f-9bea-44e9-8154-9c036cc66db6`, model
+`default.gpt2_bf16_g5.smoke__914323868f4f`, backend
+`s6e11_gpt2_benchmark_bf16_g5`. The unchanged image and trainer bytes are reused.
+
+Preset `benchmark_bf16_g5.json` uses the same saved 20k source / 20k training /
+10k validation rows, one epoch per training stage, BF16 autocast, microbatch 16,
+source accumulation 1 (effective 16), competition accumulation 2 (effective 32),
+score batch 8, three orders, and the reference no-prior scoring policy. Scoring
+itself remains FP32. `checkpoint_steps=10000` saves only the final checkpoint of
+each short stage. These changes measure the proposed recipe settings together,
+not an isolated precision-only speedup or a predictive-quality comparison.
+
+Manifest: `manifests/trainer-bf16-g5.json`, with immutable URI/hash in
+`manifests/artifacts-bf16-g5.json`. Compilation and local training-data validation
+passed. The larger full-fold data and 30-order runtime remain projections; this
+benchmark does not establish full-fold host-memory fit or authorize five folds.
+
+**Result: SUCCEEDED**, 22:26:31–22:45:23 UTC (18m52s including startup).
+Native BF16 support was confirmed on the actual A10G, driver 580.159.03.
+Sustained rates after the first 100 optimizer steps were **84.18 source rows/s**
+and **89.33 competition rows/s**. The earlier FP32 configuration measured about
+53.01 rows/s after excluding checkpoint pauses: improvements of **1.59x** and
+**1.68x** for the respective settings. Source/competition compute took 238.13 /
+223.78 seconds; stage times including final checkpoint handling were 254.56 /
+240.18 seconds. Peak allocated GPU memory was **6.929 GiB**. Scoring remained
+FP32 and took **315.37 seconds** for 10,000 rows × three orders × both labels,
+including evaluation-artifact publication: **95.13 row-orders/s**.
+
+Projection for the complete reference recipe on one sequential g5, reusing the
+60-epoch source checkpoint across folds:
+
+| Component | Projected GPU hours |
+| --- | ---: |
+| 20k source rows × 60 epochs, batch 16 | 3.96 |
+| 559,968 training rows × 8 epochs × 5 folds, batch 32 | 69.65 |
+| 699,960 held-out rows × 30 orders, both labels | 61.32 |
+| Checkpoint overhead, assuming every 10,000 steps | 0.36 |
+| **Total** | **135.29 (5.64 days), $136.10 EC2 compute** |
+
+The checkpoint assumption means approximately 78 saves across source plus five
+folds, not the full preset's current every-200-step policy. This projection does
+not modify or launch that full preset. Use a **15–25% planning allowance**:
+155.6–169.1 hours (6.5–7 days), **$157–170 compute** at $1.006/hour. Storage,
+network, existing shared CPU infrastructure, arbitrary retries and capacity
+waiting are excluded. Full 30-order test predictions from all five models would
+add approximately 131.4 GPU hours / $132 compute. Full-fold host RAM and long-run
+behavior still need verification; the three-order scoring measurement is
+extrapolated linearly to 30 orders.
+
+All seven report artifacts exist, and exact unique held-out IDs, checksum, and
+independent metric recomputation passed. Local Trials reports success/valid.
+The report contains AUC 0.8090738080, AP 0.1958911760, log loss 0.6140867647.
+These are not a controlled quality comparison with the earlier pilot: precision,
+batches, prior policy and scoring order count changed. See
+`manifests/execution-bf16-g5.json`, `manifests/profile-bf16-g5.json`,
+`manifests/report-bf16-g5.json` and `manifests/projection-bf16-g5.json`.
+
+Artifact root:
+`s3://zipline-artifacts-crucible/gpt2-s6e11/runs/aef6529f-9bea-44e9-8154-9c036cc66db6/0abbe3f1-f3ef-4c45-bec4-35fdfe483f03/1/`.
+Automatic RayCluster cleanup released GPU quota to 0/1. The instance
+`i-0d0aeac2c89d680cf` launched at 22:26:36 UTC and entered shutting-down at
+22:48:54 UTC, giving an estimated **$0.37 EC2 compute** before other charges.
+EC2 `terminated` and zero GPU nodes/NodeClaims were verified at **22:54:05 UTC**.
+
 ## Approved scope and runtime bounds
 
 The following bounds describe the approved first attempt:

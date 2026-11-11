@@ -1,0 +1,108 @@
+{
+  "date": "2026-11-11",
+  "trial_id": "56538208-dd78-4922-b760-3ed7264fb424",
+  "experiment_id": "benchmark-bf16-g5-f0-s42",
+  "attempt_id": "0abbe3f1-f3ef-4c45-bec4-35fdfe483f03-1",
+  "artifact_root": "s3://zipline-artifacts-crucible/gpt2-s6e11/runs/aef6529f-9bea-44e9-8154-9c036cc66db6/0abbe3f1-f3ef-4c45-bec4-35fdfe483f03/1/",
+  "workflow_id": "aef6529f-9bea-44e9-8154-9c036cc66db6",
+  "model_conf_name": "default.gpt2_bf16_g5.smoke__914323868f4f",
+  "rayjob": "training-90b55825-2910-3294-bf56-3566f031fbf8",
+  "instance_id": "i-0d0aeac2c89d680cf",
+  "instance_type": "g5.xlarge",
+  "availability_zone": "us-west-2a",
+  "instance_launch_time": "2026-11-11T22:26:36+00:00",
+  "bf16_supported": true,
+  "gpu": "NVIDIA A10G",
+  "driver": "580.159.03",
+  "training_image": "345594603419.dkr.ecr.us-west-2.amazonaws.com/ctr-trainer-ray@sha256:1b1bbc4bdf174645e4a6acf87648d6c0fcb071c8a354c50f6fe603bee873861b",
+  "trainer_manifest_sha256": "2c64c432f05d865519622d05b5ce1f500bff8712501759e995e23368aa88d7e2",
+  "bounds": {
+    "activeDeadlineSeconds": 3600,
+    "preRunningDeadlineSeconds": 900,
+    "backoffLimit": 0,
+    "deletionStrategy": {
+      "deletionRules": [
+        {
+          "condition": {
+            "jobStatus": "SUCCEEDED",
+            "ttlSeconds": 120
+          },
+          "policy": "DeleteCluster"
+        },
+        {
+          "condition": {
+            "jobStatus": "SUCCEEDED",
+            "ttlSeconds": 21600
+          },
+          "policy": "DeleteSelf"
+        },
+        {
+          "condition": {
+            "jobDeploymentStatus": "Failed",
+            "ttlSeconds": 120
+          },
+          "policy": "DeleteCluster"
+        },
+        {
+          "condition": {
+            "jobDeploymentStatus": "Failed",
+            "ttlSeconds": 21600
+          },
+          "policy": "DeleteSelf"
+        }
+      ]
+    }
+  },
+  "status": "SUCCEEDED",
+  "cleanup_verified": true,
+  "comparison_scope": "BF16 plus reference batch sizes and final-only checkpoints; not a precision-only ablation",
+  "full_fold_host_memory_verified": false,
+  "full_30_order_scoring_measured": false,
+  "metrics": {
+    "source_rows": 20000,
+    "trainable_parameters": 124439808,
+    "training_rows": 20000,
+    "validation_auc": 0.809073808043427,
+    "validation_average_precision": 0.19589117596333738,
+    "validation_logloss": 0.6140867646816527,
+    "validation_rows": 10000
+  },
+  "evaluation_scope": "sampled_fold0_10k;fold=0;prior=reference_no_prior;orders=3;purpose=validation",
+  "independent_verification": {
+    "exact_validation_ids": true,
+    "unique_rows": 10000,
+    "prediction_sha256": "48076c7ee2c09c39421448ca79e97467fce6fbacf68107b83216e6420f1ffb75",
+    "recomputed_metrics": {
+      "validation_auc": 0.809073808043427,
+      "validation_average_precision": 0.19589117596333738,
+      "validation_logloss": 0.6140867646816527
+    },
+    "all_report_artifacts_exist": true
+  },
+  "rayjob_start": "2026-11-11T22:26:31Z",
+  "rayjob_end": "2026-11-11T22:45:23Z",
+  "job_seconds_including_startup": 1132,
+  "trainer_ray_job_start": "2026-11-11T22:31:06Z",
+  "trainer_ray_job_end": "2026-11-11T22:45:17Z",
+  "gpu_peak_allocated_bytes": 7439618560,
+  "local_hub_execution_state": "success",
+  "local_hub_evaluation_state": "valid",
+  "final_checkpoint": "checkpoints/competition-00000625.pt",
+  "final_checkpoint_sha256": "8cf8135bd688d1364c3dee26f546f5f690743e9db054782aa9c97bc01c2e32f6",
+  "trainer_manifest_s3_hash_verified": true,
+  "archive_s3_hash_verified": true,
+  "instance_shutdown_initiated_at": "2026-11-11T22:48:54+00:00",
+  "estimated_billed_compute_seconds": 1338.0,
+  "estimated_ec2_compute_usd": 0.37389666666666665,
+  "on_demand_rate_usd_hour": 1.006,
+  "estimate_scope": "Launch to shutdown initiation, excludes storage/network/shared CPU infrastructure",
+  "gpu_quota_used": 0,
+  "device_plugin_desired": 0,
+  "cleanup": {
+    "state": "terminated",
+    "reason": "User initiated (2026-11-11 22:48:54 GMT)",
+    "verified_at": "2026-11-11T22:54:05.236236+00:00"
+  },
+  "gpu_nodes_remaining": 0,
+  "gpu_nodeclaims_remaining": 0
+}

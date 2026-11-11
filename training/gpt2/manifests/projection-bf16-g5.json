@@ -1,0 +1,82 @@
+{
+  "scope": "One source adaptation, five full training folds and 30-order pooled OOF scoring; no test ensemble",
+  "bf16_training": {
+    "source": {
+      "warmup_steps_excluded": 100,
+      "start_step": 100,
+      "end_step": 1250,
+      "rows_measured": 18400,
+      "seconds": 218.57585023000001,
+      "total_compute_seconds": 238.13151056600003,
+      "rows_per_second": 84.18130356413253
+    },
+    "competition": {
+      "warmup_steps_excluded": 100,
+      "start_step": 100,
+      "end_step": 625,
+      "rows_measured": 16800,
+      "seconds": 188.07161028400003,
+      "total_compute_seconds": 223.77668912800004,
+      "rows_per_second": 89.32767670054474
+    }
+  },
+  "fp32_training_baseline": {
+    "source": {
+      "rows_measured": 16800,
+      "seconds": 316.89933392599994,
+      "rows_per_second": 53.01368037562053
+    },
+    "competition": {
+      "rows_measured": 16800,
+      "seconds": 316.8913024240002,
+      "rows_per_second": 53.015023989271945
+    }
+  },
+  "training_speedup": {
+    "source": 1.587916608839048,
+    "competition": 1.6849502269134309
+  },
+  "scoring": {
+    "orders": 3,
+    "rows": 10000,
+    "both_labels": true,
+    "seconds_including_artifact_uploads": 315.369508,
+    "start": "2026-11-11T22:40:00.358797+00:00",
+    "end": "2026-11-11T22:45:15.728305+00:00",
+    "row_orders_per_second": 95.12650791845101,
+    "precision": "FP32"
+  },
+  "projection": {
+    "source_hours": 3.959707431702899,
+    "all_fold_training_hours": 69.65217160549665,
+    "per_fold_training_hours": 13.93043432109933,
+    "all_fold_scoring_hours": 61.318344672133335,
+    "per_fold_scoring_hours": 12.263668934426667,
+    "assumed_checkpoint_steps": 10000,
+    "checkpoint_count": 78,
+    "mean_observed_checkpoint_overhead_seconds": 16.41755929750002,
+    "checkpoint_hours": 0.3557137847791671,
+    "total_hours": 135.28593749411206,
+    "days": 5.636914062254669,
+    "on_demand_usd_per_hour": 1.006,
+    "compute_usd": 136.09765311907674,
+    "planning_hours": [
+      155.57882811822887,
+      169.10742186764008
+    ],
+    "planning_compute_usd": [
+      156.51230108693824,
+      170.12206639884593
+    ],
+    "test_ensemble_additional_hours": 131.39695345537777,
+    "test_ensemble_additional_compute_usd": 132.18533517611004
+  },
+  "limitations": [
+    "Linear extrapolation from saved 20k/10k samples",
+    "Full-fold host memory not validated",
+    "Three-order scoring measured; 30-order scoring extrapolated",
+    "Precision, batches, checkpoint frequency, order count and prior differ from previous FP32 pilot; not a precision-only or quality ablation",
+    "Planning allowance covers ordinary overhead, not arbitrary retries or capacity waits",
+    "Storage/network and shared CPU infrastructure excluded"
+  ]
+}

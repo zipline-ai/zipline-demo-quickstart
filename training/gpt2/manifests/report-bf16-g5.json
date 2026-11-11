@@ -1,0 +1,60 @@
+{
+  "artifacts": [
+    {
+      "id": "validation",
+      "kind": "predictions",
+      "path": "predictions/validation.csv"
+    },
+    {
+      "id": "coverage",
+      "kind": "manifest",
+      "path": "predictions/validation.json"
+    },
+    {
+      "id": "dataset",
+      "kind": "dataset_manifest",
+      "path": "manifests/dataset.json"
+    },
+    {
+      "id": "split",
+      "kind": "split_manifest",
+      "path": "manifests/split.json"
+    },
+    {
+      "id": "profile",
+      "kind": "profile",
+      "path": "profile.json"
+    },
+    {
+      "id": "recipe",
+      "kind": "manifest",
+      "path": "manifests/recipe.json"
+    },
+    {
+      "id": "checkpoint",
+      "kind": "checkpoint",
+      "path": "checkpoints/competition-00000625.pt"
+    }
+  ],
+  "attempt_id": "0abbe3f1-f3ef-4c45-bec4-35fdfe483f03-1",
+  "complete": true,
+  "conf_hash": "467ca7e40d8ce915627e8a4804bd957a",
+  "dataset_manifest_hash": "802675cfd652bea99179b2f47402f906d581969773e3f57e6defca4689fc32ea",
+  "evaluation_scope": "sampled_fold0_10k;fold=0;prior=reference_no_prior;orders=3;purpose=validation",
+  "experiment_id": "benchmark-bf16-g5-f0-s42",
+  "metrics": {
+    "source_rows": 20000,
+    "trainable_parameters": 124439808,
+    "training_rows": 20000,
+    "validation_auc": 0.809073808043427,
+    "validation_average_precision": 0.19589117596333738,
+    "validation_logloss": 0.6140867646816527,
+    "validation_rows": 10000
+  },
+  "model_conf_name": "default.gpt2_bf16_g5.smoke__914323868f4f",
+  "schema_version": 1,
+  "split_manifest_hash": "d6d82738950e9a4b5984910934fd2e526ece481603358f8cb8b017585affd6a1",
+  "step_id": "0abbe3f1-f3ef-4c45-bec4-35fdfe483f03",
+  "trial_id": "56538208-dd78-4922-b760-3ed7264fb424",
+  "workflow_id": "aef6529f-9bea-44e9-8154-9c036cc66db6"
+}

@@ -66,5 +66,16 @@
       "validation_logloss": 0.07291537851011404
     },
     "all_report_artifacts_present": true
+  },
+  "bf16_benchmark": {
+    "experiment_id": "benchmark-bf16-g5-f0-s42",
+    "workflow_id": "aef6529f-9bea-44e9-8154-9c036cc66db6",
+    "status": "SUCCEEDED",
+    "execution_evidence": "manifests/execution-bf16-g5.json",
+    "performance_projection": "manifests/projection-bf16-g5.json",
+    "native_bf16_supported": true,
+    "all_report_artifacts_verified": true,
+    "exact_validation_ids_verified": true,
+    "report_metrics_independently_recomputed": true
   }
 }

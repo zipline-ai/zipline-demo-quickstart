@@ -1,0 +1,44 @@
+{
+  "adaptation": "S6E10-inspired pilot optimizer, not exact legacy GReaT parity",
+  "device": "NVIDIA A10G",
+  "gpu_peak_allocated_bytes": 7439618560,
+  "scoring_precision": "float32 transformer/head; float64 sums",
+  "stages": {
+    "competition": {
+      "checkpoint_sha256": "8cf8135bd688d1364c3dee26f546f5f690743e9db054782aa9c97bc01c2e32f6",
+      "effective_batch_size": 32,
+      "epochs": 1,
+      "first_logged_loss_this_process": 0.6070811721040896,
+      "initial_step_this_process": 0,
+      "last_loss": 0.5875397674149432,
+      "optimizer_steps": 625,
+      "positives": 334,
+      "rows": 20000,
+      "sampled_memory_max": {
+        "cuda_peak_allocated_gib": 6.928684711456299,
+        "process_peak_rss_gib": 3.0881576538085938
+      },
+      "seconds_this_process": 240.18313247000003,
+      "status": "complete"
+    },
+    "source": {
+      "checkpoint_sha256": "bf5c9c557c716f6683b884b10b5721876beb2d696c57a37f7a51d19715e6e0b8",
+      "effective_batch_size": 16,
+      "epochs": 1,
+      "first_logged_loss_this_process": 3.5811166763305664,
+      "initial_step_this_process": 0,
+      "last_loss": 0.620354413986206,
+      "optimizer_steps": 1250,
+      "positives": 339,
+      "rows": 20000,
+      "sampled_memory_max": {
+        "cuda_peak_allocated_gib": 6.51780366897583,
+        "process_peak_rss_gib": 2.3560714721679688
+      },
+      "seconds_this_process": 254.56018581900008,
+      "status": "complete"
+    }
+  },
+  "trainer_manifest_sha256": "2c64c432f05d865519622d05b5ce1f500bff8712501759e995e23368aa88d7e2",
+  "training_prior": 0.0167
+}
