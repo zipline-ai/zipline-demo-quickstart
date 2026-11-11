@@ -1,0 +1,37 @@
+{
+  "artifacts": [
+    {
+      "id": "memory_profile",
+      "kind": "profile",
+      "path": "memory_profile.json"
+    },
+    {
+      "id": "dataset",
+      "kind": "dataset_manifest",
+      "path": "manifests/dataset.json"
+    }
+  ],
+  "attempt_id": "afdd78a3-c3e4-42b4-b66d-b2aa2d09ef54-1",
+  "complete": true,
+  "conf_hash": "b07d27010bd9f1056c80dca4cbc2264d",
+  "dataset_manifest_hash": "802675cfd652bea99179b2f47402f906d581969773e3f57e6defca4689fc32ea",
+  "evaluation_scope": "full_fold0_memory_probe;purpose=memory_fit;predictive_evaluation=false",
+  "experiment_id": "memory-fullfold-g5-f0-s42",
+  "metrics": {
+    "gpu_peak_allocated_bytes": 7500284416,
+    "gpu_peak_reserved_bytes": 9477029888,
+    "source_rows_loaded": 20000,
+    "training_probe_steps": 40,
+    "training_rows_loaded": 559968,
+    "validation_rows_loaded": 139992,
+    "worker_memory_headroom_bytes": 7354695680,
+    "worker_memory_limit_bytes": 12884901888,
+    "worker_peak_memory_bytes": 5530206208
+  },
+  "model_conf_name": "default.gpt2_memory_g5.smoke__a16f67c8dd50",
+  "schema_version": 1,
+  "split_manifest_hash": "d6d82738950e9a4b5984910934fd2e526ece481603358f8cb8b017585affd6a1",
+  "step_id": "afdd78a3-c3e4-42b4-b66d-b2aa2d09ef54",
+  "trial_id": "56538208-dd78-4922-b760-3ed7264fb424",
+  "workflow_id": "0a17e253-96a6-4ce2-a3be-79f5366a2150"
+}

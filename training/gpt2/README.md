@@ -173,8 +173,9 @@ not modify or launch that full preset. Use a **15–25% planning allowance**:
 155.6–169.1 hours (6.5–7 days), **$157–170 compute** at $1.006/hour. Storage,
 network, existing shared CPU infrastructure, arbitrary retries and capacity
 waiting are excluded. Full 30-order test predictions from all five models would
-add approximately 131.4 GPU hours / $132 compute. Full-fold host RAM and long-run
-behavior still need verification; the three-order scoring measurement is
+add approximately 131.4 GPU hours / $132 compute. The full-fold memory probe
+below subsequently verified fold-0 memory fit.
+Long-run behavior remains untested; the three-order scoring measurement is
 extrapolated linearly to 30 orders.
 
 All seven report artifacts exist, and exact unique held-out IDs, checksum, and
@@ -191,6 +192,103 @@ Automatic RayCluster cleanup released GPU quota to 0/1. The instance
 `i-0d0aeac2c89d680cf` launched at 22:26:36 UTC and entered shutting-down at
 22:48:54 UTC, giving an estimated **$0.37 EC2 compute** before other charges.
 EC2 `terminated` and zero GPU nodes/NodeClaims were verified at **22:54:05 UTC**.
+
+## Full fold-0 memory probe
+
+The user requested a bounded memory-fit check before any full campaign.
+Model `default.gpt2_memory_g5.smoke__a16f67c8dd50`, backend
+`s6e11_gpt2_memory_g5`, experiment `memory-fullfold-g5-f0-s42` in the same trial.
+The dedicated `trainer.memory_probe` entrypoint reuses the existing dataset
+loader, RowEncoder, train_stage, checkpoint writer and likelihood scorer.
+Its new archive version is `a16f67c8dd50`; the training image is unchanged.
+
+The probe loads 20,000 source rows, all 559,968 fold-0 training rows and 139,992
+held-out rows; all three full encoders remain resident. It selects long encoded
+rows for 20 source steps (batch 16) and 20 competition steps (batch 32) using
+BF16/microbatch 16. Both stages exercise AdamW allocation and checkpoint writing.
+Eight long validation rows are scored with both labels across 30 feature orders
+in FP32. Two resident full-fold likelihood arrays model accumulation and
+concatenation memory for 30-order evaluation. This is a memory test, not a full
+epoch, full validation evaluation, or predictive-quality comparison.
+
+Kernel cgroup current/peak/limit and OOM counters are recorded alongside process
+RSS and CUDA allocated/reserved peaks. Progress is published before and after
+loading/encoding/training/scoring so failures can be localized. A successful
+report contains memory measurements only, with no fabricated AUC or predictions.
+The one-GPU quota, 12 GiB worker limit, 900-second startup and 3600-second job
+bounds are unchanged. No infrastructure apply is needed.
+
+Native and AMD64-image CPU suites each passed all 14 tests, including exact
+long-row length bounds across feature orders and selected-row mapping. The
+compiled model passed local training-data validation. Both manifest and archive
+are immutable and referenced by `manifests/artifacts-memory-g5.json`.
+
+**Result: SUCCEEDED**, 23:01:15–23:10:16 UTC (9m01s including startup;
+77 seconds for the Ray driver). An initial capacity rejection was followed by
+successful placement in us-west-2a within the same bounded attempt.
+All full-fold frames/encoders remained resident while both 20-step stages,
+checkpoint saves and 30-order scoring completed. Kernel OOM counters stayed zero.
+
+| Memory measurement | Observed peak | Available limit |
+| --- | ---: | ---: |
+| Worker host memory, kernel cgroup including transient allocations | 5.150 GiB | 12 GiB |
+| CUDA tensor allocation | 6.985 GiB | 22.488 GiB visible GPU memory |
+| CUDA reserved allocator memory | 8.826 GiB | 22.488 GiB visible GPU memory |
+
+Host headroom was **6.850 GiB (57.1%)**; peak process RSS was 3.148 GiB.
+The conservative per-row token-length bounds were source 231, competition 232,
+validation 231. The scoring buffer pair occupied 134,392,320 bytes. This supports
+memory fit for the tested fold/settings, not full five-fold or multi-day stability.
+It does not change the prior runtime projection or start a full campaign.
+
+Workflow `0a17e253-96a6-4ce2-a3be-79f5366a2150`; local Trials reports success/valid.
+The saved report was compared with the Hub report, dimensions/step counts/peaks
+were independently checked, and both reported S3 artifacts were retrieved.
+Dataset SHA-256 matches the immutable manifest. Evidence:
+`manifests/report-memory-g5.json`, `manifests/profile-memory-g5.json`,
+`manifests/execution-memory-g5.json`.
+
+Artifact root:
+`s3://zipline-artifacts-crucible/gpt2-s6e11/runs/0a17e253-96a6-4ce2-a3be-79f5366a2150/afdd78a3-c3e4-42b4-b66d-b2aa2d09ef54/1/`.
+
+Automatic cleanup deleted the RayCluster and released GPU quota to 0/1.
+Instance `i-00496b9840beece65` launched at 23:04:29 UTC and entered shutting-down
+at 23:13:40 UTC: approximately **$0.154 EC2 compute** (551 seconds), excluding
+storage/network/shared CPU charges. EC2 `terminated`, zero GPU nodes/NodeClaims
+and device-plugin desired count zero were verified at **23:19:19 UTC**.
+
+To rebuild this variant without changing older variants' manifest files:
+
+```sh
+# From training/gpt2, after an intentional probe-code change:
+python - <<'PYMEMORY'
+import hashlib, json
+from pathlib import Path
+from build_archive import _archive_bytes
+archive = Path("dist/memory-probe.building.zip")
+_archive_bytes(archive)
+sha = hashlib.sha256(archive.read_bytes()).hexdigest()
+version = sha[:12]
+archive.rename(Path("dist") / f"s6e11_gpt2_memory_g5-{version}.zip")
+manifest_path = Path("manifests/trainer-memory-g5.json")
+manifest = json.loads(manifest_path.read_text())
+manifest["trainer_code_version"] = version
+raw = (json.dumps(manifest, sort_keys=True, indent=2) + "\n").encode()
+manifest_path.write_bytes(raw)
+msha = hashlib.sha256(raw).hexdigest()
+a_path = Path("manifests/artifacts-memory-g5.json")
+a = json.loads(a_path.read_text())
+a.update(trainer_code_version=version, archive_sha256=sha,
+         trainer_manifest_sha256=msha,
+         trainer_manifest_uri=f"s3://zipline-artifacts-crucible/gpt2-s6e11/manifests/trainer-{msha}.json")
+a_path.write_text(json.dumps(a, sort_keys=True, indent=2) + "\n")
+PYMEMORY
+```
+
+Then follow the compile/validate/publish/record/submit cycle below with this model,
+archive, manifest and experiment identity. Any new paid attempt needs its own
+bounded authorization. Kernel accounting and short-step success establish only
+observed fold-0 memory fit; they do not establish multi-day leak-free execution.
 
 ## Approved scope and runtime bounds
 

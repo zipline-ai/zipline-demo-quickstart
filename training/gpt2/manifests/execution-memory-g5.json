@@ -1,0 +1,109 @@
+{
+  "date": "2026-11-11",
+  "trial_id": "56538208-dd78-4922-b760-3ed7264fb424",
+  "experiment_id": "memory-fullfold-g5-f0-s42",
+  "workflow_id": "0a17e253-96a6-4ce2-a3be-79f5366a2150",
+  "attempt_id": "afdd78a3-c3e4-42b4-b66d-b2aa2d09ef54-1",
+  "artifact_root": "s3://zipline-artifacts-crucible/gpt2-s6e11/runs/0a17e253-96a6-4ce2-a3be-79f5366a2150/afdd78a3-c3e4-42b4-b66d-b2aa2d09ef54/1/",
+  "model_conf_name": "default.gpt2_memory_g5.smoke__a16f67c8dd50",
+  "rayjob": "training-28411a45-a2f3-3a6d-9546-11bead33f566",
+  "archive_sha256": "a16f67c8dd5090ad29c98fa070366b52b7777f5b094dbcc84686b047216cdd43",
+  "trainer_manifest_sha256": "4c100b2793e45df484474ee48ce9a17c319f3259c62c5b929040b10870be15b9",
+  "archive_s3_hash_verified": true,
+  "trainer_manifest_s3_hash_verified": true,
+  "native_cpu_tests_passed": 14,
+  "amd64_container_cpu_tests_passed": 14,
+  "compile_passed": true,
+  "training_data_validation_passed": true,
+  "bounds": {
+    "activeDeadlineSeconds": 3600,
+    "preRunningDeadlineSeconds": 900,
+    "backoffLimit": 0,
+    "deletionStrategy": {
+      "deletionRules": [
+        {
+          "condition": {
+            "jobStatus": "SUCCEEDED",
+            "ttlSeconds": 120
+          },
+          "policy": "DeleteCluster"
+        },
+        {
+          "condition": {
+            "jobStatus": "SUCCEEDED",
+            "ttlSeconds": 21600
+          },
+          "policy": "DeleteSelf"
+        },
+        {
+          "condition": {
+            "jobDeploymentStatus": "Failed",
+            "ttlSeconds": 120
+          },
+          "policy": "DeleteCluster"
+        },
+        {
+          "condition": {
+            "jobDeploymentStatus": "Failed",
+            "ttlSeconds": 21600
+          },
+          "policy": "DeleteSelf"
+        }
+      ]
+    }
+  },
+  "status": "SUCCEEDED",
+  "full_fold_memory_verified": true,
+  "cleanup_verified": true,
+  "instance_id": "i-00496b9840beece65",
+  "instance_type": "g5.xlarge",
+  "availability_zone": "us-west-2a",
+  "instance_launch_time": "2026-11-11T23:04:29+00:00",
+  "initial_capacity_failure": true,
+  "execution_state": "success",
+  "evaluation_state": "valid",
+  "metrics": {
+    "gpu_peak_allocated_bytes": 7500284416,
+    "gpu_peak_reserved_bytes": 9477029888,
+    "source_rows_loaded": 20000,
+    "training_probe_steps": 40,
+    "training_rows_loaded": 559968,
+    "validation_rows_loaded": 139992,
+    "worker_memory_headroom_bytes": 7354695680,
+    "worker_memory_limit_bytes": 12884901888,
+    "worker_peak_memory_bytes": 5530206208
+  },
+  "gpu_total_mib": 23028,
+  "oom_events": 0,
+  "job_start_time": "2026-11-11T23:01:15Z",
+  "job_end_time": "2026-11-11T23:10:16Z",
+  "job_wall_seconds": 541,
+  "ray_driver_seconds": 77,
+  "all_report_artifacts_verified": true,
+  "artifact_sha256": {
+    "report-memory-g5.json": "3cb510e50ffbbfabdea2029e612c27f62ae37cc8c384345cefa148a7ba1417d5",
+    "profile-memory-g5.json": "8d51d81a4281fb712a205c37c47f16435e4da284a0b57ff166afbb9227fd86bb"
+  },
+  "limitations": [
+    "Only fold 0 loaded",
+    "20 optimizer steps per stage",
+    "Longest-row probe is not a multi-day stability test",
+    "No complete validation predictions or predictive metrics"
+  ],
+  "instance_shutdown_started": "2026-11-11T23:13:40Z",
+  "estimated_compute_seconds": 551,
+  "instance_rate_usd_per_hour": 1.006,
+  "estimated_instance_compute_usd": 0.15397388888888888,
+  "cost_exclusions": [
+    "storage",
+    "network",
+    "shared CPU infrastructure"
+  ],
+  "gpu_quota_used": 0,
+  "raycluster_deleted": true,
+  "instance_state": "terminated",
+  "cleanup_verified_at": "2026-11-11T23:19:19.628981+00:00",
+  "gpu_nodes": 0,
+  "gpu_nodeclaims": 0,
+  "device_plugin_desired": 0
+}

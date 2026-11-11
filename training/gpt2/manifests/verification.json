@@ -77,5 +77,16 @@
     "all_report_artifacts_verified": true,
     "exact_validation_ids_verified": true,
     "report_metrics_independently_recomputed": true
+  },
+  "memory_probe": {
+    "experiment_id": "memory-fullfold-g5-f0-s42",
+    "workflow_id": "0a17e253-96a6-4ce2-a3be-79f5366a2150",
+    "status": "SUCCEEDED",
+    "execution_evidence": "manifests/execution-memory-g5.json",
+    "native_cpu_tests_passed": 14,
+    "amd64_container_cpu_tests_passed": 14,
+    "full_fold_memory_verified": true,
+    "all_report_artifacts_verified": true,
+    "scope": "full_fold_0_memory_probe_not_full_training"
   }
 }
