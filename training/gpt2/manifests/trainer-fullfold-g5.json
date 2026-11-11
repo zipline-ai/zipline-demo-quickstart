@@ -1,0 +1,23 @@
+{
+  "dataset_manifest_uri": "s3://zipline-artifacts-crucible/gpt2-s6e11/manifests/dataset-802675cfd652bea99179b2f47402f906d581969773e3f57e6defca4689fc32ea.json",
+  "recipe": {
+    "bf16": true,
+    "checkpoint_steps": 10000,
+    "competition_accumulation": 2,
+    "competition_epochs": 8,
+    "fold": 0,
+    "lr": 5e-05,
+    "microbatch": 16,
+    "order_seed": 2025,
+    "orders": 30,
+    "preset": "full_fold0_bf16_g5",
+    "prior_mode": "reference_no_prior",
+    "sampled": false,
+    "score_batch": 8,
+    "source_accumulation": 1,
+    "source_epochs": 60
+  },
+  "schema_version": 1,
+  "trainer_code_version": "914323868f4f",
+  "training_image": "345594603419.dkr.ecr.us-west-2.amazonaws.com/ctr-trainer-ray@sha256:1b1bbc4bdf174645e4a6acf87648d6c0fcb071c8a354c50f6fe603bee873861b"
+}

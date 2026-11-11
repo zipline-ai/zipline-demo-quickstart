@@ -290,6 +290,52 @@ archive, manifest and experiment identity. Any new paid attempt needs its own
 bounded authorization. Kernel accounting and short-step success establish only
 observed fold-0 memory fit; they do not establish multi-day leak-free execution.
 
+## Planned full fold 0 on g5.xlarge
+
+Requested after the successful memory probe. New model
+`default.gpt2_fullfold_g5.full_fold__914323868f4f`, backend
+`s6e11_gpt2_fullfold0_g5`, planned experiment `fullfold-bf16-g5-f0-s42`.
+The existing BF16 trainer/image are unchanged. The manifest
+`manifests/trainer-fullfold-g5.json` selects all fold-0 rows, 60 source epochs,
+eight classifier epochs, microbatch 16, effective source/classifier batches
+16/32, BF16, and 30-order FP32 validation with `reference_no_prior`.
+Checkpoints every 10,000 optimizer steps and stage end are uploaded to the new
+attempt root; the completed source checkpoint can be reused for later folds.
+
+Measured-rate projection: approximately 30.25 hours plus checkpoint/startup
+costs; allow roughly 35–38 hours / $35–38 EC2 compute at $1.006/hour.
+The proposed job cutoff is 42 hours ($42.25 compute before cleanup/storage/network),
+with a 15-minute startup limit, no automatic training retry, one-GPU quota and
+44-hour node-expiry fallback. Empty nodes still terminate automatically.
+Only this model overrides the smoke timeout. The other four folds are not queued.
+
+**Not submitted:** the current local Hub rejects timeouts above six hours, and
+its runtime changes were excluded by the original launcher-only Platform scope.
+A proposed opt-in patch is `/private/tmp/gpt2-fullfold-platform-timeout.patch`:
+it retains the six-hour default, permits a bounded local environment override
+up to 48 hours, forwards that override through Compose, and adds boundary tests.
+The intended local override is `CRUCIBLE_RAY_TIMEOUT_MAX_SECONDS=151200`.
+The patch passes `git apply --check`; it has not been applied, compiled or tested.
+The infrastructure variant adds `s6e11_node_expire_hours` (default 2, maximum 48),
+with 44 selected only in the targeted full-fold plan. That plan is not applied.
+
+After the runtime scope is approved: apply/test the patch and rebuild the local
+stack, apply only the reviewed NodePool release plan, publish the immutable
+manifest/archive under this model identity, record the experiment, and submit:
+
+```sh
+ZIPLINE_TRIAL_ID=56538208-dd78-4922-b760-3ed7264fb424 \
+ZIPLINE_EXPERIMENT_ID=fullfold-bf16-g5-f0-s42 \
+  zipline hub backfill "$CONF_ROOT/compiled/models/default/gpt2_fullfold_g5.full_fold__914323868f4f" \
+  --skip-compile --start-ds 2026-11-11 --end-ds 2026-11-11 \
+  --chronon-root "$CONF_ROOT" --hub-url http://localhost:3000/services/hub --no-use-auth --yes -f json
+```
+
+Review the actual full validation report, exact 139,992 held-out IDs, independent
+AUC/AP/log-loss recomputation, loss/time profiles and durable checkpoints before
+considering the other four folds. Close out with the experiment-list,
+summary/status/journal commands below only after measured results and cleanup.
+
 ## Approved scope and runtime bounds
 
 The following bounds describe the approved first attempt:
