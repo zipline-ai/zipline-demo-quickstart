@@ -292,6 +292,43 @@ observed fold-0 memory fit; they do not establish multi-day leak-free execution.
 
 ## Full fold 0 on g5.xlarge
 
+**FAILED at the Hub's separate six-hour step watchdog.** No full-fold validation
+metrics were produced. The 42-hour Kubernetes deadline and 44-hour node expiry
+were correctly configured, but `StepTracker.scala:39` still sets
+`STEP_TIMEOUT_DURATION = Duration.ofHours(6)` for non-continuous workflow steps.
+At 06:11:29 UTC on November 12, Hub logged the timeout and killed the running
+RayJob; step status changed to timeout at 06:11:30 UTC. This was an orchestration
+timeout, not observed GPU or host-memory exhaustion. The earlier preflight tested
+request validation and Kubernetes deadlines but missed this separate watchdog.
+Do not resubmit the command below until that watchdog path has been corrected
+and tested against the configured training deadline.
+
+Automatic cleanup is verified: RayCluster deleted, GPU quota 0/1, zero GPU
+nodes/NodeClaims and EC2 `terminated` at **2026-11-12 06:18:35 UTC**.
+The instance entered shutting-down at 06:12:57 UTC, after 21,685 seconds
+from launch: approximately **$6.06 EC2 compute**, excluding storage/network
+and shared CPU charges. The failed job elapsed 21,617 seconds.
+
+Source adaptation completed all **60 epochs / 75,000 steps** in 14,379.73 seconds;
+its final checkpoint remains in S3 as `checkpoints/source-00075000.pt`.
+Classifier training reached step **19,234/139,992** before termination. The latest
+durable classifier checkpoint is `checkpoints/competition-00010000.pt`, containing
+model/AdamW state, CPU/CUDA RNG and `next_step=10000`, verified with a safe CPU load.
+Downloaded checkpoint SHA-256:
+`8b5c8d511a4dc70627cd95bd1f82b5af94743eadf71c3ea0ab7c489d972686a4`.
+Resumption from it preserves the completed source adaptation and 10,000 classifier
+steps; approximately 9,234 later classifier steps must be repeated.
+
+Smallest recovery: make the Hub's training-step watchdog honor the bounded
+configured training timeout, preserve the existing default for unrelated jobs,
+and add a test covering this watchdog as well as the Kubernetes deadline. Then
+use an explicitly authorized new attempt with the original recipe/code/image,
+parent-attempt provenance and verified classifier checkpoint. Neither a replacement
+run nor the other four folds has been submitted. No watchdog change was applied
+by the monitor. Evidence is in `manifests/execution-fullfold-g5.json` and
+`manifests/source-profile-fullfold-g5.json`.
+
+
 Requested after the successful memory probe. New model
 `default.gpt2_fullfold_g5.full_fold__914323868f4f`, backend
 `s6e11_gpt2_fullfold0_g5`, experiment `fullfold-bf16-g5-f0-s42`.
@@ -336,7 +373,7 @@ ZIPLINE_EXPERIMENT_ID=fullfold-bf16-g5-f0-s42 \
   --chronon-root "$CONF_ROOT" --hub-url http://localhost:3000/services/hub --no-use-auth --yes -f json
 ```
 
-**RUNNING**, submitted November 12 at 00:11:27 UTC; source training started
+Historical launch: submitted November 12 at 00:11:27 UTC; source training started
 at 00:16:46 UTC (November 11, 16:16 PST). Workflow
 `c5cff551-ce43-415c-8694-e9570397142a`, attempt
 `bd0d19bf-c194-4334-8c18-cff5617acbd1-1`, RayJob
@@ -349,11 +386,11 @@ GPU memory was 6.505 GiB. These are startup observations, not final metrics.
 
 Artifact root:
 `s3://zipline-artifacts-crucible/gpt2-s6e11/runs/c5cff551-ce43-415c-8694-e9570397142a/bd0d19bf-c194-4334-8c18-cff5617acbd1/1/`.
-Live job deadline: **2026-11-13 18:11:27 UTC** (10:11:27 PST).
+Configured Kubernetes job deadline was **2026-11-13 18:11:27 UTC**
+(10:11:27 PST); the separate Hub watchdog terminated it earlier.
 Execution evidence: `manifests/execution-fullfold-g5.json`.
-Heartbeat `review-gpt-2-fold-0` checks every 30 minutes, stays quiet during
-healthy progress, and reviews completed results and cleanup or reports problems.
-It must not submit the other folds or automatically launch replacement attempts.
+Heartbeat `review-gpt-2-fold-0` was removed after this failed attempt and cleanup
+were verified. No replacement attempt or other fold was submitted.
 Remote runtime deadlines and cleanup do not depend on the laptop staying awake;
 local Hub/heartbeat observation requires the local services and app to be available.
 

@@ -1,0 +1,17 @@
+{
+  "checkpoint_sha256": "9b3932bcf74fb6195a33c6f4d8cbb307eaf22a5fe50d78f64a991a9389f77488",
+  "effective_batch_size": 16,
+  "epochs": 60,
+  "first_logged_loss_this_process": 3.5811166763305664,
+  "initial_step_this_process": 0,
+  "last_loss": 0.5834223628044128,
+  "optimizer_steps": 75000,
+  "positives": 339,
+  "rows": 20000,
+  "sampled_memory_max": {
+    "cuda_peak_allocated_gib": 6.51780366897583,
+    "process_peak_rss_gib": 3.51953125
+  },
+  "seconds_this_process": 14379.730222141,
+  "status": "complete"
+}

@@ -1,5 +1,5 @@
 {
-  "status": "RUNNING",
+  "status": "FAILED",
   "trial_id": "56538208-dd78-4922-b760-3ed7264fb424",
   "experiment_id": "fullfold-bf16-g5-f0-s42",
   "workflow_id": "c5cff551-ce43-415c-8694-e9570397142a",
@@ -15,8 +15,8 @@
     "ImageId": "ami-07c57d9a1e75511eb",
     "LaunchTime": "2026-11-12 00:11:32+00:00",
     "State": {
-      "Code": 16,
-      "Name": "running"
+      "Code": 48,
+      "Name": "terminated"
     },
     "availability_zone": "us-west-2a"
   },
@@ -82,7 +82,7 @@
   "trainer_manifest_s3_hash_verified": true,
   "platform_commit": "4873822ea",
   "infrastructure_commit": "e123af0",
-  "cleanup_verified": false,
+  "cleanup_verified": true,
   "full_fold_completed": false,
   "other_folds_queued": false,
   "monitor_automation_id": "review-gpt-2-fold-0",
@@ -100,14 +100,71 @@
   "training_started_utc": "2026-11-12T00:16:46.287300+00:00",
   "durable_progress_verified": true,
   "last_verified_progress": {
+    "step": 19234,
+    "phase": "competition",
+    "sequence": 1045,
+    "timestamp": "2026-11-12T06:11:23.691182+00:00",
     "attempt_id": "bd0d19bf-c194-4334-8c18-cff5617acbd1-1",
+    "checkpoint": "checkpoints/competition-00010000.pt",
+    "total_steps": 139992,
     "measurements": {
-      "lm_loss": 0.6379924416542053
+      "lm_loss": 0.5583561117491378
+    }
+  },
+  "execution_state": "timeout",
+  "evaluation_state": "invalid_report",
+  "final_report_present": false,
+  "job_terminated_at": "2026-11-12T06:11:30Z",
+  "job_elapsed_seconds": 21617,
+  "failure_reason": "Hub StepTracker hard-coded six-hour timeout killed the running job despite its approved 42-hour Kubernetes deadline.",
+  "failure_source": "orchestration/src/main/scala/ai/chronon/orchestration/executor/StepTracker.scala:39",
+  "termination_log_excerpt": [
+    "2026-11-12 06:11:29 INFO  a.c.o.executor.StepTracker - Found 1 timed-out steps, marking as timeout and killing jobs",
+    "2026-11-12 06:11:29 INFO  a.c.o.executor.NodeSubmitter$ - Killing job crucible|training-fc54568e-7125-3d98-a81f-61cb8e083bd6 with current status: RUNNING",
+    "2026-11-12 06:11:30 INFO  a.c.o.persistence.StepDao - [CANONICAL-STEP-DAO]: status=timeout, attempt=1, jobTrackingUrl=http://localhost:3000/services/hub/engines/training/jobs/training-fc54568e-7125-3d98-a81f-61cb8e083bd6/ui/, startPartition=2026-11-11, endPartition=2026-11-11, workflowId=c5cff551-ce43-415c-8694-e9570397142a, stepId=bd0d19bf-c194-4334-8c18-cff5617acbd1, nodeName=default.gpt2_fullfold_g5.full_fold__914323868f4f__model_training, nodeHash=5cc9a7, semanticHash=41459b, callSite=ai.chronon.orchestration.persistence.StepDao.batchUpdateStepStatus:462 <- ai.chronon.orchestration.executor.StepTracker.handleTimedOutSteps:109 <- ai.chronon.orchestration.executor.StepTracker.updateActiveSteps:62"
+  ],
+  "source_stage": {
+    "checkpoint_sha256": "9b3932bcf74fb6195a33c6f4d8cbb307eaf22a5fe50d78f64a991a9389f77488",
+    "effective_batch_size": 16,
+    "epochs": 60,
+    "first_logged_loss_this_process": 3.5811166763305664,
+    "initial_step_this_process": 0,
+    "last_loss": 0.5834223628044128,
+    "optimizer_steps": 75000,
+    "positives": 339,
+    "rows": 20000,
+    "sampled_memory_max": {
+      "cuda_peak_allocated_gib": 6.51780366897583,
+      "process_peak_rss_gib": 3.51953125
     },
-    "phase": "source",
-    "sequence": 5,
-    "step": 322,
-    "timestamp": "2026-11-12T00:17:47.248871+00:00",
-    "total_steps": 75000
-  }
+    "seconds_this_process": 14379.730222141,
+    "status": "complete"
+  },
+  "recovery_checkpoint": {
+    "checkpoint_uri": "s3://zipline-artifacts-crucible/gpt2-s6e11/runs/c5cff551-ce43-415c-8694-e9570397142a/bd0d19bf-c194-4334-8c18-cff5617acbd1/1/checkpoints/competition-00010000.pt",
+    "checkpoint_sha256": "8b5c8d511a4dc70627cd95bd1f82b5af94743eadf71c3ea0ab7c489d972686a4",
+    "checkpoint_bytes": 1647844964,
+    "sidecar_sha256": "a93fa44ac85d3bb871f31f3052f649bd81be2847dc334fdbe3ae22d6bd67aecb",
+    "payload_verified": true,
+    "next_optimizer_step": 10000,
+    "contains_model_optimizer_rng": true
+  },
+  "classifier_steps_after_checkpoint_to_repeat": 9234,
+  "instance_shutdown_started": "2026-11-12T06:12:57Z",
+  "estimated_instance_compute_seconds": 21685,
+  "estimated_instance_compute_usd": 6.059752777777778,
+  "cost_exclusions": [
+    "storage",
+    "network",
+    "shared CPU infrastructure"
+  ],
+  "raycluster_deleted": true,
+  "gpu_quota_used": 0,
+  "replacement_attempt_submitted": false,
+  "cleanup_verified_at": "2026-11-12T06:18:35.145966+00:00",
+  "instance_state": "terminated",
+  "gpu_nodes": 0,
+  "gpu_nodeclaims": 0,
+  "device_plugin_desired": 0,
+  "monitor_status": "DELETED"
 }
