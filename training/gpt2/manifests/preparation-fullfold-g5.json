@@ -1,14 +1,14 @@
 {
   "trial_id": "56538208-dd78-4922-b760-3ed7264fb424",
   "experiment_id": "fullfold-bf16-g5-f0-s42",
-  "status": "PLANNED",
+  "status": "AUTHORIZED_PREPARING",
   "model_conf_name": "default.gpt2_fullfold_g5.full_fold__914323868f4f",
   "compiled": true,
   "training_source_validation_passed": true,
   "training_submitted": false,
-  "infrastructure_applied": false,
-  "platform_patch_applied": false,
-  "blocker": "Original user instruction restricts Platform changes to launcher/Compose; existing RayResources runtime maximum is 21600 seconds. Requested full fold needs a narrow opt-in timeout exception.",
+  "infrastructure_applied": true,
+  "platform_patch_applied": true,
+  "blocker": null,
   "proposed_job_seconds": 151200,
   "proposed_node_expire_hours": 44,
   "startup_seconds": 900,
@@ -26,5 +26,11 @@
   },
   "infra_plan_change": "helm_release.s6e11_l40s[0] expireAfter only: 2h -> 44h",
   "platform_patch": "/private/tmp/gpt2-fullfold-platform-timeout.patch",
-  "other_folds_queued": false
+  "other_folds_queued": false,
+  "runtime_default_tests_passed": 4,
+  "runtime_optin_tests_passed": 4,
+  "archive_s3_hash_verified": true,
+  "trainer_manifest_s3_hash_verified": true,
+  "platform_commit": "4873822ea",
+  "infrastructure_commit": "e123af0"
 }

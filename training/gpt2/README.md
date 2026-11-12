@@ -290,7 +290,7 @@ archive, manifest and experiment identity. Any new paid attempt needs its own
 bounded authorization. Kernel accounting and short-step success establish only
 observed fold-0 memory fit; they do not establish multi-day leak-free execution.
 
-## Planned full fold 0 on g5.xlarge
+## Full fold 0 on g5.xlarge
 
 Requested after the successful memory probe. New model
 `default.gpt2_fullfold_g5.full_fold__914323868f4f`, backend
@@ -309,23 +309,24 @@ with a 15-minute startup limit, no automatic training retry, one-GPU quota and
 44-hour node-expiry fallback. Empty nodes still terminate automatically.
 Only this model overrides the smoke timeout. The other four folds are not queued.
 
-**Not submitted:** the current local Hub rejects timeouts above six hours, and
-its runtime changes were excluded by the original launcher-only Platform scope.
-A proposed opt-in patch is `/private/tmp/gpt2-fullfold-platform-timeout.patch`:
-it retains the six-hour default, permits a bounded local environment override
-up to 48 hours, forwards that override through Compose, and adds boundary tests.
-The intended local override is `CRUCIBLE_RAY_TIMEOUT_MAX_SECONDS=151200`.
-The patch passes `git apply --check`; it has not been applied, compiled or tested.
-The new model compiled and passed local training-data validation.
+The user approved the runtime exception and this single full fold. Platform
+commit `4873822ea` retains the six-hour default and permits an explicit local
+maximum up to 48 hours, forwarded through Compose. The selected override is
+`CRUCIBLE_RAY_TIMEOUT_MAX_SECONDS=151200`. Four resource/deadline tests passed
+with the default environment and again with the 42-hour opt-in; these exercise
+request validation and actual rendered active/startup deadlines.
+The new model compiled and passed local training-data validation. Trainer/archive
+and manifest were published to the isolated S3 prefix and hash-verified.
 The infrastructure variant adds `s6e11_node_expire_hours` (default 2, maximum 48),
 with 44 selected only in the targeted full-fold plan. OpenTofu validation passed;
 plan `tfplan-gpt2-fullfold` contains exactly one in-place Helm release update.
 Decoded before/after values differ only in `expireAfter: 2h` to `44h`.
-That plan is not applied.
+That plan was refreshed, verified and applied: 0 added, 1 changed, 0 destroyed.
+Live NodePool expiry is 44h; its 5-minute termination grace, one-GPU quota and
+empty-node cleanup remain unchanged. Infrastructure commit `e123af0`.
 
-After the runtime scope is approved: apply/test the patch and rebuild the local
-stack, apply only the reviewed NodePool release plan, publish the immutable
-manifest/archive under this model identity, record the experiment, and submit:
+The local stack is rebuilt with the override. Record this experiment before
+submitting, with both trial and experiment IDs:
 
 ```sh
 ZIPLINE_TRIAL_ID=56538208-dd78-4922-b760-3ed7264fb424 \
@@ -407,8 +408,9 @@ Backend/tfvars/plan files are ignored and may contain secrets; do not commit the
 ## Start the existing local stack
 
 Use the prepared Platform worktree, branch `codex/gpt2-crucible-local`. Its only
-changes are opt-in Databricks-lookup skip, overridable Hub verticles/kube directory,
-and forwarding the execution region. Profile forwarding is already in #1461.
+launcher changes are opt-in Databricks-lookup skip, overridable Hub verticles/kube
+directory, and forwarding the execution region. The separately approved bounded
+runtime override is described above. Profile forwarding is already in #1461.
 The worktree's fresh `postgres_data` keeps old local workflows and databases intact.
 Do not copy an old database into this stack without auditing its active workflows.
 
@@ -424,6 +426,8 @@ export KUBECONFIG="$LOCAL_KUBE_DIR/config" ASDF_KUBECTL_VERSION=1.31.3
 kubectl config current-context # Must end in :cluster/crucible-eks
 export CUSTOMER_ID=crucible AWS_DEFAULT_REGION=us-west-2 EKS_CLUSTER_NAME=crucible-eks
 export CRUCIBLE_RAY_GPU_PROFILES=s6e11-l40s CRUCIBLE_EXECUTION_REGION=us-west-2
+# Required only for the approved full-fold run; omit to retain the 6h ceiling.
+export CRUCIBLE_RAY_TIMEOUT_MAX_SECONDS=151200
 export CRUCIBLE_SKIP_DATABRICKS=true
 export AWS_HUB_VERTICLES=ai.chronon.hub.AWSOrchestrationVerticle,ai.chronon.hub.AWSWorkflowExecutionVerticle
 ./docker/orchestration/build_and_start.sh --cloud aws --crucible
