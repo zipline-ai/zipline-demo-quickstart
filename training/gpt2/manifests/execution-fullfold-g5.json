@@ -1,0 +1,113 @@
+{
+  "status": "RUNNING",
+  "trial_id": "56538208-dd78-4922-b760-3ed7264fb424",
+  "experiment_id": "fullfold-bf16-g5-f0-s42",
+  "workflow_id": "c5cff551-ce43-415c-8694-e9570397142a",
+  "attempt_id": "bd0d19bf-c194-4334-8c18-cff5617acbd1-1",
+  "artifact_root": "s3://zipline-artifacts-crucible/gpt2-s6e11/runs/c5cff551-ce43-415c-8694-e9570397142a/bd0d19bf-c194-4334-8c18-cff5617acbd1/1/",
+  "model_conf_name": "default.gpt2_fullfold_g5.full_fold__914323868f4f",
+  "rayjob": "training-fc54568e-7125-3d98-a81f-61cb8e083bd6",
+  "raycluster": "training-fc54568e-7125-3d98-a81f-61cb8e083bd6-g4dgc",
+  "nodeclaim": "s6e11-l40s-fqkhv",
+  "instance": {
+    "InstanceId": "i-05ccaea6db4ef5546",
+    "InstanceType": "g5.xlarge",
+    "ImageId": "ami-07c57d9a1e75511eb",
+    "LaunchTime": "2026-11-12 00:11:32+00:00",
+    "State": {
+      "Code": 16,
+      "Name": "running"
+    },
+    "availability_zone": "us-west-2a"
+  },
+  "job_start_time": "2026-11-12T00:11:27Z",
+  "bounds": {
+    "activeDeadlineSeconds": 151200,
+    "preRunningDeadlineSeconds": 900,
+    "backoffLimit": 0,
+    "deletionStrategy": {
+      "deletionRules": [
+        {
+          "condition": {
+            "jobStatus": "SUCCEEDED",
+            "ttlSeconds": 120
+          },
+          "policy": "DeleteCluster"
+        },
+        {
+          "condition": {
+            "jobStatus": "SUCCEEDED",
+            "ttlSeconds": 21600
+          },
+          "policy": "DeleteSelf"
+        },
+        {
+          "condition": {
+            "jobDeploymentStatus": "Failed",
+            "ttlSeconds": 120
+          },
+          "policy": "DeleteCluster"
+        },
+        {
+          "condition": {
+            "jobDeploymentStatus": "Failed",
+            "ttlSeconds": 21600
+          },
+          "policy": "DeleteSelf"
+        }
+      ]
+    }
+  },
+  "resources": {
+    "ray.region": "us-west-2",
+    "ray.head.cpu": "1",
+    "ray.worker.cpu": "2",
+    "ray.worker.shm": "4Gi",
+    "ray.head.memory": "4Gi",
+    "ray.worker.gpus": "1",
+    "ray.architecture": "amd64",
+    "ray.worker.memory": "12Gi",
+    "ray.timeout.seconds": "151200",
+    "ray.worker.replicas": "1",
+    "ray.placement.profile": "s6e11-l40s",
+    "ray.worker.ephemeral-storage": "50Gi"
+  },
+  "native_bf16_previously_verified": true,
+  "fullfold_memory_previously_verified": true,
+  "compile_passed": true,
+  "training_data_validation_passed": true,
+  "runtime_default_tests_passed": 4,
+  "runtime_optin_tests_passed": 4,
+  "archive_s3_hash_verified": true,
+  "trainer_manifest_s3_hash_verified": true,
+  "platform_commit": "4873822ea",
+  "infrastructure_commit": "e123af0",
+  "cleanup_verified": false,
+  "full_fold_completed": false,
+  "other_folds_queued": false,
+  "monitor_automation_id": "review-gpt-2-fold-0",
+  "monitor_interval_minutes": 30,
+  "job_deadline_utc": "2026-11-13T18:11:27+00:00",
+  "startup_deadline_utc": "2026-11-12T00:26:27+00:00",
+  "trainer_code_version": "914323868f4f",
+  "trainer_manifest_sha256": "8ab89d4d011fa31b766c56a57cbb2e0ff3f03eb0b2262127066a8d6bcdc79433",
+  "instance_rate_usd_per_hour": 1.006,
+  "ray_job_status": "RUNNING",
+  "ray_deployment_status": "Running",
+  "actual_gpu": "NVIDIA A10G",
+  "driver_version": "580.159.03",
+  "visible_gpu_memory_mib": 23028,
+  "training_started_utc": "2026-11-12T00:16:46.287300+00:00",
+  "durable_progress_verified": true,
+  "last_verified_progress": {
+    "attempt_id": "bd0d19bf-c194-4334-8c18-cff5617acbd1-1",
+    "measurements": {
+      "lm_loss": 0.6379924416542053
+    },
+    "phase": "source",
+    "sequence": 5,
+    "step": 322,
+    "timestamp": "2026-11-12T00:17:47.248871+00:00",
+    "total_steps": 75000
+  }
+}

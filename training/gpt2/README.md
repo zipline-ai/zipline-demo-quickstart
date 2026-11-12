@@ -294,7 +294,7 @@ observed fold-0 memory fit; they do not establish multi-day leak-free execution.
 
 Requested after the successful memory probe. New model
 `default.gpt2_fullfold_g5.full_fold__914323868f4f`, backend
-`s6e11_gpt2_fullfold0_g5`, planned experiment `fullfold-bf16-g5-f0-s42`.
+`s6e11_gpt2_fullfold0_g5`, experiment `fullfold-bf16-g5-f0-s42`.
 The existing BF16 trainer/image are unchanged. The manifest
 `manifests/trainer-fullfold-g5.json` selects all fold-0 rows, 60 source epochs,
 eight classifier epochs, microbatch 16, effective source/classifier batches
@@ -335,6 +335,27 @@ ZIPLINE_EXPERIMENT_ID=fullfold-bf16-g5-f0-s42 \
   --skip-compile --start-ds 2026-11-11 --end-ds 2026-11-11 \
   --chronon-root "$CONF_ROOT" --hub-url http://localhost:3000/services/hub --no-use-auth --yes -f json
 ```
+
+**RUNNING**, submitted November 12 at 00:11:27 UTC; source training started
+at 00:16:46 UTC (November 11, 16:16 PST). Workflow
+`c5cff551-ce43-415c-8694-e9570397142a`, attempt
+`bd0d19bf-c194-4334-8c18-cff5617acbd1-1`, RayJob
+`training-fc54568e-7125-3d98-a81f-61cb8e083bd6`.
+The actual g5.xlarge instance `i-05ccaea6db4ef5546` is in us-west-2a,
+with NVIDIA A10G, driver 580.159.03 and 23,028 MiB visible GPU memory.
+Initial training reached source step 322/75,000 with durable S3 progress;
+classifier training is configured for 139,992 optimizer steps. Early allocated
+GPU memory was 6.505 GiB. These are startup observations, not final metrics.
+
+Artifact root:
+`s3://zipline-artifacts-crucible/gpt2-s6e11/runs/c5cff551-ce43-415c-8694-e9570397142a/bd0d19bf-c194-4334-8c18-cff5617acbd1/1/`.
+Live job deadline: **2026-11-13 18:11:27 UTC** (10:11:27 PST).
+Execution evidence: `manifests/execution-fullfold-g5.json`.
+Heartbeat `review-gpt-2-fold-0` checks every 30 minutes, stays quiet during
+healthy progress, and reviews completed results and cleanup or reports problems.
+It must not submit the other folds or automatically launch replacement attempts.
+Remote runtime deadlines and cleanup do not depend on the laptop staying awake;
+local Hub/heartbeat observation requires the local services and app to be available.
 
 Review the actual full validation report, exact 139,992 held-out IDs, independent
 AUC/AP/log-loss recomputation, loss/time profiles and durable checkpoints before
