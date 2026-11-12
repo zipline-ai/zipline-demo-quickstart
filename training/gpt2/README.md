@@ -328,6 +328,24 @@ run nor the other four folds has been submitted. No watchdog change was applied
 by the monitor. Evidence is in `manifests/execution-fullfold-g5.json` and
 `manifests/source-profile-fullfold-g5.json`.
 
+### Fold 0 resume (attempt 2)
+
+Watchdog fixed in platform `codex/gpt2-crucible-local` commit `86c0d4271`: the Hub
+step watchdog now honors the step's configured `ray.timeout.seconds` (+30 min
+startup grace, capped at 48 h); steps without training state keep six hours. The
+local Hub was rebuilt from that worktree with `CRUCIBLE_RAY_TIMEOUT_MAX_SECONDS=151200`.
+
+Resume model `default.gpt2_fullfold_g5_resume1.full_fold__914323868f4f`, backend
+`s6e11_gpt2_fullfold0_g5_resume1`, experiment `fullfold-bf16-g5-f0-s42-r1` in the
+same trial. `manifests/trainer-fullfold-g5-resume1.json` is the fold-0 manifest
+unchanged (recipe identical to the checkpoint sidecar) plus a `resume` object:
+parent attempt `bd0d19bf-c194-4334-8c18-cff5617acbd1-1`, stage `competition`,
+checkpoint `competition-00010000.pt`, SHA-256 `8b5c8d51…686a4` (re-verified by
+download). Manifest SHA-256 `d20d7853c47dc11a1c45e77373402cec63ea5df3a0cf389458daf430b7aa30f2`,
+uploaded and round-trip verified. The conf declares `ZIPLINE_PARENT_ATTEMPT_ID` and
+keeps the 151200 s cutoff. Source adaptation is skipped; about 130k classifier
+steps (~13 h at 2.8 steps/s) plus validation remain, roughly $15–20 EC2 compute.
+
 
 Requested after the successful memory probe. New model
 `default.gpt2_fullfold_g5.full_fold__914323868f4f`, backend
