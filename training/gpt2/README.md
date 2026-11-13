@@ -347,6 +347,30 @@ keeps the 151200 s cutoff. Source adaptation is skipped; about 130k classifier
 steps (~13 h at 2.8 steps/s) plus validation remain, roughly $15–20 EC2 compute.
 
 
+### Five-fold campaign (approved 2026-11-13)
+
+The user approved all five folds in parallel. Capacity is now the config-driven
+profile from infrastructure PR zipline-ai/infrastructure#234 (applied from that
+branch, targeted): `s6e11-l40s` workers on `g6e.xlarge`/`g5.xlarge` (Karpenter
+picks the cheaper available, normally g5), `max_gpus` 5, `zipline-default` GPU
+quota 5, and an `s6e11-l40s-control` CPU pool for heads/submitters (it replaces
+labels on the shared managed node group).
+
+| Fold | Model | Experiment | Starts from |
+| --- | --- | --- | --- |
+| 0 | `default.gpt2_fullfold_g5_resume1.full_fold__914323868f4f` | `fullfold-bf16-g5-f0-s42-r1` | `competition-00010000.pt` |
+| 1–4 | `default.gpt2_fullfold{k}_g5.full_fold__914323868f4f` | `fullfold-bf16-g5-f{k}-s42` | `source-00075000.pt` |
+
+Folds 1–4 reuse the completed fold-independent source adaptation from parent
+attempt `bd0d19bf-c194-4334-8c18-cff5617acbd1-1` (`resume.stage=source`,
+SHA-256 `9b3932bc…77488`, `next_step=75000` verified by safe CPU load); the
+trainer's own `resume_compatible` accepts each manifest as a source resume and
+rejects it as a classifier resume. Each fold trains 139,992 classifier steps
+(~14 h at the measured 2.8 steps/s) plus 30-order scoring, within the 42 h cutoff.
+Manifests are published under `gpt2-s6e11/manifests/trainer-<sha>.json` and
+round-trip verified. Every fold keeps `ray.timeout.seconds=151200`.
+
+
 Requested after the successful memory probe. New model
 `default.gpt2_fullfold_g5.full_fold__914323868f4f`, backend
 `s6e11_gpt2_fullfold0_g5`, experiment `fullfold-bf16-g5-f0-s42`.

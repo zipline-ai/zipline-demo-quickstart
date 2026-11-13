@@ -1,0 +1,84 @@
+{
+  "inferenceSpec": {
+    "modelBackend": 2,
+    "modelBackendParams": {
+      "model_name": "s6e11_gpt2_fullfold2_g5",
+      "model_type": "custom"
+    }
+  },
+  "metaData": {
+    "environments": [
+      0
+    ],
+    "executionInfo": {
+      "conf": {
+        "common": {
+          "ray.architecture": "amd64",
+          "ray.head.cpu": "1",
+          "ray.head.memory": "4Gi",
+          "ray.placement.profile": "s6e11-l40s",
+          "ray.region": "us-west-2",
+          "ray.timeout.seconds": "151200",
+          "ray.worker.cpu": "2",
+          "ray.worker.ephemeral-storage": "50Gi",
+          "ray.worker.gpus": "1",
+          "ray.worker.memory": "12Gi",
+          "ray.worker.shm": "4Gi",
+          "spark.chronon.table_write.format": "parquet",
+          "spark.hadoop.hive.metastore.client.factory.class": "com.amazonaws.glue.catalog.metastore.AWSGlueDataCatalogHiveClientFactory",
+          "spark.sql.catalog.spark_catalog": "org.apache.iceberg.spark.SparkSessionCatalog",
+          "spark.sql.catalog.spark_catalog.catalog-impl": "org.apache.iceberg.aws.glue.GlueCatalog",
+          "spark.sql.catalog.spark_catalog.warehouse": "s3://zipline-warehouse-crucible/data/tables/",
+          "spark.sql.defaultUrlStreamHandlerFactory.enabled": "false",
+          "spark.sql.extensions": "org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions"
+        }
+      },
+      "env": {
+        "common": {
+          "ARTIFACT_PREFIX": "s3://zipline-artifacts-crucible/gpt2-s6e11",
+          "AWS_REGION": "us-west-2",
+          "CLOUD_PROVIDER": "aws",
+          "CUSTOMER_ID": "crucible",
+          "EVAL_URL": "http://localhost:3904",
+          "FRONTEND_URL": "http://localhost:3000",
+          "HUB_URL": "http://localhost:3000/services/hub",
+          "VERSION": "latest",
+          "WAREHOUSE_PREFIX": "s3://zipline-warehouse-crucible",
+          "ZIPLINE_DATASET_MANIFEST_HASH": "802675cfd652bea99179b2f47402f906d581969773e3f57e6defca4689fc32ea",
+          "ZIPLINE_PARENT_ATTEMPT_ID": "bd0d19bf-c194-4334-8c18-cff5617acbd1-1",
+          "ZIPLINE_SPLIT_MANIFEST_HASH": "d6d82738950e9a4b5984910934fd2e526ece481603358f8cb8b017585affd6a1",
+          "ZIPLINE_TRAINING_OBSERVABILITY": "v1"
+        }
+      }
+    },
+    "name": "default.gpt2_fullfold2_g5.full_fold__914323868f4f",
+    "outputNamespace": "data",
+    "sourceFile": "models/default/gpt2_fullfold2_g5.py",
+    "team": "default",
+    "version": "914323868f4f"
+  },
+  "modelArtifactBaseUri": "s3://zipline-artifacts-crucible/gpt2-s6e11",
+  "trainingConf": {
+    "image": "345594603419.dkr.ecr.us-west-2.amazonaws.com/ctr-trainer-ray@sha256:1b1bbc4bdf174645e4a6acf87648d6c0fcb071c8a354c50f6fe603bee873861b",
+    "jobConfigs": {
+      "trainer-manifest-sha256": "63523a55fdd530483a48c79ed594540f81c1047edc5be8cfc5171fd0406493b1",
+      "trainer-manifest-uri": "s3://zipline-artifacts-crucible/gpt2-s6e11/manifests/trainer-63523a55fdd530483a48c79ed594540f81c1047edc5be8cfc5171fd0406493b1.json"
+    },
+    "pythonModule": "trainer.train",
+    "resourceConfig": {
+      "maxReplicaCount": 1,
+      "minReplicaCount": 1
+    },
+    "schedule": "@never",
+    "trainingDataSource": {
+      "entities": {
+        "query": {},
+        "snapshotTable": "data.s6e11_gpt2_train_87eaa10b"
+      }
+    },
+    "trainingDataWindow": {
+      "length": 0,
+      "timeUnit": 1
+    }
+  }
+}
