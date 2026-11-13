@@ -370,6 +370,27 @@ rejects it as a classifier resume. Each fold trains 139,992 classifier steps
 Manifests are published under `gpt2-s6e11/manifests/trainer-<sha>.json` and
 round-trip verified. Every fold keeps `ray.timeout.seconds=151200`.
 
+**RUNNING since 2026-11-13** (Hub rebuilt with an isolated `crucible-eks`
+kubeconfig and the watchdog fix, verified in the deployed jar). The earlier fold-0
+resume `fullfold-bf16-g5-f0-s42-r1` failed on Nov 12 because its Ray head could not
+schedule after the shared node group's control labels were reset; the profile's
+own control pool fixes that. The first fold 1–4 workflows were refused before
+any RayJob because the Hub derives the archive key from the model name; the
+identical archive (SHA-256 `914323868f4f…`) was published as
+`builds/s6e11_gpt2_fullfold{1..4}_g5-914323868f4f.zip` and they were resubmitted.
+
+| Fold | Experiment | Workflow | Attempt | First verified |
+| --- | --- | --- | --- | --- |
+| 0 | `fullfold-bf16-g5-f0-s42-r2` | `3421b034-ab6b-4197-b9a0-92af74191682` | `9ea6de35-…-1` | 1 GPU; resumed at classifier step 10,000 |
+| 1 | `fullfold-bf16-g5-f1-s42` | `5925666d-b31c-473e-a823-fa8f2e807c00` | `a404bc49-…-1` | 1 GPU; classifier step 3,076 |
+| 2 | `fullfold-bf16-g5-f2-s42` | `7808d08d-512f-4bb9-abe9-ca241732feb8` | `5550d810-…-1` | 1 GPU; classifier step 3,133 |
+| 3 | `fullfold-bf16-g5-f3-s42` | `8de3414a-b09e-47eb-a7cc-7c24438e50a2` | `331b89ee-…-1` | 1 GPU; classifier step 3,076 |
+| 4 | `fullfold-bf16-g5-f4-s42` | `ea7210ba-9ffe-451d-ac10-115a1ed84387` | `653f2172-…-1` | 1 GPU; classifier step 3,019 |
+
+All on g5.xlarge (A10G); each RayJob has `activeDeadlineSeconds=151200`. Observed
+~2.6 classifier steps/s per fold at 20:30 UTC. These are startup observations,
+not metrics. Pool with `trainer.aggregate` only after all five reports are valid.
+
 
 Requested after the successful memory probe. New model
 `default.gpt2_fullfold_g5.full_fold__914323868f4f`, backend
