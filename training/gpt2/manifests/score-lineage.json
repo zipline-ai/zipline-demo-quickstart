@@ -1,0 +1,116 @@
+{
+  "archive_sha256": "d83f04f6a708a218f7c76cb5bbc7defac27c4b68329e3a536eaf51070acfb6e7",
+  "folds": {
+    "0": {
+      "checkpoint_md5": "6bcf231cac83f8da80f3abdd5713566f",
+      "checkpoint_uri": "s3://zipline-artifacts-crucible/gpt2-s6e11/runs/3421b034-ab6b-4197-b9a0-92af74191682/9ea6de35-8e24-443a-9257-98f6f3a488ac/1/checkpoints/competition-00139992.pt",
+      "parent_attempt_id": "9ea6de35-8e24-443a-9257-98f6f3a488ac-1",
+      "recipe": {
+        "bf16": true,
+        "checkpoint_steps": 10000,
+        "competition_accumulation": 2,
+        "competition_epochs": 8,
+        "fold": 0,
+        "lr": 5e-05,
+        "microbatch": 16,
+        "order_seed": 2025,
+        "orders": 30,
+        "preset": "full_fold0_bf16_g5",
+        "prior_mode": "reference_no_prior",
+        "sampled": false,
+        "score_batch": 8,
+        "source_accumulation": 1,
+        "source_epochs": 60
+      }
+    },
+    "1": {
+      "checkpoint_md5": "55fb4404c3edbccb2f336351ceab6f6b",
+      "checkpoint_uri": "s3://zipline-artifacts-crucible/gpt2-s6e11/runs/5925666d-b31c-473e-a823-fa8f2e807c00/a404bc49-01db-4a84-9ff2-9038d4b0ceb4/1/checkpoints/competition-00139992.pt",
+      "parent_attempt_id": "a404bc49-01db-4a84-9ff2-9038d4b0ceb4-1",
+      "recipe": {
+        "bf16": true,
+        "checkpoint_steps": 10000,
+        "competition_accumulation": 2,
+        "competition_epochs": 8,
+        "fold": 1,
+        "lr": 5e-05,
+        "microbatch": 16,
+        "order_seed": 2025,
+        "orders": 30,
+        "preset": "full_fold1_bf16_g5",
+        "prior_mode": "reference_no_prior",
+        "sampled": false,
+        "score_batch": 8,
+        "source_accumulation": 1,
+        "source_epochs": 60
+      }
+    },
+    "2": {
+      "checkpoint_md5": "fedd48c860ead70b42ea0d2d7bda8526",
+      "checkpoint_uri": "s3://zipline-artifacts-crucible/gpt2-s6e11/runs/7808d08d-512f-4bb9-abe9-ca241732feb8/5550d810-2520-49b8-bf90-c15fdb66dd85/1/checkpoints/competition-00139992.pt",
+      "parent_attempt_id": "5550d810-2520-49b8-bf90-c15fdb66dd85-1",
+      "recipe": {
+        "bf16": true,
+        "checkpoint_steps": 10000,
+        "competition_accumulation": 2,
+        "competition_epochs": 8,
+        "fold": 2,
+        "lr": 5e-05,
+        "microbatch": 16,
+        "order_seed": 2025,
+        "orders": 30,
+        "preset": "full_fold2_bf16_g5",
+        "prior_mode": "reference_no_prior",
+        "sampled": false,
+        "score_batch": 8,
+        "source_accumulation": 1,
+        "source_epochs": 60
+      }
+    },
+    "3": {
+      "checkpoint_md5": "5a600454159e438891d821c6b88e7c33",
+      "checkpoint_uri": "s3://zipline-artifacts-crucible/gpt2-s6e11/runs/8de3414a-b09e-47eb-a7cc-7c24438e50a2/331b89ee-6c46-4576-9aef-76d6a3babb7f/1/checkpoints/competition-00139992.pt",
+      "parent_attempt_id": "331b89ee-6c46-4576-9aef-76d6a3babb7f-1",
+      "recipe": {
+        "bf16": true,
+        "checkpoint_steps": 10000,
+        "competition_accumulation": 2,
+        "competition_epochs": 8,
+        "fold": 3,
+        "lr": 5e-05,
+        "microbatch": 16,
+        "order_seed": 2025,
+        "orders": 30,
+        "preset": "full_fold3_bf16_g5",
+        "prior_mode": "reference_no_prior",
+        "sampled": false,
+        "score_batch": 8,
+        "source_accumulation": 1,
+        "source_epochs": 60
+      }
+    },
+    "4": {
+      "checkpoint_md5": "95547114752480438f295ae7c729cfbf",
+      "checkpoint_uri": "s3://zipline-artifacts-crucible/gpt2-s6e11/runs/ea7210ba-9ffe-451d-ac10-115a1ed84387/653f2172-607d-4206-b462-abac3e56fd2e/1/checkpoints/competition-00139992.pt",
+      "parent_attempt_id": "653f2172-607d-4206-b462-abac3e56fd2e-1",
+      "recipe": {
+        "bf16": true,
+        "checkpoint_steps": 10000,
+        "competition_accumulation": 2,
+        "competition_epochs": 8,
+        "fold": 4,
+        "lr": 5e-05,
+        "microbatch": 16,
+        "order_seed": 2025,
+        "orders": 30,
+        "preset": "full_fold4_bf16_g5",
+        "prior_mode": "reference_no_prior",
+        "sampled": false,
+        "score_batch": 8,
+        "source_accumulation": 1,
+        "source_epochs": 60
+      }
+    }
+  },
+  "trainer_code_version": "d83f04f6a708"
+}
