@@ -128,6 +128,30 @@ def conditional_log_likelihood(model, seqs, prefix_lengths, eos, device):
         return values
 
 
+def detective_log_likelihood(model, seqs, eos, label_tokens, device):
+    """Label-last readout: [n, 2] = log p(text before the label word) + log p(' False' / ' True').
+
+    seqs end just before the label word (", is_fraud is"); both labels share every earlier token,
+    so one forward pass per row gives both values. fp32 head, float64 sums.
+    """
+    ids, mask = pad(seqs, eos, device)
+    with torch.inference_mode():
+        h = model.transformer(input_ids=ids, use_cache=False).last_hidden_state
+        logits = F.linear(h[:, :-1].float(), model.lm_head.weight.float())
+        prefix = -F.cross_entropy(
+            logits.reshape(-1, logits.shape[-1]), ids[:, 1:].reshape(-1), reduction="none"
+        ).reshape(len(seqs), -1)
+        prefix = (prefix * mask[:, 1:]).double().sum(1)
+        last = torch.tensor([len(s) - 1 for s in seqs], device=device)
+        hl = h[torch.arange(len(seqs), device=device), last].float()
+        label = torch.log_softmax(F.linear(hl, model.lm_head.weight.float()), -1)
+        label = label[:, list(label_tokens)].double()
+        values = (prefix[:, None] + label).cpu().numpy()
+        if not np.isfinite(values).all():
+            raise ValueError("Nonfinite likelihood")
+        return values
+
+
 def memory(device):
     r = {
         "process_peak_rss_gib": resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
@@ -211,6 +235,9 @@ def train_stage(model, encoder, labels, name, args):
     steps_per_epoch = math.ceil(n / batch)
     log = d / "training.jsonl"
     current_epoch = None
+    # The replica (source) text always has the label as a random-position field; the
+    # competition stage does too only for the label-anywhere member.
+    anywhere = name == "source" or getattr(args, "label_anywhere", False)
     for step in range(start_step, steps):
         epoch, within = divmod(step, steps_per_epoch)
         if epoch != current_epoch:
@@ -222,8 +249,8 @@ def train_stage(model, encoder, labels, name, args):
             encoder.build(
                 int(r),
                 labels[r],
-                rng.permutation(len(encoder.features) + (name == "source")),
-                source=name == "source",
+                rng.permutation(len(encoder.features) + anywhere),
+                source=anywhere,
                 eos=True,
             )
             for r in rows

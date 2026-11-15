@@ -33,6 +33,11 @@ def validate_recipe(recipe):
         raise ValueError("Invalid scoring/fold policy")
     if recipe["bf16"] not in (True, False) or not 0 < recipe["lr"] < 1:
         raise ValueError("Invalid precision/learning rate")
+    # Optional: label-anywhere competition text, scored target-last (Detective, one order).
+    if recipe.get("label_position", "first") not in ("first", "anywhere") or (
+        recipe.get("label_position") == "anywhere" and recipe["orders"] != 1
+    ):
+        raise ValueError("Invalid label position/readout")
 
 
 def resume_compatible(saved, current, stage):
@@ -53,11 +58,30 @@ def resume_compatible(saved, current, stage):
     return source_identity(saved) == source_identity(current)
 
 
-def score(model, encoder, valid, training, recipe, out, publisher):
-    from .core import conditional_log_likelihood
-
+def detective_orders(encoder, recipe):
     rng = np.random.default_rng(recipe["order_seed"])
-    orders = [rng.permutation(len(encoder.features)) for _ in range(recipe["orders"])]
+    n = len(encoder.features)
+    return [np.append(rng.permutation(n), n) for _ in range(recipe["orders"])]
+
+
+def detective_tokens(encoder):
+    false, true = encoder.target[", "]
+    if false[:-1] != true[:-1] or len(false) != len(true):
+        raise ValueError("Labels must differ only in the final token")
+    return false[-1], true[-1]
+
+
+def score(model, encoder, valid, training, recipe, out, publisher):
+    from .core import conditional_log_likelihood, detective_log_likelihood
+
+    detective = recipe.get("label_position") == "anywhere"
+    rng = np.random.default_rng(recipe["order_seed"])
+    orders = (
+        detective_orders(encoder, recipe)
+        if detective
+        else [rng.permutation(len(encoder.features)) for _ in range(recipe["orders"])]
+    )
+    tokens = detective_tokens(encoder) if detective else None
     model.eval()
     all_ll = []
     for lo in range(0, len(valid), 512):
@@ -67,6 +91,13 @@ def score(model, encoder, valid, training, recipe, out, publisher):
             for start in range(lo, hi, recipe["score_batch"]):
                 stop = min(start + recipe["score_batch"], hi)
                 rows = range(start, stop)
+                if detective:
+                    seqs = [encoder.build(r, 0, order, source=True)[:-1] for r in rows]
+                    ll[start - lo : stop - lo, o] = detective_log_likelihood(
+                        model, seqs, encoder.tok.eos_token_id, tokens, "cuda"
+                    )
+                    publisher.progress("scoring", rows=start, total_steps=len(valid))
+                    continue
                 seqs = [encoder.build(r, y, order) for y in (0, 1) for r in rows]
                 prefixes = [len(encoder.prefix[y]) for y in (0, 1) for _ in rows]
                 values = conditional_log_likelihood(
@@ -158,9 +189,14 @@ def worker(context, manifest, manifest_sha):
     if resume:
         if context.get("parent_attempt_id") != resume["parent_attempt_id"]:
             raise ValueError("Resume lineage must be declared to Hub")
+        expected = dict(resume_config)
+        if resume["stage"] == "source" and "source_trainer_code_version" in resume:
+            # Reusing a finished replica written by an earlier trainer version: the source
+            # stage is only loaded (its step count is already complete), never retrained.
+            expected["trainer_code_version"] = resume["source_trainer_code_version"]
         if not resume_compatible(
             json.loads(read_bytes(resume["checkpoint_uri"] + ".json")),
-            resume_config,
+            expected,
             resume["stage"],
         ):
             raise ValueError("Resume recipe/provenance mismatch")
@@ -186,6 +222,7 @@ def worker(context, manifest, manifest_sha):
             accumulation=recipe[name + "_accumulation"],
             lr=recipe["lr"],
             bf16=recipe["bf16"],
+            label_anywhere=recipe.get("label_position") == "anywhere",
             checkpoint_steps=recipe["checkpoint_steps"],
             checkpoint_callback=publisher.checkpoint_saved,
             progress_callback=lambda phase, step, total, loss: publisher.progress(
