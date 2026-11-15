@@ -747,3 +747,36 @@ python -m trainer.aggregate --truth /path/to/original/train.csv \
 The aggregator validates one held-out prediction per training ID, matching labels,
 fold membership, checksums and recipe/image/code provenance, then reports pooled
 `oof_auc`, `oof_average_precision`, `oof_logloss`. Mean fold AUC is not pooled AUC.
+
+## Test predictions from the five fold checkpoints
+
+`trainer/score_test.py` (`python_module="trainer.score_test"`) loads a finished fold checkpoint and scores
+rows with the validation scorer's encoder, orders and log-likelihood math. It checks the checkpoint's
+sidecar provenance, its S3 ETag (pinned in `manifests/score-lineage.json`) and the declared
+`ZIPLINE_PARENT_ATTEMPT_ID` before scoring.
+
+- `mode: benchmark` scores the first 512 fold-validation rows for a list of `{precision, score_batch}`
+  runs against the stored `evaluation/likelihoods-000000.npz`. The first run must be the exact
+  validation setting (fp32, batch 8) and must reproduce the stored values bit for bit.
+- `mode: test` scores all 299,984 test rows and writes `test_evaluation/likelihoods-*.npz`,
+  `predictions/test.csv` (`id,logit,prediction`) and `predictions/test.json`.
+
+Measured on an A10G (fold 0, 512 rows):
+
+| precision, batch | rows/s | max abs logit drift |
+|---|---|---|
+| fp32, 8 | 3.21 | 0 |
+| fp32, 64 | 3.53 | 0.0001 |
+| tf32, 32 | 4.20 | 0.013 |
+| bf16, 32 | 4.57 | 0.023 |
+| fp16, 32 | 4.57 | 0.0027 |
+
+Test predictions used fp16 at batch 32: experiments `testscore-f{k}-fp16-b32` in trial
+`56538208-dd78-4922-b760-3ed7264fb424`, code version `bb238a802b3c`, about 18.3 h per fold at
+4.56 rows/s, all five folds in parallel. Confs are `configs/models/default/gpt2_testscore_f{k}.py`.
+
+Operational notes:
+- The local Hub JVM grew to about 7.7 GB and stalled (Vert.x "Thread blocked"), and was OOM-killed
+  about 10 h into the run. RayJobs keep running; `docker start hub` reconciles them.
+- A backfill can succeed even when the experiment-record call before it returns 502. List RayJobs
+  before retrying any submission.
