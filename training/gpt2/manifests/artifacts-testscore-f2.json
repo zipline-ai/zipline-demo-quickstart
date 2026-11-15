@@ -1,0 +1,7 @@
+{
+  "archive_sha256": "bb238a802b3c161be40f688640d8e8868410acd3c723d98c7b8a8e28c244cc24",
+  "trainer_code_version": "bb238a802b3c",
+  "trainer_manifest_sha256": "fcae923a8bb5de80f410f30ffc737ab097e8f16ff1cac9ad2eb51c8bc3f87152",
+  "trainer_manifest_uri": "s3://zipline-artifacts-crucible/gpt2-s6e11/manifests/trainer-fcae923a8bb5de80f410f30ffc737ab097e8f16ff1cac9ad2eb51c8bc3f87152.json",
+  "training_image": "345594603419.dkr.ecr.us-west-2.amazonaws.com/ctr-trainer-ray@sha256:1b1bbc4bdf174645e4a6acf87648d6c0fcb071c8a354c50f6fe603bee873861b"
+}
