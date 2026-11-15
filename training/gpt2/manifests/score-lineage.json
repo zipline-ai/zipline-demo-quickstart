@@ -1,5 +1,5 @@
 {
-  "archive_sha256": "d83f04f6a708a218f7c76cb5bbc7defac27c4b68329e3a536eaf51070acfb6e7",
+  "archive_sha256": "bb238a802b3c161be40f688640d8e8868410acd3c723d98c7b8a8e28c244cc24",
   "folds": {
     "0": {
       "checkpoint_md5": "6bcf231cac83f8da80f3abdd5713566f",
@@ -112,5 +112,5 @@
       }
     }
   },
-  "trainer_code_version": "d83f04f6a708"
+  "trainer_code_version": "bb238a802b3c"
 }

@@ -1,13 +1,16 @@
 """Score rows with a finished fold checkpoint: batch benchmark or full test set.
 
-Same encoder, 30 feature orders (order_seed) and FP32 log-likelihood math as the
-validation scorer in train.py; only the number of rows per forward pass changes.
+Same encoder, 30 feature orders (order_seed) and log-likelihood math as the
+validation scorer in train.py. "fp32" reproduces it exactly; "tf32", "bf16" and
+"fp16" trade small numeric drift for speed in the transformer body only (the
+vocabulary head stays fp32 and sums stay fp64).
 """
 
 import argparse
 import hashlib
 import json
 import time
+from contextlib import contextmanager
 from pathlib import Path
 import numpy as np
 import pandas as pd
@@ -18,6 +21,35 @@ from .train import validate_recipe
 
 TEST_ROWS = 299984
 CHUNK = 512
+PRECISIONS = ("fp32", "tf32", "bf16", "fp16")
+
+
+@contextmanager
+def precision(model, name):
+    """Run the transformer body in the requested precision; restore afterwards."""
+    import torch
+
+    body = model.transformer
+
+    class Autocast(torch.nn.Module):
+        def __init__(self, dtype):
+            super().__init__()
+            self.body, self.dtype = body, dtype
+
+        def forward(self, **kwargs):
+            with torch.autocast("cuda", dtype=self.dtype):
+                return self.body(**kwargs)
+
+    torch.backends.cuda.matmul.allow_tf32 = name == "tf32"
+    torch.backends.cudnn.allow_tf32 = name == "tf32"
+    if name in ("bf16", "fp16"):
+        model.transformer = Autocast(torch.bfloat16 if name == "bf16" else torch.float16)
+    try:
+        yield
+    finally:
+        model.transformer = body
+        torch.backends.cuda.matmul.allow_tf32 = False
+        torch.backends.cudnn.allow_tf32 = False
 
 
 def md5(path):
@@ -64,10 +96,17 @@ def validate_scoring(scoring, recipe):
         raise ValueError("Invalid checkpoint URI")
     if scoring["mode"] == "benchmark":
         b = scoring["benchmark"]
-        if b["rows"] != CHUNK or not b["batches"] or b["batches"][0] != recipe["score_batch"]:
-            raise ValueError("Benchmark must start with the validation batch on one chunk")
+        runs = b["runs"]
+        if b["rows"] != CHUNK or not runs or runs[0] != {
+            "precision": "fp32", "score_batch": recipe["score_batch"]}:
+            raise ValueError("Benchmark must start with the exact validation setting on one chunk")
+        for r in runs:
+            if r["precision"] not in PRECISIONS or not 0 < r["score_batch"] <= 256:
+                raise ValueError("Invalid benchmark run")
     elif type(scoring["score_batch"]) is not int or not 0 < scoring["score_batch"] <= 256:
         raise ValueError("Invalid test score_batch")
+    elif scoring["precision"] not in PRECISIONS:
+        raise ValueError("Invalid test precision")
 
 
 def worker(context, manifest, manifest_sha):
@@ -149,7 +188,7 @@ def worker(context, manifest, manifest_sha):
         "scoring_trainer_code_version": manifest["trainer_code_version"],
         "training_image": manifest["training_image"],
         "dataset_manifest_hash": context["dataset_manifest_hash"],
-        "scoring_precision": "float32 transformer/head; float64 sums",
+        "scoring_precision": "transformer per run/test precision; float32 head; float64 sums",
         "prior": "none (reference_no_prior); logit = logsumexp_o ll(True) - logsumexp_o ll(False)",
         "trainer_manifest_sha256": manifest_sha,
     }
@@ -175,22 +214,25 @@ def benchmark(model, tok, valid, dataset, recipe, scoring, lineage, out, publish
         raise ValueError("Feature orders differ from the validation scorer")
     ref_odds = log_odds(ref["ll"])
     results, measured = [], {"benchmark_rows": CHUNK}
-    for batch in b["batches"]:
+    for run in b["runs"]:
+        batch, name = run["score_batch"], run["precision"]
+        tag = f"{name}_b{batch}"
         torch.cuda.empty_cache()
         torch.cuda.reset_peak_memory_stats()
         torch.cuda.synchronize()
         started = time.perf_counter()
         try:
-            ll = likelihoods(model, encoder, 0, CHUNK, orders, batch)
-        except torch.cuda.OutOfMemoryError:
-            results.append({"score_batch": batch, "oom": True})
+            with precision(model, name):
+                ll = likelihoods(model, encoder, 0, CHUNK, orders, batch)
+        except (torch.cuda.OutOfMemoryError, ValueError) as e:
+            results.append({**run, "error": type(e).__name__ + ": " + str(e)[:200]})
             print(json.dumps(results[-1]), flush=True)
-            break
+            continue
         torch.cuda.synchronize()
         seconds = time.perf_counter() - started
         odds = log_odds(ll)
         row = {
-            "score_batch": batch,
+            **run,
             "seconds": seconds,
             "rows_per_second": CHUNK / seconds,
             "max_abs_ll_diff": float(np.abs(ll - ref["ll"]).max()),
@@ -203,12 +245,12 @@ def benchmark(model, tok, valid, dataset, recipe, scoring, lineage, out, publish
         results.append(row)
         print(json.dumps(row), flush=True)
         publisher.progress("benchmark", force=True, measurements={
-            f"b{batch}_rows_per_second": row["rows_per_second"],
-            f"b{batch}_max_abs_logodds_diff": row["max_abs_logodds_diff"],
+            f"{tag}_rows_per_second": row["rows_per_second"],
+            f"{tag}_max_abs_logodds_diff": row["max_abs_logodds_diff"],
         })
         for k in ("rows_per_second", "max_abs_logodds_diff", "max_abs_prob_diff",
                   "gpu_peak_allocated_bytes"):
-            measured[f"b{batch}_{k}"] = float(row[k])
+            measured[f"{tag}_{k}"] = float(row[k])
     write_json(out / "benchmark.json", {**lineage, "reference_uri": b["reference_uri"],
                                          "device": torch.cuda.get_device_name(),
                                          "results": results})
@@ -236,7 +278,8 @@ def score_test(model, tok, paths, dataset, recipe, scoring, lineage, out, publis
     started, chunks = time.perf_counter(), []
     for lo in range(0, len(test), CHUNK):
         hi = min(lo + CHUNK, len(test))
-        ll = likelihoods(model, encoder, lo, hi, orders, batch)
+        with precision(model, scoring["precision"]):
+            ll = likelihoods(model, encoder, lo, hi, orders, batch)
         path = out / f"likelihoods-{lo:06d}.npz"
         np.savez_compressed(path, id=test.id.iloc[lo:hi].to_numpy(), ll=ll,
                             orders=np.array(orders))
@@ -254,7 +297,7 @@ def score_test(model, tok, paths, dataset, recipe, scoring, lineage, out, publis
     predictions.to_csv(pred_path, index=False, float_format="%.10g")
     write_json(pred_path.with_suffix(".json"), {
         **lineage, "complete": True, "scope": "test", "rows": len(test),
-        "score_batch": batch, "test_sha256": dataset["files"]["test"]["sha256"],
+        "score_batch": batch, "precision": scoring["precision"], "test_sha256": dataset["files"]["test"]["sha256"],
         "predictions_sha256": fingerprint(pred_path),
     })
     measured = {
