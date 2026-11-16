@@ -24,6 +24,6 @@
     "weights_file": "kumo-tabular-large-classifier.pt",
     "weights_sha256": "cc21484316949641cc3d65a7bb6c36cdea854cc569435755ff23b850018ec613"
   },
-  "trainer_code_version": "52a70626f47a",
+  "trainer_code_version": "e4c58b20e735",
   "training_image": "345594603419.dkr.ecr.us-west-2.amazonaws.com/ctr-trainer-ray@sha256:b71cc1a1b71560e6d482bf5dbec05a82cc4561ccb8c9281f27e5954c92e453e2"
 }

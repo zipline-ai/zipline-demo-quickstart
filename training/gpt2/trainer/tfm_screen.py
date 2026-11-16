@@ -206,7 +206,7 @@ def worker(context, manifest, manifest_sha):
     validate_screen(s)
     out = Path("/tmp/s6e11-attempts") / context["attempt_id"]
     out.mkdir(parents=True, exist_ok=False)
-    torch.set_num_threads(4)
+    torch.set_num_threads(2)
     publisher = Publisher(context, out)
     publisher.progress("setup", force=True, measurements={"visible_gpus": 1})
 
@@ -291,7 +291,7 @@ def main():
     if ray.__version__ != "2.55.1":
         raise RuntimeError("Ray runtime must match Platform 2.55.1")
     ray.init(address="auto")
-    task = ray.remote(num_gpus=1, num_cpus=4, max_retries=0)(worker)
+    task = ray.remote(num_gpus=1, num_cpus=2, max_retries=0)(worker)
     print(json.dumps(ray.get(task.remote(context, manifest, a.trainer_manifest_sha256)), allow_nan=False))
 
 

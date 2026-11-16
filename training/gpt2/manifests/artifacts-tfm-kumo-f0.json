@@ -1,7 +1,7 @@
 {
-  "archive_sha256": "52a70626f47a6893fbd17d5e99bf0fe0d56bf3de6b0ce67a67e6de59e84e5f09",
-  "trainer_code_version": "52a70626f47a",
-  "trainer_manifest_sha256": "08ba9a1c13a3cfa017540916e574a11db3564e4c3e895c50457925d6e9275e15",
-  "trainer_manifest_uri": "s3://zipline-artifacts-crucible/gpt2-s6e11/manifests/trainer-08ba9a1c13a3cfa017540916e574a11db3564e4c3e895c50457925d6e9275e15.json",
+  "archive_sha256": "e4c58b20e7352034b3485e33d8d760c5a9e8f96c5e69831d760e5d1eb5b1a7b1",
+  "trainer_code_version": "e4c58b20e735",
+  "trainer_manifest_sha256": "9162e99b974d8ae2d05e70403faf9ff9621672941fe9d07370a8c96a0b0d6e85",
+  "trainer_manifest_uri": "s3://zipline-artifacts-crucible/gpt2-s6e11/manifests/trainer-9162e99b974d8ae2d05e70403faf9ff9621672941fe9d07370a8c96a0b0d6e85.json",
   "training_image": "345594603419.dkr.ecr.us-west-2.amazonaws.com/ctr-trainer-ray@sha256:b71cc1a1b71560e6d482bf5dbec05a82cc4561ccb8c9281f27e5954c92e453e2"
 }
