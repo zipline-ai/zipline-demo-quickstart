@@ -4,6 +4,11 @@ Same encoder, 30 feature orders (order_seed) and log-likelihood math as the
 validation scorer in train.py. "fp32" reproduces it exactly; "tf32", "bf16" and
 "fp16" trade small numeric drift for speed in the transformer body only (the
 vocabulary head stays fp32 and sums stay fp64).
+
+Mode "any" scores fold validation rows (an id list) with a label-anywhere checkpoint:
+for each of K orders of the features plus the label field, the full sequence is scored
+with label True and False; row logit = mean over orders of the log-likelihood difference
+(log-sum-exp version saved alongside).
 """
 
 import argparse
@@ -83,6 +88,32 @@ def likelihoods(model, encoder, lo, hi, orders, batch):
     return ll
 
 
+def any_orders(scoring, n_features):
+    """Permutations of the features plus the label field (index n_features), as in training."""
+    rng = np.random.default_rng(scoring["order_seed"])
+    return [rng.permutation(n_features + 1) for _ in range(scoring["orders"])]
+
+
+def any_likelihoods(model, encoder, rows, orders, batch, device="cuda"):
+    """[row, order, label] log-likelihood of every token after the first (EOS included)."""
+    from .core import conditional_log_likelihood
+
+    ll = np.zeros((len(rows), len(orders), 2), dtype=np.float64)
+    for o, order in enumerate(orders):
+        for start in range(0, len(rows), batch):
+            part = rows[start : start + batch]
+            seqs = [encoder.build(r, y, order, source=True, eos=True) for y in (0, 1) for r in part]
+            values = conditional_log_likelihood(
+                model, seqs, [1] * len(seqs), encoder.tok.eos_token_id, device
+            )
+            ll[start : start + len(part), o] = values.reshape(2, -1).T
+    return ll
+
+
+def any_logits(ll):
+    return (ll[:, :, 1] - ll[:, :, 0]).mean(axis=1), log_odds(ll)
+
+
 def log_odds(ll):
     from scipy.special import logsumexp
 
@@ -90,8 +121,16 @@ def log_odds(ll):
 
 
 def validate_scoring(scoring, recipe):
-    if scoring["mode"] not in ("benchmark", "test") or scoring["fold"] != recipe["fold"]:
+    if scoring["mode"] not in ("benchmark", "test", "any") or scoring["fold"] != recipe["fold"]:
         raise ValueError("Invalid scoring mode/fold")
+    if scoring["mode"] == "any" and (
+        recipe.get("label_position") != "anywhere"
+        or type(scoring["orders"]) is not int or not 0 < scoring["orders"] <= 64
+        or type(scoring["order_seed"]) is not int
+        or len(scoring["checkpoint_sha256"]) != 64 or len(scoring["ids_sha256"]) != 64
+        or not scoring["ids_uri"].startswith("s3://") or type(scoring["rows"]) is not int
+    ):
+        raise ValueError("Invalid any-readout scoring")
     if not scoring["checkpoint_uri"].endswith(".pt") or "/runs/" not in scoring["checkpoint_uri"]:
         raise ValueError("Invalid checkpoint URI")
     if scoring["mode"] == "benchmark":
@@ -161,6 +200,8 @@ def worker(context, manifest, manifest_sha):
     if md5(cp) != scoring["checkpoint_md5"]:
         raise ValueError("Checkpoint MD5 differs from pinned S3 ETag")
     checkpoint_sha = fingerprint(cp)
+    if scoring.get("checkpoint_sha256", checkpoint_sha) != checkpoint_sha:
+        raise ValueError("Checkpoint SHA-256 differs from the pinned value")
 
     source, training, valid, paths = load(dataset, out / "data", recipe["fold"], False)
     weights = Path("/opt/gpt2")
@@ -195,6 +236,8 @@ def worker(context, manifest, manifest_sha):
 
     if scoring["mode"] == "benchmark":
         return benchmark(model, tok, valid, dataset, recipe, scoring, lineage, out, publisher)
+    if scoring["mode"] == "any":
+        return score_any(model, tok, valid, dataset, recipe, scoring, lineage, out, publisher)
     return score_test(model, tok, paths, dataset, recipe, scoring, lineage, out, publisher)
 
 
@@ -317,6 +360,74 @@ def score_test(model, tok, paths, dataset, recipe, scoring, lineage, out, publis
         f"test;fold={recipe['fold']};prior={recipe['prior_mode']};orders={recipe['orders']};purpose=test_prediction",
         [{"id": "test", "kind": "predictions", "path": "predictions/test.csv"},
          {"id": "coverage", "kind": "manifest", "path": "predictions/test.json"},
+         {"id": "dataset", "kind": "dataset_manifest", "path": "manifests/dataset.json"}],
+    )
+    return measured
+
+
+def score_any(model, tok, valid, dataset, recipe, scoring, lineage, out, publisher):
+    import torch
+    from .core import RowEncoder
+
+    ids_path = download(scoring["ids_uri"], out / "ids.csv", scoring["ids_sha256"])
+    ids = pd.read_csv(ids_path).id
+    if len(ids) != scoring["rows"] or ids.duplicated().any() or not ids.isin(valid.id).all():
+        raise ValueError("Id list is not a set of this fold's validation rows")
+    rows = valid.set_index("id", drop=False).loc[ids].reset_index(drop=True)
+    encoder = RowEncoder(tok, rows, dataset["features"])
+    encoder.check()
+    orders = any_orders(scoring, len(encoder.features))
+    batch = scoring["score_batch"]
+    started, chunks = time.perf_counter(), []
+    for lo in range(0, len(rows), CHUNK):
+        hi = min(lo + CHUNK, len(rows))
+        with precision(model, scoring["precision"]):
+            ll = any_likelihoods(model, encoder, list(range(lo, hi)), orders, batch)
+        path = out / f"any-likelihoods-{lo:06d}.npz"
+        np.savez_compressed(path, id=rows.id.iloc[lo:hi].to_numpy(), ll=ll,
+                            orders=np.array(orders))
+        publisher.artifact(path, "any_evaluation/" + path.name)
+        path.unlink()
+        chunks.append(ll)
+        publisher.progress("scoring", rows=hi, total_steps=len(rows))
+    seconds = time.perf_counter() - started
+    mean, lse = any_logits(np.concatenate(chunks))
+    if not (np.isfinite(mean).all() and np.isfinite(lse).all()) or len(mean) != len(rows):
+        raise ValueError("Nonfinite or incomplete any-readout logits")
+    predictions = rows[["id", "is_fraud"]].copy()
+    predictions["fold"] = recipe["fold"]
+    predictions["prediction"] = 1 / (1 + np.exp(-mean))
+    predictions["logit"], predictions["logit_lse"] = mean, lse
+    pred_path = out / "any.csv"
+    predictions.to_csv(pred_path, index=False, float_format="%.10g")
+    from sklearn.metrics import roc_auc_score
+
+    measured = {
+        "rows": len(rows),
+        "positives": int(rows.is_fraud.sum()),
+        "scoring_seconds": seconds,
+        "rows_per_second": len(rows) / seconds,
+        "auc_mean": float(roc_auc_score(rows.is_fraud, mean)),
+        "auc_lse": float(roc_auc_score(rows.is_fraud, lse)),
+        "gpu_peak_allocated_bytes": float(torch.cuda.max_memory_allocated()),
+    }
+    write_json(pred_path.with_suffix(".json"), {
+        **lineage, "complete": True, "scope": "any_readout", "rows": len(rows),
+        "ids_uri": scoring["ids_uri"], "ids_sha256": scoring["ids_sha256"],
+        "orders": scoring["orders"], "order_seed": scoring["order_seed"],
+        "score_batch": batch, "precision": scoring["precision"],
+        "readout": "any: mean over orders of ll(True) - ll(False), all tokens after the first incl. EOS; logit_lse = lse_o ll(True) - lse_o ll(False)",
+        "predictions_sha256": fingerprint(pred_path), "measured": measured,
+    })
+    publisher.artifact(pred_path, "predictions/any.csv")
+    publisher.artifact(pred_path.with_suffix(".json"), "predictions/any.json")
+    publisher.artifact(out / "dataset.json", "manifests/dataset.json")
+    publisher.progress("complete", force=True, measurements=measured)
+    publisher.report(
+        measured,
+        f"any_readout;fold={recipe['fold']};rows={len(rows)};orders={scoring['orders']};purpose=validation",
+        [{"id": "any", "kind": "predictions", "path": "predictions/any.csv"},
+         {"id": "coverage", "kind": "manifest", "path": "predictions/any.json"},
          {"id": "dataset", "kind": "dataset_manifest", "path": "manifests/dataset.json"}],
     )
     return measured

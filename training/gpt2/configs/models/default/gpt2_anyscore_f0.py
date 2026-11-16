@@ -1,0 +1,55 @@
+"""Fold-0 "any" readout of the label-anywhere checkpoint: 27,337-row fold-0 subset, 30 orders."""
+
+import json
+from pathlib import Path
+from ai.chronon.types import (
+    ConfigProperties,
+    EnvironmentVariables,
+    ExecutionInfo,
+    EntitySource,
+    InferenceSpec,
+    Model,
+    ModelBackend,
+    Query,
+    ResourceConfig,
+    TrainingSpec,
+    Window,
+    TimeUnit,
+)
+
+artifacts = json.loads(
+    (Path(__file__).resolve().parents[3] / "manifests/artifacts-anyscore-f0.json").read_text()
+)
+anyscore = Model(
+    version=artifacts["trainer_code_version"],
+    environments=["prod"],
+    inference_spec=InferenceSpec(
+        model_backend=ModelBackend.RAY,
+        model_backend_params={"model_name": "s6e11_gpt2_anyscore_f0", "model_type": "custom"},
+    ),
+    model_artifact_base_uri="s3://zipline-artifacts-crucible/gpt2-s6e11",
+    training_conf=TrainingSpec(
+        # Real unpartitioned external CSV, registered in existing Glue database.
+        # No event clock, feature pipeline, or synthetic partition is introduced.
+        training_data_source=EntitySource(
+            snapshot_table="data.s6e11_gpt2_train_87eaa10b", query=Query()
+        ),
+        training_data_window=Window(length=0, time_unit=TimeUnit.DAYS),
+        schedule="@never",
+        image=artifacts["training_image"],
+        python_module="trainer.score_test",
+        resource_config=ResourceConfig(min_replica_count=1, max_replica_count=1),
+        job_configs={
+            "trainer-manifest-uri": artifacts["trainer_manifest_uri"],
+            "trainer-manifest-sha256": artifacts["trainer_manifest_sha256"],
+        },
+    ),
+)
+
+# Scoring only: the parent attempt is the fold-0 label-anywhere run that wrote the checkpoint.
+anyscore.metaData.executionInfo = ExecutionInfo(
+    conf=ConfigProperties(common={"ray.timeout.seconds": "151200"}),
+    env=EnvironmentVariables(
+        common={"ZIPLINE_PARENT_ATTEMPT_ID": "302e0135-2944-437b-9b3a-462c3237b6ba-1"}
+    ),
+)
