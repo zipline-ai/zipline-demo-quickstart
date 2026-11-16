@@ -1,0 +1,13 @@
+# LimiX-2 screen image: the verified TFM screen image plus LimiX inference code (limix-ldm-ai/LimiX
+# commit db592af4, vendored source, installed without dependencies) and the checksum-verified
+# LimiX-2 checkpoint (stable-ai/LimiX-2 de07b679). StableAI LimiX Non-Commercial License v1.0:
+# non-commercial use only. No downloads at run time.
+FROM 345594603419.dkr.ecr.us-west-2.amazonaws.com/ctr-trainer-ray@sha256:b71cc1a1b71560e6d482bf5dbec05a82cc4561ccb8c9281f27e5954c92e453e2
+COPY requirements-limix.txt /tmp/limix-requirements.txt
+COPY --chown=ray:users limix-src /tmp/limix-src
+RUN printf 'torch==2.15.0\nnumpy==2.5.4\npandas==3.1.1\nscikit-learn==1.9.1\nscipy==1.18.1\nray==2.55.1\n' > /tmp/base-constraints.txt \
+ && pip install -c /tmp/base-constraints.txt -r /tmp/limix-requirements.txt \
+ && pip install --no-deps /tmp/limix-src && rm -rf /tmp/limix-src && pip check
+COPY --chown=ray:users work/limix /opt/tfm/limix
+RUN cd /opt/tfm/limix && echo 'ed01f7a0a18d25451bc9d1058b479ba6b68048aa1ebde06156c8fcfaf8b8fe81  LimiX-2.ckpt' | sha256sum -c -
+RUN python -c "import ray, torch, triton, tabicl, sdm, inference.predictor; assert ray.__version__ == '2.55.1' and torch.__version__.startswith('2.15.0'); print(torch.__version__, triton.__version__)"

@@ -1,4 +1,4 @@
-"""Fold-k screen of in-context tabular foundation models (Kumo-Tabular, TabICLv2).
+"""Fold-k screen of in-context tabular foundation models (Kumo-Tabular, TabICLv2, LimiX-2).
 
 Context per bag: every training-fold fraud plus random training-fold non-frauds up to
 `context_rows` (numpy default_rng(seed)); validation labels never enter a context or a
@@ -21,7 +21,7 @@ from .storage import fingerprint, read_bytes, write_json
 from .attempt import Publisher, context_from_env
 from .data import REVISION, load
 
-MODELS = ("kumo_tabular", "tabicl_v2")
+MODELS = ("kumo_tabular", "tabicl_v2", "limix_2")
 ARMS = ("a", "b")
 DIGIT_COLUMNS = ("amount_usd", "hours_since_last_txn", "velocity_score", "distance_from_home_km")
 QUERY_CHUNK = 35000
@@ -133,14 +133,62 @@ class KumoRunner:
                 x_query=table[nc:].drop_columns("is_fraud"), num_estimators=self.cfg["n_estimators"],
                 generator=g,
             )
-        probs = out.numerical if hasattr(out, "numerical") else out
-        probs = probs.float().cpu().numpy() if hasattr(probs, "cpu") else np.asarray(probs)
-        probs = probs.reshape(len(xq), -1)
-        return probs[:, 1] if probs.shape[1] >= 2 else probs[:, 0]
+        # sdm permutes the target class order per generator; output columns are named by class.
+        names = list(out.columns[sdm.Stype.numerical])
+        probs = out.numerical.float().cpu().numpy().reshape(len(xq), -1)
+        positive = [i for i, n in enumerate(names) if float(n) == 1.0]
+        if len(names) != 2 or len(positive) != 1:
+            raise ValueError(f"Unexpected Kumo output columns {names}")
+        return probs[:, positive[0]]
+
+
+class LimiXRunner:
+    """LimiX-2 (StableAI LimiX Non-Commercial License v1.0; non-commercial use only)."""
+    name = "limix_2"
+
+    def __init__(self, cfg, device):
+        import os
+        import torch
+        import inference
+        for k, v in {"RANK": "0", "WORLD_SIZE": "1", "MASTER_ADDR": "127.0.0.1", "MASTER_PORT": "29500"}.items():
+            os.environ.setdefault(k, v)
+        from inference.predictor import LimiXPredictor
+        self.cls, self.cfg, self.torch, self.device = LimiXPredictor, cfg, torch, torch.device(device)
+        packaged = Path(inference.__file__).resolve().parents[1] / "config" / "cls_default_noretrieval_v2.json"
+        config = json.loads(packaged.read_text())
+        # first n_estimators members of the packaged default classification config
+        self.config = dict(config, pipelines=config["pipelines"][:cfg["n_estimators"]])
+        self.ckpt = torch.load(cfg["model_path"], map_location="cpu", weights_only=False)
+
+    @staticmethod
+    def encode(xc, xq):
+        # label-free ordinal codes for string columns (sorted feature vocabulary)
+        xc, xq = xc.copy(), xq.copy()
+        for c in categorical_columns(xc):
+            vocab = {v: i for i, v in enumerate(sorted(set(xc[c].astype(str)) | set(xq[c].astype(str))))}
+            xc[c], xq[c] = xc[c].astype(str).map(vocab).astype(np.float64), xq[c].astype(str).map(vocab).astype(np.float64)
+        return xc.to_numpy(np.float64), xq.to_numpy(np.float64)
+
+    def fit(self, xc, yc, seed):
+        self.xc, self.yc = xc, np.asarray(yc, dtype=np.int64)
+        self.model = self.cls(
+            device=self.device, model_path=self.cfg["model_path"], inference_config=self.config,
+            mix_precision=self.cfg["precision"] == "amp", seed=int(seed), ckpt=self.ckpt,
+            preprocess_num_jobs=2, cache_dir="/tmp/limix-cache",
+        )
+        return self
+
+    def predict(self, xq):
+        xc, xq = self.encode(self.xc, xq)
+        proba = np.asarray(self.model.predict(xc, self.yc, xq, task_type="Classification"))
+        classes = list(getattr(getattr(self.model, "label_encoder", None), "classes_", [0, 1]))
+        if proba.shape != (len(xq), 2) or classes != [0, 1]:
+            raise ValueError(f"Unexpected LimiX output {proba.shape} classes {classes}")
+        return proba[:, 1]
 
 
 def make_runner(cfg, device):
-    return {"tabicl_v2": TabICLRunner, "kumo_tabular": KumoRunner}[cfg["model"]](cfg, device)
+    return {"tabicl_v2": TabICLRunner, "kumo_tabular": KumoRunner, "limix_2": LimiXRunner}[cfg["model"]](cfg, device)
 
 
 def run_arm(runner, training, valid, features, arm, cfg, publisher=None, out=None, budget=None):
