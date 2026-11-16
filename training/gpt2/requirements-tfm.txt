@@ -1,0 +1,4 @@
+tabicl==2.2.0
+structured-data-models==0.2.1
+einops==0.8.2
+psutil==7.2.2

@@ -1,0 +1,13 @@
+# Foundation-model screen image: the verified GPT-2 trainer image plus pinned TabICLv2 and
+# Kumo-Tabular inference packages and checksum-verified weights. No downloads at run time.
+FROM 345594603419.dkr.ecr.us-west-2.amazonaws.com/ctr-trainer-ray@sha256:1b1bbc4bdf174645e4a6acf87648d6c0fcb071c8a354c50f6fe603bee873861b
+COPY requirements-tfm.txt /tmp/tfm-requirements.txt
+# Constrain the base image's scientific stack so nothing already verified is upgraded.
+RUN printf 'torch==2.15.0\nnumpy==2.5.4\npandas==3.1.1\nscikit-learn==1.9.1\nscipy==1.18.1\nray==2.55.1\n' > /tmp/base-constraints.txt \
+ && pip install -c /tmp/base-constraints.txt -r /tmp/tfm-requirements.txt && pip check
+# work/tfm holds kumo-tabular-large-classifier.pt (nvidia/Kumo-Tabular v1.0.1, sha256 cc214843...)
+# and tabicl-classifier-v2-20260212.ckpt (jingang/TabICL 4dcd344e, sha256 bdc7dbd5...).
+COPY --chown=ray:users work/tfm /opt/tfm
+RUN cd /opt/tfm && printf 'cc21484316949641cc3d65a7bb6c36cdea854cc569435755ff23b850018ec613  kumo-tabular-large-classifier.pt\nbdc7dbd5e4ff21f8f0456fcf90c6b7cdf72dbea960f2d05b19bec19f9b3d4ed0  tabicl-classifier-v2-20260212.ckpt\n' | sha256sum -c -
+ENV HF_HUB_OFFLINE=1 HF_HUB_DISABLE_TELEMETRY=1
+RUN python -c "import ray, torch, tabicl, sdm; assert ray.__version__ == '2.55.1' and torch.__version__.startswith('2.15.0'); print(torch.__version__, torch.version.cuda)"
