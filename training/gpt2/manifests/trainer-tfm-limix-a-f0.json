@@ -1,0 +1,29 @@
+{
+  "dataset_manifest_uri": "s3://zipline-artifacts-crucible/gpt2-s6e11/manifests/dataset-802675cfd652bea99179b2f47402f906d581969773e3f57e6defca4689fc32ea.json",
+  "schema_version": 1,
+  "screen": {
+    "arm_b": "raw + categorical cents (round(value mod 1, 2)) and leading digit of amount_usd, hours_since_last_txn, velocity_score, distance_from_home_km",
+    "arms": [
+      "a"
+    ],
+    "categorical_note": "LimiX infers categoricals itself (<=30 unique values); string columns are ordinal-coded from the sorted feature vocabulary, so cents columns (100 values) are treated as ordinal",
+    "context_rows": 100000,
+    "context_rule": "all training-fold frauds + numpy default_rng(seed) non-frauds to 100,000 rows; mean logit over bags",
+    "fold": 0,
+    "licence": "StableAI LimiX Non-Commercial License v1.0; non-commercial use (accepted by the user 2026-11-16)",
+    "max_seconds": 21600,
+    "model": "limix_2",
+    "model_version": "LimiX-2 400M (stable-ai/LimiX-2 de07b679; limix-ldm-ai/LimiX code db592af4); first 8 of 32 pipelines of cls_default_noretrieval_v2",
+    "n_estimators": 8,
+    "precision": "amp",
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "weights_file": "limix/LimiX-2.ckpt",
+    "weights_sha256": "ed01f7a0a18d25451bc9d1058b479ba6b68048aa1ebde06156c8fcfaf8b8fe81"
+  },
+  "trainer_code_version": "28acb6fdbed2",
+  "training_image": "345594603419.dkr.ecr.us-west-2.amazonaws.com/ctr-trainer-ray@sha256:61b2ed70b6702563128b137129d6832654b3e98cda7f3fc5480fd2432f0c3e0d"
+}
